@@ -1,0 +1,16 @@
+{
+  "name": "Waivio Product Extension",
+  "version": "1.0.0",
+  "manifest_version": 3,
+  "action": {
+    "default_title": "Parse Waivio Product",
+    "default_popup": "./index.html"
+  },
+  "permissions": ["activeTab", "tabs"],
+  "content_scripts":  [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["contentScript.js"]
+    }
+  ]
+}
