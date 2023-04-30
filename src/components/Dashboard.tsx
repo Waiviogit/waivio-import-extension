@@ -1,13 +1,13 @@
 import {StyledDashboard} from "./Dashboard.styled";
 import {DashboardButton} from "./DasboardButton";
-import {parseProductPage} from "../services/pageParser";
+import {parsePageCSV, parsePageJSON } from "../services/pageParser";
 
 export const Dashboard = () => {
     return (
         <StyledDashboard>
             <header>
-                <DashboardButton text={"get JSON"} onClick={parseProductPage} />
-                <DashboardButton text={"get CSV"} onClick={parseProductPage}/>
+                <DashboardButton text={"get JSON"} onClick={parsePageJSON} />
+                <DashboardButton text={"get CSV"} onClick={parsePageCSV}/>
             </header>
         </StyledDashboard>
     );

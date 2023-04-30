@@ -1,19 +1,20 @@
+import Tab = chrome.tabs.Tab;
 
-// @ts-ignore
-function getCurrentTab(callback){ //Take a callback
-    chrome.tabs.query({active:true, currentWindow:true},function(tab){
+const getCurrentTab = (callback: (tab: Tab) => void): void => {
+    chrome.tabs.query({active:true, currentWindow:true},(tab) => {
         callback(tab[0]); //call the callback with argument
     });
 }
 
-// @ts-ignore
-function displayTab (tab){
-    console.log(tab)//define your callback function
-   chrome.tabs.sendMessage(tab.id, 'ssdfsasdf')
+const saveJSON = (tab: Tab): void => {
+   chrome.tabs.sendMessage(tab?.id ?? 1, 'saveJSON')
 }
 
-
-
-export const parseProductPage = ():void => {
-    getCurrentTab(displayTab);
+const saveCSV = (tab: Tab): void => {
+    chrome.tabs.sendMessage(tab?.id ?? 1, 'saveJSON')
 }
+
+export const parsePageJSON = ():void => getCurrentTab(saveJSON);
+
+export const parsePageCSV = ():void => getCurrentTab(saveCSV);
+
