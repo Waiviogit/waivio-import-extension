@@ -1,6 +1,4 @@
 import styled from "styled-components";
-import React from "react";
-
 
 export const StyledDashboardButtonContainer = styled.div`
   margin-bottom: 10px

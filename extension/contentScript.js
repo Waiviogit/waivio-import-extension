@@ -8,6 +8,7 @@ const downloadObjectAsJson = (exportObj, exportName) => {
     downloadAnchorNode.remove();
 }
 
+// eslint-disable-next-line no-undef
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     console.log(message);
     console.log(sender);
