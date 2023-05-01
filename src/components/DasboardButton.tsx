@@ -1,4 +1,5 @@
 import React from "react";
+import {StyledDashboardButton, StyledDashboardButtonContainer} from "./DasboardButton.styled";
 
 interface DashboardButtonProps  {
     text: string
@@ -8,10 +9,10 @@ interface DashboardButtonProps  {
 export const DashboardButton : React.FC<DashboardButtonProps> = ({text, onClick}) => {
 
     return (
-        <div>
-            <button onClick={onClick}>
+        <StyledDashboardButtonContainer>
+            <StyledDashboardButton onClick={onClick}>
                 {text}
-            </button>
-        </div>
+            </StyledDashboardButton>
+        </StyledDashboardButtonContainer>
     );
 }
