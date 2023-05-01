@@ -1,20 +1,36 @@
 import Tab = chrome.tabs.Tab;
 
-const getCurrentTab = (callback: (tab: Tab) => void): void => {
-    chrome.tabs.query({active:true, currentWindow:true},(tab) => {
-        callback(tab[0]); //call the callback with argument
-    });
+interface sendMessageToTabInterface {
+    id: number;
+    message: string;
 }
 
-const saveJSON = (tab: Tab): void => {
-   chrome.tabs.sendMessage(tab?.id ?? 1, 'saveJSON')
+export const PARSE_COMMANDS = {
+    TO_JSON: 'to_json',
+    TO_CSV: 'to_csv'
 }
 
-const saveCSV = (tab: Tab): void => {
-    chrome.tabs.sendMessage(tab?.id ?? 1, 'saveJSON')
+const getCurrentTab = async (): Promise<Tab | undefined> => {
+    try {
+        const [tab] = await  chrome.tabs.query({active:true, currentWindow:true});
+        return tab
+    } catch (error) {
+        console.error(error)
+    }
 }
 
-export const parsePageJSON = ():void => getCurrentTab(saveJSON);
+const sendMessageToTab = async ({id, message}:sendMessageToTabInterface): Promise<void> => {
+    try {
+        await chrome.tabs.sendMessage(id, message)
+    } catch (error) {
+        console.error(error)
+    }
+}
 
-export const parsePageCSV = ():void => getCurrentTab(saveCSV);
+export const parsePage = async (message: string): Promise<void> => {
+    const tab = await getCurrentTab()
+    const id = tab?.id
+    if(!id) return
+    await sendMessageToTab({id, message})
+};
 
