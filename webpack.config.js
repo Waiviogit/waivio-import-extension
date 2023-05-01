@@ -2,7 +2,12 @@ const path = require('path');
 const CopyPlugin = require('copy-webpack-plugin');
 
 module.exports = {
-  entry: './src/index.tsx',
+  entry: {
+    app: [
+      './src/index.tsx',
+    ],
+    contentScript: ['./src/content-script/contentScript.ts'],
+  },
   mode: 'production',
   module: {
     rules: [
@@ -24,7 +29,7 @@ module.exports = {
     extensions: ['.tsx', '.ts', '.js'],
   },
   output: {
-    filename: 'app.js',
+    filename: '[name].js',
     path: path.resolve(__dirname, 'dist'),
   },
   plugins: [
