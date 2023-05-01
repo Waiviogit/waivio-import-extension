@@ -1,15 +1,15 @@
-import {StyledDashboard} from "./Dashboard.styled";
-import {DashboardButton} from "./DasboardButton";
-import {sendMessageToContentScript, PARSE_COMMANDS } from "../services/pageParser";
+import { StyledDashboard } from './Dashboard.styled';
+import { DashboardButton } from './DasboardButton';
+import { sendMessageToContentScript, PARSE_COMMANDS } from '../services/pageParser';
 
 export const Dashboard = () => {
-    const parseToJson = async (): Promise<void> => sendMessageToContentScript(PARSE_COMMANDS.TO_JSON);
-    const parseToCsv = async (): Promise<void> => sendMessageToContentScript(PARSE_COMMANDS.TO_CSV);
+  const parseToJson = async (): Promise<void> => sendMessageToContentScript(PARSE_COMMANDS.TO_JSON);
+  const parseToCsv = async (): Promise<void> => sendMessageToContentScript(PARSE_COMMANDS.TO_CSV);
 
-    return (
+  return (
         <StyledDashboard>
-                <DashboardButton text={"get JSON"} onClick={parseToJson} />
-                <DashboardButton text={"get CSV"} onClick={parseToCsv}/>
+                <DashboardButton text={'get JSON'} onClick={parseToJson} />
+                <DashboardButton text={'get CSV'} onClick={parseToCsv}/>
         </StyledDashboard>
-    );
-}
+  );
+};

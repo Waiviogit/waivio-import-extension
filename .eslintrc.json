@@ -1,6 +1,6 @@
 {
   "root": true,
-  "extends": ["eslint:recommended"],
+  "extends": ["airbnb-base"],
   "env": {
     "browser": true,
     "node": true,
@@ -12,6 +12,25 @@
     },
     "ecmaVersion": 12,
     "sourceType": "module"
+  },
+  "rules": {
+    "import/extensions": [
+      "error",
+      "ignorePackages",
+      {
+        "js": "never",
+        "jsx": "never",
+        "ts": "never",
+        "tsx": "never"
+      }
+    ]
+  },
+  "settings": {
+    "import/resolver": {
+      "node": {
+        "extensions": [".js", ".jsx", ".ts", ".tsx", ".json"]
+      }
+    }
   },
   "overrides": [
     {

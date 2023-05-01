@@ -1,15 +1,15 @@
-const path = require("path");
-const config = require("./webpack.config");
+const path = require('path');
+const config = require('./webpack.config');
 
 module.exports = {
-    ...config,
-    mode: "development",
-    devServer: {
-        static: {
-            directory: path.join(__dirname, "extension"),
-        },
-        port: 8020,
+  ...config,
+  mode: 'development',
+  devServer: {
+    static: {
+      directory: path.join(__dirname, 'extension'),
     },
-    performance: { hints: false },
-    output: { ...config.output, publicPath: "/" },
+    port: 8020,
+  },
+  performance: { hints: false },
+  output: { ...config.output, publicPath: '/' },
 };

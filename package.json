@@ -22,7 +22,7 @@
     "start": "webpack serve --config webpack.dev.js",
     "build": "webpack",
     "build:watch": "webpack --watch",
-    "lint": "eslint --ext=.jsx,.js,.tsx,.ts  .",
+    "lint": "eslint --fix --ext=.jsx,.js,.tsx,.ts  .",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
@@ -48,6 +48,7 @@
     "@types/chrome": "0.0.234",
     "copy-webpack-plugin": "^11.0.0",
     "eslint": "^8.39.0",
+    "eslint-config-airbnb-base": "^15.0.0",
     "ts-loader": "^9.4.2",
     "typescript-eslint": "0.0.1-alpha.0",
     "webpack": "^5.81.0",
