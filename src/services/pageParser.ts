@@ -5,7 +5,7 @@ export const PARSE_COMMANDS = {
     TO_CSV: 'to_csv'
 }
 
-export const parsePage = async (message: string): Promise<void> => {
+export const sendMessageToContentScript = async (message: string): Promise<void> => {
     const tab = await getCurrentTab()
     const id = tab?.id
     if(!id) return
