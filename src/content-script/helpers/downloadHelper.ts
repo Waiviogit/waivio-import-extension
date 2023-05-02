@@ -7,3 +7,7 @@ export const downloadObjectAsJson = (exportObj: object, exportName: string): voi
   downloadAnchorNode.click();
   downloadAnchorNode.remove();
 };
+
+export const downloadObjectAsCsv = (exportObj: object, exportName: string): void => {
+
+};
