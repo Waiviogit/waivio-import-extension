@@ -10,6 +10,7 @@ const downloadFileScript = {
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (!message || typeof message !== 'string') return;
+  const downLoadType = message as keyof typeof downloadFileScript;
 
   console.log(message);
   console.log(sender);
@@ -18,8 +19,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   const exportObject = { test: 'test' };
   const fileName = randomNameGenerator(8);
 
-  // @ts-ignore
-  (downloadFileScript[message] || downloadFileScript.default)(exportObject, fileName);
+  (downloadFileScript[downLoadType] || downloadFileScript.default)(exportObject, fileName);
 });
 
 export {};
