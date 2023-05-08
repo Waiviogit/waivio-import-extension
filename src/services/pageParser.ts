@@ -5,9 +5,18 @@ export const PARSE_COMMANDS = {
   TO_CSV: 'to_csv',
 };
 
+const validatePage = (url: string):boolean => {
+  const regex = /^https:\/\/www\.amazon[^\/]+\/dp\//;
+  return regex.test(url);
+};
+
 export const sendMessageToContentScript = async (message: string): Promise<void> => {
   const tab = await getCurrentTab();
   const id = tab?.id;
-  if (!id) return;
+  const url = tab?.url;
+  if (!id || !url) return;
+
+  if (!validatePage(url)) return alert('Url must be like https://www.amazon.com/dp/ASIN_NUMBER');
+
   await sendMessageToTab({ id, message });
 };
