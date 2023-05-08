@@ -1,5 +1,8 @@
-export const downloadObjectAsJson = (exportObj: object, exportName: string): void => {
-  const dataStr = `data:text/json;charset=utf-8,${encodeURIComponent(JSON.stringify(exportObj))}`;
+import { formatToJsonObject, parsedObjectType } from '../getProduct';
+
+export const downloadObjectAsJson = (exportObj: parsedObjectType, exportName: string): void => {
+  const jsonFormat = formatToJsonObject(exportObj);
+  const dataStr = `data:text/json;charset=utf-8,${encodeURIComponent(JSON.stringify(jsonFormat))}`;
   const downloadAnchorNode = document.createElement('a');
   downloadAnchorNode.setAttribute('href', dataStr);
   downloadAnchorNode.setAttribute('download', `${exportName}.json`);
@@ -8,6 +11,6 @@ export const downloadObjectAsJson = (exportObj: object, exportName: string): voi
   downloadAnchorNode.remove();
 };
 
-export const downloadObjectAsCsv = (exportObj: object, exportName: string): void => {
+export const downloadObjectAsCsv = (exportObj: parsedObjectType, exportName: string): void => {
 
 };
