@@ -31,6 +31,16 @@ export type exportJsonType = {
   brand?: string
 }
 
+export type exportCSVType = {
+  primaryImageURLs: string
+  waivio_options: string
+  name: string
+  asins: string
+  categories: string
+  descriptions?: string
+  brand?: string
+}
+
 export const getProduct = (): parsedObjectType => {
   const object: parsedObjectType = {
     name: productTitle(),
@@ -58,6 +68,24 @@ export const formatToJsonObject = (object: parsedObjectType):exportJsonType => {
   } as exportJsonType;
   if (object.description) {
     exportObject.descriptions = [object.description];
+  }
+  if (object.brand) {
+    exportObject.brand = object.brand;
+  }
+
+  return exportObject;
+};
+
+export const formatToCsvObject = (object: parsedObjectType):exportCSVType => {
+  const exportObject = {
+    primaryImageURLs: object.avatar,
+    waivio_options: object.options.map((o) => `category:${o.category};\r\n value:${o.value};\r\n`).join(';'),
+    name: object.name,
+    categories: object.departments.join(','),
+    asins: object.productId,
+  } as exportCSVType;
+  if (object.description) {
+    exportObject.descriptions = object.description;
   }
   if (object.brand) {
     exportObject.brand = object.brand;
