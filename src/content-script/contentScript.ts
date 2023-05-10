@@ -12,7 +12,9 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (!message || typeof message !== 'string') return;
   const downLoadType = message as keyof typeof downloadFileScript;
 
-  const product = getProduct();
+  const { product, error } = getProduct();
+  if (!product || error) return;
+
   const fileName = randomNameGenerator(8);
 
   (downloadFileScript[downLoadType] || downloadFileScript.default)(product, fileName);

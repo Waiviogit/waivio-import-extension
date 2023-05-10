@@ -10,6 +10,7 @@ import {
   getProductDetails,
   OptionType, priceType,
 } from './parser';
+import { productSchema } from './validation';
 
 export type parsedObjectType = {
   name: string
@@ -56,7 +57,12 @@ export type exportCSVType = {
   mostRecentPriceAmount?: string
 }
 
-export const getProduct = (): parsedObjectType => {
+type getProductReturnedType = {
+  product?: parsedObjectType
+  error?: Error
+}
+
+export const getProduct = (): getProductReturnedType => {
   const object: parsedObjectType = {
     name: productTitle(),
     avatar: getAvatar(),
@@ -68,9 +74,15 @@ export const getProduct = (): parsedObjectType => {
     productId: getProductId(),
     ...getProductDetails(),
   };
+
+  const validation = productSchema.validate(object);
+  if (validation.error) {
+    alert(validation.error.message);
+    return { error: validation.error };
+  }
   // todo validation empty fields
   // name, departments, options, avatar, productId
-  return object;
+  return { product: object };
 };
 
 export const formatToJsonObject = (object: parsedObjectType):exportJsonType => {
