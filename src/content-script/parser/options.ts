@@ -1,15 +1,12 @@
 import { getAvatar } from './avatar';
+import { make2dArray } from '../helpers/commonHelper';
 
 const SELECTOR = {
   TWISTER_ID: '#twister .a-row',
   OPTION_NAME: '.a-form-label',
   OPTION_VALUE: '.selection',
+  INLINE_OPTION: '#twister-plus-inline-twister-card span div div div span:not(.inline-twister-dim-title-value-truncate)',
 };
-
-interface getOptionValuesFromNodesInterface {
-  nameNode: HTMLElement
-  valueNode:HTMLElement
-}
 
 export type OptionType = {
   category: string
@@ -25,39 +22,51 @@ const capitalizeEachWord = (string: string): string => {
   return arr.join(' ');
 };
 
-const getOptionValuesFromNodes = (
-  { nameNode, valueNode }: getOptionValuesFromNodesInterface,
-): OptionType| undefined => {
-  try {
-    const name = nameNode.innerText;
-    const value = valueNode.innerText;
-
-    return {
-      category: capitalizeEachWord(name
-        .trim()
-        .replace(/[.,%?+*|{}[\]()<>“”^'"\\\-_=!&$:]/g, '')
-        .replace(/  +/g, ' ')),
-      value: value.trim(),
-    };
-  } catch (error) {
-    console.log(error);
+const getOptionObject = (category: string, value: string): OptionType => {
+  const option = {
+    category: capitalizeEachWord(category
+      .trim()
+      .replace(/[.,%?+*|{}[\]()<>“”^'"\\\-_=!&$:]/g, '')
+      .replace(/  +/g, ' ')),
+    value: value.trim(),
+  } as OptionType;
+  if (option.category === 'Color') {
+    option.image = getAvatar();
   }
+  return option;
 };
 
-export const getOptions = () => {
-  const options = document.querySelectorAll(SELECTOR.TWISTER_ID);
+const getInlineOptions = (): OptionType[] => {
+  const productOptions = [] as OptionType[];
+  const inlineOptions = Array
+    .from(document.querySelectorAll<HTMLElement>('#twister-plus-inline-twister-card span div div div span:not(.inline-twister-dim-title-value-truncate)'))
+    .map((el) => el?.innerText);
+
+  const arr2d = make2dArray(inlineOptions);
+
+  for (const element of arr2d) {
+    const [category, value] = element;
+    if (!category || !value) continue;
+    if (/select/.test(value.toLowerCase())) continue;
+    productOptions.push(getOptionObject(category, value));
+  }
+
+  return productOptions;
+};
+
+export const getOptions = (): OptionType[] => {
+  const options = Array.from(document.querySelectorAll<HTMLElement>(SELECTOR.TWISTER_ID));
+  if (!options.length) return getInlineOptions();
 
   const productOptions = [];
-  // @ts-ignore
   for (const option of options) {
-    const nameNode = option.querySelector(SELECTOR.OPTION_NAME);
-    const valueNode = option.querySelector(SELECTOR.OPTION_VALUE);
-    const formattedValues = getOptionValuesFromNodes({ nameNode, valueNode });
-    if (!formattedValues || !formattedValues.category || !formattedValues.value) continue;
-    if (formattedValues.category === 'Color') {
-      formattedValues.image = getAvatar();
-    }
-    productOptions.push(formattedValues);
+    const nameNode = option.querySelector<HTMLElement>(SELECTOR.OPTION_NAME);
+    const valueNode = option.querySelector<HTMLElement>(SELECTOR.OPTION_VALUE);
+    const category = nameNode?.innerText ?? '';
+    const value = valueNode?.innerText ?? '';
+    if (!category || !value) continue;
+
+    productOptions.push(getOptionObject(category, value));
   }
 
   return productOptions;

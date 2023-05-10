@@ -7,6 +7,7 @@ import {
   getOptions,
   getProductId,
   getPrice,
+  getProductDetails,
   OptionType,
 } from './parser';
 
@@ -19,6 +20,10 @@ export type parsedObjectType = {
   options: OptionType[]
   price: string
   productId: string
+  dimension?: string
+  groupId?: string
+  manufacturer?: string
+  // gallery items
 }
 
 export type exportJsonType = {
@@ -29,6 +34,9 @@ export type exportJsonType = {
   categories: string[]
   descriptions?: string[]
   brand?: string
+  dimension?: string
+  manufacturer?: string
+  groupId?: string
 }
 
 export type exportCSVType = {
@@ -39,6 +47,9 @@ export type exportCSVType = {
   categories: string
   descriptions?: string
   brand?: string
+  dimension?: string
+  groupId?: string
+  manufacturer?: string
 }
 
 export const getProduct = (): parsedObjectType => {
@@ -51,10 +62,10 @@ export const getProduct = (): parsedObjectType => {
     options: getOptions(),
     price: getPrice(),
     productId: getProductId(),
+    ...getProductDetails(),
   };
   // todo validation empty fields
   // name, departments, options, avatar, productId
-  console.log(object);
   return object;
 };
 
@@ -71,6 +82,15 @@ export const formatToJsonObject = (object: parsedObjectType):exportJsonType => {
   }
   if (object.brand) {
     exportObject.brand = object.brand;
+  }
+  if (object.dimension) {
+    exportObject.dimension = object.dimension;
+  }
+  if (object.manufacturer) {
+    exportObject.manufacturer = object.manufacturer;
+  }
+  if (object.groupId) {
+    exportObject.groupId = object.groupId;
   }
 
   return exportObject;
@@ -89,6 +109,15 @@ export const formatToCsvObject = (object: parsedObjectType):exportCSVType => {
   }
   if (object.brand) {
     exportObject.brand = object.brand;
+  }
+  if (object.dimension) {
+    exportObject.dimension = object.dimension;
+  }
+  if (object.manufacturer) {
+    exportObject.manufacturer = object.manufacturer;
+  }
+  if (object.groupId) {
+    exportObject.groupId = object.groupId;
   }
 
   return exportObject;

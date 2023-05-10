@@ -6,3 +6,4 @@ export * from './name';
 export * from './options';
 export * from './price';
 export * from './productId';
+export * from './productDetails';
