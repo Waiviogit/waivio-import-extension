@@ -47,7 +47,26 @@ const getInlineOptions = (): OptionType[] => {
   for (const element of arr2d) {
     const [category, value] = element;
     if (!category || !value) continue;
-    if (/select/.test(value.toLowerCase())) continue;
+    if (/select/.test(value.toLowerCase())) {
+      const searchCategory = category.trim()
+        .replace(/[.,%?+*|{}[\]()<>“”^'"\\\-_=!&$:]/g, '')
+        .replace(/  +/g, ' ').toLocaleLowerCase();
+
+      const values = Array.from(
+        document
+          .querySelectorAll<HTMLElement>(`#inline-twister-expander-content-${searchCategory}_name li span span span span`),
+      )
+        .map((el) => el.innerText.trim())
+        .filter((el) => !!el)
+        .filter((el, index, self) => index === self.indexOf(el));
+
+      if (!values.length) continue;
+
+      for (const selectValue of values) {
+        productOptions.push(getOptionObject(category, selectValue));
+      }
+      continue;
+    }
     productOptions.push(getOptionObject(category, value));
   }
 
