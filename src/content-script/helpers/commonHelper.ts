@@ -1,10 +1,16 @@
 export const randomNameGenerator = (num: number): string => {
-  let res = '';
+  const letters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  let randomName = '';
+
   for (let i = 0; i < num; i++) {
-    const random = Math.floor(Math.random() * 27);
-    res += String.fromCharCode(97 + random);
+    const randomIndex = Math.floor(Math.random() * letters.length);
+    randomName += letters[randomIndex];
   }
-  return res;
+
+  const timestamp = Math.floor(Date.now() / 1000);
+  randomName += `_${timestamp}`;
+
+  return randomName;
 };
 
 export const make2dArray = (arr1d :string[]):string[][] => {
