@@ -8,7 +8,7 @@ import {
   getProductId,
   getPrice,
   getProductDetails,
-  OptionType,
+  OptionType, priceType,
 } from './parser';
 
 export type parsedObjectType = {
@@ -18,7 +18,7 @@ export type parsedObjectType = {
   description: string
   departments: string[]
   options: OptionType[]
-  price: string
+  price?: priceType
   productId: string
   dimension?: string
   groupId?: string
@@ -37,6 +37,8 @@ export type exportJsonType = {
   dimension?: string
   manufacturer?: string
   groupId?: string
+  mostRecentPriceCurrency?: string
+  mostRecentPriceAmount?: string
 }
 
 export type exportCSVType = {
@@ -50,6 +52,8 @@ export type exportCSVType = {
   dimension?: string
   groupId?: string
   manufacturer?: string
+  mostRecentPriceCurrency?: string
+  mostRecentPriceAmount?: string
 }
 
 export const getProduct = (): parsedObjectType => {
@@ -92,6 +96,11 @@ export const formatToJsonObject = (object: parsedObjectType):exportJsonType => {
   if (object.groupId) {
     exportObject.groupId = object.groupId;
   }
+  if (object?.price?.mostRecentPriceAmount) {
+    const { mostRecentPriceAmount, mostRecentPriceCurrency } = object.price;
+    exportObject.mostRecentPriceAmount = mostRecentPriceAmount;
+    exportObject.mostRecentPriceCurrency = mostRecentPriceCurrency;
+  }
 
   return exportObject;
 };
@@ -118,6 +127,11 @@ export const formatToCsvObject = (object: parsedObjectType):exportCSVType => {
   }
   if (object.groupId) {
     exportObject.groupId = object.groupId;
+  }
+  if (object?.price?.mostRecentPriceAmount) {
+    const { mostRecentPriceAmount, mostRecentPriceCurrency } = object.price;
+    exportObject.mostRecentPriceAmount = mostRecentPriceAmount;
+    exportObject.mostRecentPriceCurrency = mostRecentPriceCurrency;
   }
 
   return exportObject;

@@ -1,4 +1,5 @@
 import { make2dArray } from '../helpers/commonHelper';
+import { DETAILS_SELECTOR } from '../constants';
 
 export type productDetailsType = {
   dimension?: string
@@ -12,7 +13,7 @@ const groupIdRegEx = /asin/;
 
 export const getProductDetails = (): productDetailsType => {
   const productDetails = {} as productDetailsType;
-  const details = Array.from(document.querySelectorAll<HTMLElement>('#detailBullets_feature_div li span span'));
+  const details = Array.from(document.querySelectorAll<HTMLElement>(DETAILS_SELECTOR.MAIN));
 
   const arr1d = details.map((el) => el?.innerText);
   const arr2d = make2dArray(arr1d);

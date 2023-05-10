@@ -1,12 +1,6 @@
 import { getAvatar } from './avatar';
 import { make2dArray } from '../helpers/commonHelper';
-
-const SELECTOR = {
-  TWISTER_ID: '#twister .a-row',
-  OPTION_NAME: '.a-form-label',
-  OPTION_VALUE: '.selection',
-  INLINE_OPTION: '#twister-plus-inline-twister-card span div div div span:not(.inline-twister-dim-title-value-truncate)',
-};
+import { OPTION_SELECTOR } from '../constants';
 
 export type OptionType = {
   category: string
@@ -39,7 +33,7 @@ const getOptionObject = (category: string, value: string): OptionType => {
 const getInlineOptions = (): OptionType[] => {
   const productOptions = [] as OptionType[];
   const inlineOptions = Array
-    .from(document.querySelectorAll<HTMLElement>('#twister-plus-inline-twister-card span div div div span:not(.inline-twister-dim-title-value-truncate)'))
+    .from(document.querySelectorAll<HTMLElement>(OPTION_SELECTOR.INLINE_OPTION))
     .map((el) => el?.innerText);
 
   const arr2d = make2dArray(inlineOptions);
@@ -52,10 +46,9 @@ const getInlineOptions = (): OptionType[] => {
         .replace(/[.,%?+*|{}[\]()<>“”^'"\\\-_=!&$:]/g, '')
         .replace(/  +/g, ' ').toLocaleLowerCase();
 
-      const values = Array.from(
-        document
-          .querySelectorAll<HTMLElement>(`#inline-twister-expander-content-${searchCategory}_name li span span span span`),
-      )
+      const dynamicSelector = `#inline-twister-expander-content-${searchCategory}_name li span span span span`;
+
+      const values = Array.from(document.querySelectorAll<HTMLElement>(dynamicSelector))
         .map((el) => el.innerText.trim())
         .filter((el) => !!el)
         .filter((el, index, self) => index === self.indexOf(el));
@@ -74,13 +67,13 @@ const getInlineOptions = (): OptionType[] => {
 };
 
 export const getOptions = (): OptionType[] => {
-  const options = Array.from(document.querySelectorAll<HTMLElement>(SELECTOR.TWISTER_ID));
+  const options = Array.from(document.querySelectorAll<HTMLElement>(OPTION_SELECTOR.TWISTER_ID));
   if (!options.length) return getInlineOptions();
 
   const productOptions = [];
   for (const option of options) {
-    const nameNode = option.querySelector<HTMLElement>(SELECTOR.OPTION_NAME);
-    const valueNode = option.querySelector<HTMLElement>(SELECTOR.OPTION_VALUE);
+    const nameNode = option.querySelector<HTMLElement>(OPTION_SELECTOR.OPTION_NAME);
+    const valueNode = option.querySelector<HTMLElement>(OPTION_SELECTOR.OPTION_VALUE);
     const category = nameNode?.innerText ?? '';
     const value = valueNode?.innerText ?? '';
     if (!category || !value) continue;
