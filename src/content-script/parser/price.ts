@@ -30,13 +30,30 @@ export type priceType = {
   mostRecentPriceAmount: string
 }
 
+const priceFromSeparateSpan = (): priceType => {
+  const price = {
+    mostRecentPriceCurrency: '',
+    mostRecentPriceAmount: '',
+  };
+  const priceWhole = document.querySelector<HTMLElement>('.a-price-whole');
+  const priceFraction = document.querySelector<HTMLElement>('.a-price-fraction');
+  const amount = parseFloat(`${(priceWhole?.innerText ?? '').replace(/\D/g, '').trim()}.${(priceFraction?.innerText ?? '').replace(/\D/g, '').trim() || 0}`);
+  if (!amount) return price;
+  const prefixElement = document.querySelector<HTMLElement>('.a-price-symbol');
+  const prefix = extractCurrency(prefixElement?.innerText ?? '') as keyof typeof CURRENCY_PREFIX;
+  price.mostRecentPriceCurrency = CURRENCY_PREFIX[prefix];
+  price.mostRecentPriceAmount = String(amount);
+
+  return price;
+};
+
 export const getPrice = (): priceType => {
   const price = {
     mostRecentPriceCurrency: '',
     mostRecentPriceAmount: '',
   };
   const priceElement = document.querySelector<HTMLElement>('#corePrice_desktop .a-offscreen');
-  if (!priceElement) return price;
+  if (!priceElement) return priceFromSeparateSpan();
   const prefix = extractCurrency(priceElement.innerText) as keyof typeof CURRENCY_PREFIX;
   const mostRecentPriceCurrency = CURRENCY_PREFIX[prefix];
   const mostRecentPriceAmount = extractNumericValue(priceElement.innerText);

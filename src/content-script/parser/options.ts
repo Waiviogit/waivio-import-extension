@@ -30,11 +30,29 @@ const getOptionObject = (category: string, value: string): OptionType => {
   return option;
 };
 
+const getTmmOptions = () => {
+  const productOptions = [] as OptionType[];
+
+  const options = Array
+    .from(document.querySelectorAll<HTMLElement>(OPTION_SELECTOR.TMM_OPTION))
+    .map((el) => el.innerText.trim())
+    .filter((el) => !!el && !/free/.test(el.toLowerCase()))
+    .filter((el, index, self) => index === self.indexOf(el));
+
+  for (const option of options) {
+    if (!option) continue;
+    productOptions.push(getOptionObject('Format', option));
+  }
+  console.log(productOptions);
+  return productOptions;
+};
+
 const getInlineOptions = (): OptionType[] => {
   const productOptions = [] as OptionType[];
   const inlineOptions = Array
     .from(document.querySelectorAll<HTMLElement>(OPTION_SELECTOR.INLINE_OPTION))
     .map((el) => el?.innerText);
+  if (!inlineOptions.length) return getTmmOptions();
 
   const arr2d = make2dArray(inlineOptions);
 
