@@ -1,5 +1,7 @@
 import * as XLSX from 'xlsx';
-import { formatToCsvObject, formatToJsonObject, parsedObjectType } from '../getProduct';
+import {
+  formatToCsvObject, formatToJsonObject, parsedObjectType,
+} from '../getProduct';
 
 export const downloadObjectAsJson = (exportObj: parsedObjectType, exportName: string): void => {
   const jsonFormat = formatToJsonObject(exportObj);
@@ -12,10 +14,21 @@ export const downloadObjectAsJson = (exportObj: parsedObjectType, exportName: st
   downloadAnchorNode.remove();
 };
 
-const objectToCsv = (objArray: object[]): string => {
-  const header = Object.keys(objArray[0]).join(',');
-  const rows = objArray.map((obj) => Object.values(obj).join(','));
-  return `${header}\n${rows.join('\n')}`;
+export const copyToClipboard = (exportObj: parsedObjectType, exportName: string): void => {
+  const object = formatToCsvObject(exportObj);
+
+  const tabRow = Object.values(object).join('\t');
+
+  const tempInput = document.createElement('textarea');
+  tempInput.setAttribute('readonly', '');
+  tempInput.value = tabRow;
+  document.body.appendChild(tempInput);
+
+  tempInput.select();
+  document.execCommand('copy');
+
+  document.body.removeChild(tempInput);
+  alert('product copied to clipboard');
 };
 
 export const downloadXLSX = (exportObj: parsedObjectType, exportName: string): void => {

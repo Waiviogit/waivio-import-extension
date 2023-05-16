@@ -1,10 +1,13 @@
-import { downloadObjectAsJson, downloadXLSX } from './helpers/downloadHelper';
+import {
+  downloadObjectAsJson, downloadXLSX, copyToClipboard,
+} from './helpers/downloadHelper';
 import { randomNameGenerator } from './helpers/commonHelper';
 import { getProduct } from './getProduct';
 
 const downloadFileScript = {
   to_json: downloadObjectAsJson,
   to_csv: downloadXLSX,
+  to_clipboard: copyToClipboard,
   default: () => {},
 };
 

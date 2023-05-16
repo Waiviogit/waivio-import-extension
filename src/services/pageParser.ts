@@ -3,6 +3,7 @@ import { getCurrentTab, sendMessageToTab } from './chromeHelper';
 export const PARSE_COMMANDS = {
   TO_JSON: 'to_json',
   TO_CSV: 'to_csv',
+  TO_CLIPBOARD: 'to_clipboard',
 };
 
 const validatePage = (url: string):boolean => {

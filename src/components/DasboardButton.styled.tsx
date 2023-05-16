@@ -6,7 +6,7 @@ export const StyledDashboardButtonContainer = styled.div`
 
 export const StyledDashboardButton = styled.button`
   width: 100px;
-  height: 30px;
+  height: 40px;
   &:hover {
     background-color: #f87007;
   }

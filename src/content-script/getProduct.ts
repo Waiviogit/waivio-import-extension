@@ -157,7 +157,7 @@ export const formatToCsvObject = (object: parsedObjectType):exportCSVType => {
     name: object.name,
     primaryImageURLs: object.avatar,
     sizes: '',
-    waivio_options: object.options.map((o) => `category:${o.category};${o.image ? `image:${o.image};` : ''} value:${o.value}*\n`).join(''),
+    waivio_options: object.options.map((o) => `category:${o.category};${o.image ? `image:${o.image};` : ''} value:${o.value}*`).join(''),
     waivio_tags: '',
     weight: '',
   } as exportCSVType;
