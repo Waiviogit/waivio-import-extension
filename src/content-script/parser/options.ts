@@ -43,7 +43,6 @@ const getTmmOptions = () => {
     if (!option) continue;
     productOptions.push(getOptionObject('Format', option));
   }
-  console.log(productOptions);
   return productOptions;
 };
 

@@ -120,9 +120,9 @@ export const formatToJsonObject = (object: parsedObjectType):exportJsonType => {
 export const formatToCsvObject = (object: parsedObjectType):exportCSVType => {
   const exportObject = {
     primaryImageURLs: object.avatar,
-    waivio_options: object.options.map((o) => `category:${o.category};\r\n value:${o.value};\r\n`).join(';'),
+    waivio_options: object.options.map((o) => `category:${o.category};${o.image ? `image:${o.image};` : ''} value:${o.value}*\n`).join(''),
     name: object.name,
-    categories: object.departments.join(','),
+    categories: object.departments.join(';'),
     asins: object.productId,
   } as exportCSVType;
   if (object.description) {

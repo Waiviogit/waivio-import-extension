@@ -9,7 +9,7 @@ export const Dashboard = () => {
   return (
         <StyledDashboard>
                 <DashboardButton text={'get JSON'} onClick={parseToJson} />
-                <DashboardButton text={'get CSV'} onClick={parseToCsv}/>
+                <DashboardButton text={'get XLSX'} onClick={parseToCsv}/>
         </StyledDashboard>
   );
 };
