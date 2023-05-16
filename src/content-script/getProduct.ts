@@ -55,6 +55,20 @@ export type exportCSVType = {
   manufacturer?: string
   mostRecentPriceCurrency?: string
   mostRecentPriceAmount?: string
+  brandLink?: string
+  colors?: string
+  dateAdded?: string
+  dateUpdated?: string
+  dontFetchAmazonOptions?: string
+  features?: string
+  imageURLs?: string
+  isbn?: string
+  manufacturerLink?: string
+  merchants?: string
+  merchantLink?: string
+  sizes?: string
+  waivio_tags?: string
+  weight?: string
 }
 
 type getProductReturnedType = {
@@ -80,8 +94,7 @@ export const getProduct = (): getProductReturnedType => {
     alert(validation.error.message);
     return { error: validation.error };
   }
-  // todo validation empty fields
-  // name, departments, options, avatar, productId
+
   return { product: object };
 };
 
@@ -118,33 +131,36 @@ export const formatToJsonObject = (object: parsedObjectType):exportJsonType => {
 };
 
 export const formatToCsvObject = (object: parsedObjectType):exportCSVType => {
+  const { mostRecentPriceAmount = '', mostRecentPriceCurrency = '' } = object?.price ?? {};
+
   const exportObject = {
-    primaryImageURLs: object.avatar,
-    waivio_options: object.options.map((o) => `category:${o.category};${o.image ? `image:${o.image};` : ''} value:${o.value}*\n`).join(''),
-    name: object.name,
-    categories: object.departments.join(';'),
     asins: object.productId,
+    brand: object.brand || '',
+    brandLink: '',
+    categories: object.departments.join(';'),
+    colors: '',
+    dateAdded: '',
+    dateUpdated: '',
+    descriptions: object.description || '',
+    dimension: object.dimension || '',
+    dontFetchAmazonOptions: '',
+    features: '',
+    groupId: object.groupId || '',
+    imageURLs: '',
+    isbn: '',
+    manufacturer: object.manufacturer || '',
+    manufacturerLink: '',
+    merchants: '',
+    merchantLink: '',
+    mostRecentPriceAmount,
+    mostRecentPriceCurrency,
+    name: object.name,
+    primaryImageURLs: object.avatar,
+    sizes: '',
+    waivio_options: object.options.map((o) => `category:${o.category};${o.image ? `image:${o.image};` : ''} value:${o.value}*\n`).join(''),
+    waivio_tags: '',
+    weight: '',
   } as exportCSVType;
-  if (object.description) {
-    exportObject.descriptions = object.description;
-  }
-  if (object.brand) {
-    exportObject.brand = object.brand;
-  }
-  if (object.dimension) {
-    exportObject.dimension = object.dimension;
-  }
-  if (object.manufacturer) {
-    exportObject.manufacturer = object.manufacturer;
-  }
-  if (object.groupId) {
-    exportObject.groupId = object.groupId;
-  }
-  if (object?.price?.mostRecentPriceAmount) {
-    const { mostRecentPriceAmount, mostRecentPriceCurrency } = object.price;
-    exportObject.mostRecentPriceAmount = mostRecentPriceAmount;
-    exportObject.mostRecentPriceCurrency = mostRecentPriceCurrency;
-  }
 
   return exportObject;
 };
