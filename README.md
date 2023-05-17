@@ -6,4 +6,4 @@
 + сd waivio-import-extension
 + run ```npm install```
 + run ```npm run build```
-+ in browser go to [chrome extensions tab](chrome://extensions/) click ```Load unpacked``` and choose path to dist folder
++ in browser go to chrome extensions tab ```chrome://extensions/``` click ```Load unpacked``` and choose path to dist folder
