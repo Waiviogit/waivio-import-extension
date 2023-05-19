@@ -2,32 +2,48 @@ import * as XLSX from 'xlsx';
 import {
   formatToCsvObject, formatToJsonObject, parsedObjectType,
 } from '../getProduct';
+import {
+  getAsinsFromPage,
+} from './scanAsinHelper';
 
-export const downloadObjectAsJson = (exportObj: parsedObjectType, exportName: string): void => {
-  const jsonFormat = formatToJsonObject(exportObj);
-  const dataStr = `data:text/json;charset=utf-8,${encodeURIComponent(JSON.stringify(jsonFormat))}`;
-  const downloadAnchorNode = document.createElement('a');
-  downloadAnchorNode.setAttribute('href', dataStr);
-  downloadAnchorNode.setAttribute('download', `${exportName}.json`);
-  document.body.appendChild(downloadAnchorNode); // required for firefox
-  downloadAnchorNode.click();
-  downloadAnchorNode.remove();
-};
-
-export const copyToClipboard = (exportObj: parsedObjectType, exportName: string): void => {
-  const object = formatToCsvObject(exportObj);
-
-  const tabRow = Object.values(object).join('\t');
-
+const stingToClipboard = (text: string) :void => {
   const tempInput = document.createElement('textarea');
   tempInput.setAttribute('readonly', '');
-  tempInput.value = tabRow;
+  tempInput.value = text;
   document.body.appendChild(tempInput);
 
   tempInput.select();
   document.execCommand('copy');
 
   document.body.removeChild(tempInput);
+};
+
+const regularFileDownload = (uriComponent : string, fileName: string, format: string) => {
+  const dataStr = `data:text/json;charset=utf-8,${encodeURIComponent(uriComponent)}`;
+  const downloadAnchorNode = document.createElement('a');
+  downloadAnchorNode.setAttribute('href', dataStr);
+  downloadAnchorNode.setAttribute('download', `${fileName}.${format}`);
+  document.body.appendChild(downloadAnchorNode);
+  downloadAnchorNode.click();
+  downloadAnchorNode.remove();
+};
+
+export const downloadObjectAsJson = (exportObj: parsedObjectType, exportName: string): void => {
+  const jsonFormat = formatToJsonObject(exportObj);
+
+  regularFileDownload(
+    JSON.stringify(jsonFormat),
+    exportName,
+    'json',
+  );
+};
+
+export const copyToClipboard = (exportObj: parsedObjectType, exportName: string): void => {
+  const object = formatToCsvObject(exportObj);
+
+  const tabRow = Object.values(object).join('\t');
+  stingToClipboard(tabRow);
+
   alert('product copied to clipboard');
 };
 
@@ -62,4 +78,18 @@ export const downloadXLSX = (exportObj: parsedObjectType, exportName: string): v
   // Clean up the temporary URL and remove the link element
   URL.revokeObjectURL(url);
   document.body.removeChild(link);
+
+  const tabRow = Object.values(object).join('\t');
+  stingToClipboard(tabRow);
+};
+
+export const downloadASIN = async (exportName: string): Promise<void> => {
+  const asins = await getAsinsFromPage();
+
+  stingToClipboard(asins);
+  regularFileDownload(
+    asins,
+    exportName,
+    'txt',
+  );
 };
