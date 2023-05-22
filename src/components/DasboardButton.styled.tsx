@@ -5,9 +5,14 @@ export const StyledDashboardButtonContainer = styled.div`
 `;
 
 export const StyledDashboardButton = styled.button`
-  width: 100px;
+  width: 130px;
   height: 40px;
+  border-radius: 10px;
+  color: white;
+  border: none;
+  background: #f87007;
   &:hover {
-    background-color: #f87007;
+    background-color: #d35f06;
+    cursor: pointer;
   }
 `;
