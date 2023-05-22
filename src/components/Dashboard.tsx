@@ -10,10 +10,10 @@ export const Dashboard = () => {
 
   return (
         <StyledDashboard>
-                <DashboardButton text={'get JSON'} onClick={parseToJson} />
-                <DashboardButton text={'get XLSX'} onClick={parseToXLSX}/>
-                <DashboardButton text={'copy to clipboard'} onClick={copyToClipboard}/>
-                <DashboardButton text={'scan asins'} onClick={scanAsins}/>
+                <DashboardButton text={'Get JSON'} onClick={parseToJson} />
+                <DashboardButton text={'Get XLSX'} onClick={parseToXLSX}/>
+                <DashboardButton text={'Copy to clipboard'} onClick={copyToClipboard}/>
+                <DashboardButton text={'Scan for ASINs'} onClick={scanAsins}/>
         </StyledDashboard>
   );
 };
