@@ -8,7 +8,7 @@ import {
   getProductId,
   getPrice,
   getProductDetails,
-  OptionType, priceType,
+  OptionType, priceType, getFeatures, featuresType,
 } from './parser';
 import { productSchema } from './validation';
 
@@ -20,6 +20,7 @@ export type parsedObjectType = {
   departments: string[]
   options: OptionType[]
   price?: priceType
+  features: featuresType[]
   productId: string
   dimension?: string
   groupId?: string
@@ -40,6 +41,7 @@ export type exportJsonType = {
   groupId?: string
   mostRecentPriceCurrency?: string
   mostRecentPriceAmount?: string
+  features: featuresType[]
 }
 
 export type exportCSVType = {
@@ -86,6 +88,7 @@ export const getProduct = (): getProductReturnedType => {
     options: getOptions(),
     price: getPrice(),
     productId: getProductId(),
+    features: getFeatures(),
     ...getProductDetails(),
   };
 
@@ -105,6 +108,7 @@ export const formatToJsonObject = (object: parsedObjectType):exportJsonType => {
     name: object.name,
     categories: object.departments,
     asins: object.productId,
+    features: object.features,
   } as exportJsonType;
   if (object.description) {
     exportObject.descriptions = [object.description];
@@ -144,7 +148,7 @@ export const formatToCsvObject = (object: parsedObjectType):exportCSVType => {
     descriptions: object.description || '',
     dimension: object.dimension || '',
     dontFetchAmazonOptions: '',
-    features: '',
+    features: object.features.map((o) => `key:${o.key}; value:${o.value[0]}*`).join(''),
     groupId: object.groupId || '',
     imageURLs: '',
     isbn: '',

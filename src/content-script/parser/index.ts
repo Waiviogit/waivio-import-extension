@@ -7,3 +7,4 @@ export * from './options';
 export * from './price';
 export * from './productId';
 export * from './productDetails';
+export * from './features';
