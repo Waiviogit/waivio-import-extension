@@ -9,5 +9,5 @@ export const productSchema = Joi.object().keys({
     category: Joi.string().required(),
     value: Joi.string().required(),
     image: Joi.string(),
-  }).required()),
+  })),
 }).options({ allowUnknown: true });
