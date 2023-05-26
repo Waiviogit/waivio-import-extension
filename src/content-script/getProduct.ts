@@ -8,7 +8,7 @@ import {
   getProductId,
   getPrice,
   getProductDetails,
-  OptionType, priceType, getFeatures, featuresType,
+  OptionType, priceType, getFeatures, featuresType, getGalleryItems,
 } from './parser';
 import { productSchema } from './validation';
 
@@ -26,6 +26,7 @@ export type parsedObjectType = {
   groupId?: string
   manufacturer?: string
   weight?: string
+  imageURLs?: string[]
   // gallery items
 }
 
@@ -44,6 +45,7 @@ export type exportJsonType = {
   mostRecentPriceAmount?: string
   features: featuresType[]
   weight?: string
+  imageURLs?: string[]
 }
 
 export type exportCSVType = {
@@ -92,6 +94,7 @@ export const getProduct = (): getProductReturnedType => {
     productId: getProductId(),
     features: getFeatures(),
     ...getProductDetails(),
+    imageURLs: getGalleryItems(),
   };
 
   const validation = productSchema.validate(object);
@@ -130,6 +133,9 @@ export const formatToJsonObject = (object: parsedObjectType):exportJsonType => {
   if (object.weight) {
     exportObject.weight = object.weight;
   }
+  if (object.imageURLs) {
+    exportObject.imageURLs = object.imageURLs;
+  }
   if (object?.price?.mostRecentPriceAmount) {
     const { mostRecentPriceAmount, mostRecentPriceCurrency } = object.price;
     exportObject.mostRecentPriceAmount = mostRecentPriceAmount;
@@ -155,7 +161,7 @@ export const formatToCsvObject = (object: parsedObjectType):exportCSVType => {
     dontFetchAmazonOptions: '',
     features: object.features.map((o) => `key:${o.key}; value:${o.value[0]}*`).join(''),
     groupId: object.groupId || '',
-    imageURLs: '',
+    imageURLs: (object.imageURLs ?? []).join(';'),
     isbn: '',
     manufacturer: object.manufacturer || '',
     manufacturerLink: '',

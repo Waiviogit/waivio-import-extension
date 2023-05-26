@@ -32,3 +32,7 @@ export const DETAILS_SELECTOR = {
   MAIN: '#detailBullets_feature_div li span span',
   TABLE: '#prodDetails tr',
 };
+
+export const GALLERY_SELECTOR = {
+  MAIN: '#aplus, img.a-spacing-mini',
+};

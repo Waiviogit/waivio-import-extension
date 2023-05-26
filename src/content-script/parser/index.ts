@@ -8,3 +8,4 @@ export * from './price';
 export * from './productId';
 export * from './productDetails';
 export * from './features';
+export * from './galleryItems';
