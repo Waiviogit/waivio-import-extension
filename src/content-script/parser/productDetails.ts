@@ -5,30 +5,46 @@ export type productDetailsType = {
   dimension?: string
   groupId?: string
   manufacturer?: string
+  weight?: string
 }
 
 const dimensionRegEx = /dimension/;
-const manufacturerRegEx = /manufacturer/;
+const manufacturerRegEx = /^(?!.*discontinued.*)(?=.*manufacturer).*$/;
 const groupIdRegEx = /asin/;
+const weightRegEx = /weight/;
+
+const constructDetailFrom2dArr = (details: string[][]): productDetailsType => {
+  const productDetails = {} as productDetailsType;
+  for (const detail of details) {
+    if (dimensionRegEx.test(detail[0].toLocaleLowerCase())) {
+      productDetails.dimension = detail[1].trim();
+    }
+    if (manufacturerRegEx.test(detail[0].toLocaleLowerCase())) {
+      productDetails.manufacturer = detail[1].trim();
+    }
+    if (groupIdRegEx.test(detail[0].toLocaleLowerCase())) {
+      productDetails.groupId = detail[1].trim();
+    }
+    if (weightRegEx.test(detail[0].toLocaleLowerCase())) {
+      productDetails.weight = detail[1].trim();
+    }
+  }
+  return productDetails;
+};
+
+const getAlternativeDetails = (): productDetailsType => {
+  const details = Array.from(document.querySelectorAll<HTMLElement>(DETAILS_SELECTOR.TABLE))
+    .map((el) => (el.outerText ?? '\t').split('\t'));
+
+  return constructDetailFrom2dArr(details);
+};
 
 export const getProductDetails = (): productDetailsType => {
-  const productDetails = {} as productDetailsType;
   const details = Array.from(document.querySelectorAll<HTMLElement>(DETAILS_SELECTOR.MAIN));
+  if (!details.length) return getAlternativeDetails();
 
   const arr1d = details.map((el) => el?.innerText);
   const arr2d = make2dArray(arr1d);
 
-  for (const element of arr2d) {
-    if (dimensionRegEx.test(element[0].toLocaleLowerCase())) {
-      productDetails.dimension = element[1].trim();
-    }
-    if (manufacturerRegEx.test(element[0].toLocaleLowerCase())) {
-      productDetails.manufacturer = element[1].trim();
-    }
-    if (groupIdRegEx.test(element[0].toLocaleLowerCase())) {
-      productDetails.groupId = element[1].trim();
-    }
-  }
-  // add check if !productDetails.groupId =
-  return productDetails;
+  return constructDetailFrom2dArr(arr2d);
 };

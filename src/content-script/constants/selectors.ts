@@ -30,4 +30,5 @@ export const OPTION_SELECTOR = {
 
 export const DETAILS_SELECTOR = {
   MAIN: '#detailBullets_feature_div li span span',
+  TABLE: '#prodDetails tr',
 };

@@ -25,6 +25,7 @@ export type parsedObjectType = {
   dimension?: string
   groupId?: string
   manufacturer?: string
+  weight?: string
   // gallery items
 }
 
@@ -42,6 +43,7 @@ export type exportJsonType = {
   mostRecentPriceCurrency?: string
   mostRecentPriceAmount?: string
   features: featuresType[]
+  weight?: string
 }
 
 export type exportCSVType = {
@@ -125,6 +127,9 @@ export const formatToJsonObject = (object: parsedObjectType):exportJsonType => {
   if (object.groupId) {
     exportObject.groupId = object.groupId;
   }
+  if (object.weight) {
+    exportObject.weight = object.weight;
+  }
   if (object?.price?.mostRecentPriceAmount) {
     const { mostRecentPriceAmount, mostRecentPriceCurrency } = object.price;
     exportObject.mostRecentPriceAmount = mostRecentPriceAmount;
@@ -163,7 +168,7 @@ export const formatToCsvObject = (object: parsedObjectType):exportCSVType => {
     sizes: '',
     waivio_options: object.options.map((o) => `category:${o.category};${o.image ? `image:${o.image};` : ''} value:${o.value}*`).join(''),
     waivio_tags: '',
-    weight: '',
+    weight: object.weight || '',
   } as exportCSVType;
 
   return exportObject;
