@@ -34,6 +34,6 @@ export const DETAILS_SELECTOR = {
 };
 
 export const GALLERY_SELECTOR = {
-  MAIN: '#aplus, img.a-spacing-mini',
+  MAIN: '.imgTagWrapper img',
   ALT_IMAGES: '#altImages li.a-spacing-small.item.imageThumbnail.a-declarative',
 };

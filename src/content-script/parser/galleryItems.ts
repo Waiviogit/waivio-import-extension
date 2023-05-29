@@ -7,7 +7,7 @@ export const getGalleryItems = (): string[] => {
   for (const altImage of altImages) {
     altImage.click();
   }
-  const images = Array.from(document.querySelectorAll<HTMLImageElement>('.imgTagWrapper img'))
+  const images = Array.from(document.querySelectorAll<HTMLImageElement>(GALLERY_SELECTOR.MAIN))
     .map((img) => img.src)
     .filter((el) => !!el)
     .slice(1);
