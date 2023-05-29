@@ -6,13 +6,17 @@
     "default_title": "Parse Waivio Product",
     "default_popup": "./index.html"
   },
-  "permissions": ["activeTab", "tabs"],
+  "permissions": ["activeTab", "tabs", "cookies"],
+  "host_permissions": ["<all_urls>"],
   "content_scripts":  [
     {
       "matches": ["<all_urls>"],
       "js": ["contentScript.js"]
     }
   ],
+  "background": {
+    "service_worker": "background.js"
+  },
   "icons" : {
     "128" : "icon128.png"
   }

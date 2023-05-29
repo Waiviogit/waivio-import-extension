@@ -1,3 +1,5 @@
+import { EXTERNAL_URL } from '../constants';
+
 export const extractASINs = (links:string[]): string[] => {
   const asins = links.map((link) => {
     const match = link.match(/\/dp\/([A-Z0-9]+)/);
@@ -16,7 +18,6 @@ export const fetchData = async (url:string, data: any) => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-
       },
       body: JSON.stringify(data),
     });
@@ -40,7 +41,7 @@ export const getAsinsFromPage = async (): Promise<string> => {
     .filter((el, index, self) => index === self.indexOf(el));
 
   const notImported = await fetchData(
-    'https://www.waivio.com/import-objects-service/asins-not-published',
+    EXTERNAL_URL.WAIVIO_IMPORT_NOT_PUBLISHED,
     { asins: jointAsins },
   );
 

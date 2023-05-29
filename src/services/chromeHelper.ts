@@ -1,8 +1,13 @@
 import Tab = chrome.tabs.Tab;
 
+type messageType = {
+  action: string,
+  payload: string
+}
+
 interface sendMessageToTabInterface {
     id: number;
-    message: string;
+    message: messageType;
 }
 
 export const getCurrentTab = async (): Promise<Tab | undefined> => {

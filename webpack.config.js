@@ -7,6 +7,7 @@ module.exports = {
       './src/index.tsx',
     ],
     contentScript: ['./src/content-script/contentScript.ts'],
+    background: ['./src/background/background.ts'],
   },
   mode: 'production',
   module: {
