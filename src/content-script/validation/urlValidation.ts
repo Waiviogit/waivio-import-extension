@@ -47,7 +47,7 @@ const validatePage = (url: string):boolean => {
       alert('Url must be like https://www.amazon.com/dp/ASIN_NUMBER');
       return result;
     }
-    if (window.confirm(`Url must be like ${validUrl}\n If you click "ok" you would be redirected. Cancel will load this website `)) {
+    if (window.confirm(`The URL must be in the format: \n${validUrl}\n\nPress "OK" to be redirected to this page.`)) {
       window.open(validUrl, '_self');
     }
   }
@@ -59,7 +59,7 @@ const validatePageForAsin = (url: string):boolean => {
 
   const result = regex.test(url);
   if (!result) {
-    alert('Url must has amazon domain https://www.amazon.com');
+    alert('The URL must have the Amazon domain https://www.amazon.com');
   }
   return result;
 };

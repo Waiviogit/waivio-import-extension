@@ -66,7 +66,7 @@ export const downloadToWaivio = async (
   })
     .then((response) => response.json())
     .then((result) => {
-      alert('Import started');
+      alert('Import successfully started!');
     })
     .catch((error) => {
       alert(error.message);

@@ -44,7 +44,7 @@ export const copyToClipboard = (exportObj: parsedObjectType, exportName: string)
   const tabRow = Object.values(object).join('\t');
   stingToClipboard(tabRow);
 
-  alert('product copied to clipboard');
+  alert('Product copied to clipboard');
 };
 
 export const downloadXLSX = (exportObj: parsedObjectType, exportName: string): void => {
