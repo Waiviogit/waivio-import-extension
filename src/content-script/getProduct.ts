@@ -99,6 +99,9 @@ export const getProduct = (): getProductReturnedType => {
     ...getProductDetails(),
     imageURLs: getGalleryItems(),
   };
+  if (object.productId === object.groupId) {
+    delete object.groupId;
+  }
 
   const validation = productSchema.validate(object);
   if (validation.error) {
