@@ -25,19 +25,6 @@ const constructAmazonURL = (url: string): string => {
   return `https://www.amazon.${domain}/dp/${productId}`;
 };
 
-// const validatePage = (url: string):boolean => {
-//   const regex = /^https:\/\/www\.amazon[^\/]+\/dp\/[A-Z0-9]{10}(?!\/)/;
-//
-//   const result = regex.test(url);
-//   if (!result) {
-//     const validUrl = constructAmazonURL(url) || 'https://www.amazon.com/dp/ASIN_NUMBER';
-//     if (window.confirm(`Url must be like ${validUrl} If you click "ok" you would be redirected . Cancel will load this website `)) {
-//       window.open(validUrl, '_self');
-//     }
-//   }
-//   return result;
-// };
-
 const validatePage = (url: string):boolean => {
   const regex = /^https:\/\/www\.amazon[^\/]+\/dp\/[A-Z0-9]{10}(?!\/)/;
 

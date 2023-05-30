@@ -6,12 +6,14 @@ export type productDetailsType = {
   groupId?: string
   manufacturer?: string
   weight?: string
+  modelNumber?: string
 }
 
 const dimensionRegEx = /dimension/;
 const manufacturerRegEx = /^(?!.*discontinued.*)(?=.*manufacturer).*$/;
 const groupIdRegEx = /asin/;
 const weightRegEx = /weight/;
+const modelRegEx = /model number/;
 
 const constructDetailFrom2dArr = (details: string[][]): productDetailsType => {
   const productDetails = {} as productDetailsType;
@@ -27,6 +29,9 @@ const constructDetailFrom2dArr = (details: string[][]): productDetailsType => {
     }
     if (weightRegEx.test(detail[0].toLocaleLowerCase())) {
       productDetails.weight = detail[1].trim();
+    }
+    if (modelRegEx.test(detail[0].toLocaleLowerCase())) {
+      productDetails.modelNumber = detail[1].trim();
     }
   }
   return productDetails;
