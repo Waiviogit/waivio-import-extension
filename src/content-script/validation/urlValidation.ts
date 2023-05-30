@@ -1,5 +1,6 @@
 import { PARSE_COMMANDS } from '../../services/pageParser';
 
+const aboutFormatText = 'The URL must be in the format:';
 const constructAmazonURL = (url: string): string => {
   // Extract the product ID from the URL
   const regex = /\/dp\/(\w+)/;
@@ -44,10 +45,10 @@ const validatePage = (url: string):boolean => {
   if (!result) {
     const validUrl = constructAmazonURL(url);
     if (!validUrl) {
-      alert('Url must be like https://www.amazon.com/dp/ASIN_NUMBER');
+      alert(`${aboutFormatText} \nhttps://www.amazon.com/dp/ASIN_NUMBER`);
       return result;
     }
-    if (window.confirm(`The URL must be in the format: \n${validUrl}\n\nPress "OK" to be redirected to this page.`)) {
+    if (window.confirm(`${aboutFormatText} \n${validUrl}\n\nPress "OK" to be redirected to this page.`)) {
       window.open(validUrl, '_self');
     }
   }
