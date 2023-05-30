@@ -1,5 +1,6 @@
 import { PARSE_COMMANDS } from '../../services/pageParser';
 
+const aboutFormatText = 'The URL must be in the format:';
 const constructAmazonURL = (url: string): string => {
   // Extract the product ID from the URL
   const regex = /\/dp\/(\w+)/;
@@ -44,10 +45,10 @@ const validatePage = (url: string):boolean => {
   if (!result) {
     const validUrl = constructAmazonURL(url);
     if (!validUrl) {
-      alert('Url must be like https://www.amazon.com/dp/ASIN_NUMBER');
+      alert(`${aboutFormatText} \nhttps://www.amazon.com/dp/ASIN_NUMBER`);
       return result;
     }
-    if (window.confirm(`Url must be like ${validUrl}\n If you click "ok" you would be redirected. Cancel will load this website `)) {
+    if (window.confirm(`${aboutFormatText} \n${validUrl}\n\nPress "OK" to be redirected to this page.`)) {
       window.open(validUrl, '_self');
     }
   }
@@ -59,7 +60,7 @@ const validatePageForAsin = (url: string):boolean => {
 
   const result = regex.test(url);
   if (!result) {
-    alert('Url must has amazon domain https://www.amazon.com');
+    alert('The URL must have the Amazon domain https://www.amazon.com');
   }
   return result;
 };

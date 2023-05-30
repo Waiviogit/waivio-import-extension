@@ -1,5 +1,5 @@
 {
-  "name": "Waivio Product Extension",
+  "name": "Waivio Chrome Extension",
   "version": "1.0.0",
   "manifest_version": 3,
   "action": {

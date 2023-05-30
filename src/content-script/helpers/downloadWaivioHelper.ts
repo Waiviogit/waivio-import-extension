@@ -31,7 +31,7 @@ export const downloadToWaivio = async (
 
   const accessTokenCookie = cookies.find((c) => c.name === 'access_token');
   if (!accessTokenCookie) {
-    alert('Information about user not found, please login waivio');
+    alert('The information about the user was not found. Please login to Waivio.');
   }
 
   const accessToken = accessTokenCookie?.value || '';
@@ -66,7 +66,7 @@ export const downloadToWaivio = async (
   })
     .then((response) => response.json())
     .then((result) => {
-      alert('Import started');
+      alert(`Import successfully started by ${user}!`);
     })
     .catch((error) => {
       alert(error.message);
