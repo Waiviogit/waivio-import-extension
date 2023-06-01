@@ -1,4 +1,4 @@
-import { make2dArray } from '../helpers/commonHelper';
+import { make2dArray, replaceInvisible } from '../helpers/commonHelper';
 import { DETAILS_SELECTOR } from '../constants';
 
 export type productDetailsType = {
@@ -6,32 +6,27 @@ export type productDetailsType = {
   groupId?: string
   manufacturer?: string
   weight?: string
-  modelNumber?: string
 }
 
 const dimensionRegEx = /dimension/;
 const manufacturerRegEx = /^(?!.*discontinued.*)(?=.*manufacturer).*$/;
 const groupIdRegEx = /asin/;
 const weightRegEx = /weight/;
-const modelRegEx = /model number/;
 
 const constructDetailFrom2dArr = (details: string[][]): productDetailsType => {
   const productDetails = {} as productDetailsType;
   for (const detail of details) {
     if (dimensionRegEx.test(detail[0].toLocaleLowerCase())) {
-      productDetails.dimension = detail[1].trim();
+      productDetails.dimension = replaceInvisible(detail[1]);
     }
     if (manufacturerRegEx.test(detail[0].toLocaleLowerCase())) {
-      productDetails.manufacturer = detail[1].trim();
+      productDetails.manufacturer = replaceInvisible(detail[1]);
     }
     if (groupIdRegEx.test(detail[0].toLocaleLowerCase())) {
-      productDetails.groupId = detail[1].trim();
+      productDetails.groupId = replaceInvisible(detail[1]);
     }
     if (weightRegEx.test(detail[0].toLocaleLowerCase())) {
-      productDetails.weight = detail[1].trim();
-    }
-    if (modelRegEx.test(detail[0].toLocaleLowerCase())) {
-      productDetails.modelNumber = detail[1].trim();
+      productDetails.weight = replaceInvisible(detail[1]);
     }
   }
   return productDetails;

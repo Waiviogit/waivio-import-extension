@@ -1,3 +1,8 @@
+import { DETAILS_SELECTOR } from '../constants';
+import { replaceInvisible } from '../helpers/commonHelper';
+
+const modelRegEx = /model number/;
+
 export type featuresType = {
   key: string,
   value: string[]
@@ -27,5 +32,15 @@ const getRating = (): featuresType => {
 export const getFeatures = () => {
   const features = [] as featuresType[];
   features.push(getRating());
+  const details = Array.from(document.querySelectorAll<HTMLElement>(DETAILS_SELECTOR.TABLE))
+    .map((el) => (el.outerText ?? '\t').split('\t'));
+  for (const detail of details) {
+    if (modelRegEx.test(detail[0].toLocaleLowerCase())) {
+      features.push({
+        key: replaceInvisible(detail[0]),
+        value: [replaceInvisible(detail[1])],
+      });
+    }
+  }
   return features;
 };

@@ -24,3 +24,5 @@ export const make2dArray = (arr1d :string[]):string[][] => {
 
   return arr2d;
 };
+
+export const replaceInvisible = (s = ''):string => s.replace(/‎|‏/, '').trim();
