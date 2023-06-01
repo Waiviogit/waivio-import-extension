@@ -1,16 +1,19 @@
-import { AVATAR_SELECTOR } from '../constants';
+import { AVATAR_SELECTOR, GALLERY_SELECTOR } from '../constants';
 import { replaceInvisible } from '../helpers/commonHelper';
 
 export const getAvatar = ():string => {
-  const image = document.querySelector<HTMLImageElement>(AVATAR_SELECTOR.MAIN);
-  if (!image) {
-    const alternative1 = document.querySelector<HTMLImageElement>(AVATAR_SELECTOR.ALTERNATIVE_1);
-    if (!alternative1) {
-      const alternative2 = document.querySelector<HTMLImageElement>(AVATAR_SELECTOR.ALTERNATIVE_2);
-      return replaceInvisible(alternative2?.src);
-    }
-    return replaceInvisible(alternative1?.src);
-  }
+  const image = document.querySelector<HTMLImageElement>(AVATAR_SELECTOR.MAIN)
+      || document.querySelector<HTMLImageElement>(AVATAR_SELECTOR.ALTERNATIVE_1)
+      || document.querySelector<HTMLImageElement>(AVATAR_SELECTOR.ALTERNATIVE_2);
 
-  return replaceInvisible(image?.src);
+  if (image) return replaceInvisible(image?.src);
+  const firstGalleryItem = document.querySelector<HTMLElement>('[data-csa-c-posy="1"]');
+  if (!firstGalleryItem) return '';
+  firstGalleryItem.click();
+  const images = Array.from(document.querySelectorAll<HTMLImageElement>(GALLERY_SELECTOR.MAIN))
+    .map((img) => img.src)
+    .filter((el) => !!el);
+  if (!images.length) return '';
+
+  return replaceInvisible(images[images.length - 1]);
 };
