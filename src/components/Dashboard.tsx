@@ -11,11 +11,12 @@ export const Dashboard = () => {
 
   return (
         <StyledDashboard>
-                <DashboardButton text={'Get JSON'} onClick={parseToJson} />
-                <DashboardButton text={'Get XLSX'} onClick={parseToXLSX}/>
+                <DashboardButton text={'Create JSON'} onClick={parseToJson} />
+                <DashboardButton text={'Create XLSX'} onClick={parseToXLSX}/>
                 <DashboardButton text={'Copy to clipboard'} onClick={copyToClipboard}/>
                 <DashboardButton text={'Scan for ASINs'} onClick={scanAsins}/>
-                <DashboardButton text={'Import to Waivio'} onClick={importToWaivio}/>
+                <DashboardButton text={'Upload to Waivio'} onClick={importToWaivio}/>
+                <span style={{ marginBottom: '10px' }}>version 1.0.1</span>
         </StyledDashboard>
   );
 };
