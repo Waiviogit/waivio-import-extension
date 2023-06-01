@@ -16,7 +16,7 @@ export const Dashboard = () => {
                 <DashboardButton text={'Copy to clipboard'} onClick={copyToClipboard}/>
                 <DashboardButton text={'Scan for ASINs'} onClick={scanAsins}/>
                 <DashboardButton text={'Upload to Waivio'} onClick={importToWaivio}/>
-                <span style={{ marginBottom: '10px' }}>version 1.0.1</span>
+                <span style={{ marginBottom: '10px' }}>version 1.0.2</span>
         </StyledDashboard>
   );
 };
