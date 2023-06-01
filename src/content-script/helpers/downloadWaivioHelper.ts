@@ -36,13 +36,13 @@ export const downloadToWaivio = async (
 
   const accessToken = accessTokenCookie?.value || '';
 
-  const { result, error: userError } = await getUser(accessToken);
+  const { result: hiveUser, error: userError } = await getUser(accessToken);
   if (userError) {
     alert(userError.message);
     return;
   }
   // eslint-disable-next-line no-underscore-dangle
-  const user = result?._id ?? '';
+  const user = hiveUser?._id ?? '';
 
   const jsonFormat = formatToJsonObject(exportObj);
   const jsonData = JSON.stringify(jsonFormat);
@@ -66,6 +66,10 @@ export const downloadToWaivio = async (
   })
     .then((response) => response.json())
     .then((result) => {
+      if (result?.message) {
+        alert(result.message);
+        return;
+      }
       alert(`Import successfully started by ${user}!`);
     })
     .catch((error) => {
