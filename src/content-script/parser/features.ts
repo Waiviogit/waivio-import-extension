@@ -1,5 +1,5 @@
 import { DETAILS_SELECTOR } from '../constants';
-import { replaceInvisible } from '../helpers/commonHelper';
+import { make2dArray, replaceInvisible } from '../helpers/commonHelper';
 
 const modelRegEx = /model number/;
 
@@ -34,10 +34,16 @@ export const getFeatures = () => {
   features.push(getRating());
   const details = Array.from(document.querySelectorAll<HTMLElement>(DETAILS_SELECTOR.TABLE))
     .map((el) => (el.outerText ?? '\t').split('\t'));
+  const details2 = Array.from(document.querySelectorAll<HTMLElement>(DETAILS_SELECTOR.MAIN));
+  if (details2.length) {
+    const arr1d = details2.map((el) => el?.innerText);
+    const arr2d = make2dArray(arr1d);
+    details.push(...arr2d);
+  }
   for (const detail of details) {
     if (modelRegEx.test(detail[0].toLocaleLowerCase())) {
       features.push({
-        key: replaceInvisible(detail[0]),
+        key: replaceInvisible(detail[0]).replace(/:/g, '').trim(),
         value: [replaceInvisible(detail[1])],
       });
     }
