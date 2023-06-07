@@ -15,4 +15,9 @@ export const StyledDashboardButton = styled.button`
     background-color: #d35f06;
     cursor: pointer;
   }
+  &:disabled{
+  border: 1px solid #999999;
+  background-color: #cccccc;
+  color: #666666;
+}
 `;

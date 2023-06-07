@@ -1,4 +1,4 @@
-import { PARSE_COMMANDS } from '../../services/pageParser';
+import { PARSE_COMMANDS } from '../../common/constants';
 
 const aboutFormatText = 'The URL must be in the format:';
 const constructAmazonURL = (url: string): string => {
@@ -52,6 +52,16 @@ const validatePageForAsin = (url: string):boolean => {
   return result;
 };
 
+const validatePageForYoutube = (url: string):boolean => {
+  const regex = /^https?:\/\/(?:www\.)?youtube\.com\/watch\?v=/;
+
+  const result = regex.test(url);
+  if (!result) {
+    alert('The URL must be youtube video example: https://www.youtube.com/watch?v=AVCOKbYKQm8');
+  }
+  return result;
+};
+
 export const urlValidation = (url: string, message: string):boolean => {
   const validationType = {
     [PARSE_COMMANDS.TO_JSON]: validatePage,
@@ -59,6 +69,7 @@ export const urlValidation = (url: string, message: string):boolean => {
     [PARSE_COMMANDS.TO_CLIPBOARD]: validatePage,
     [PARSE_COMMANDS.SCAN_ASINS]: validatePageForAsin,
     [PARSE_COMMANDS.IMPORT_WAIVIO]: validatePage,
+    [PARSE_COMMANDS.CREATE_DRAFT]: validatePageForYoutube,
   };
   const type = message as keyof typeof PARSE_COMMANDS;
 

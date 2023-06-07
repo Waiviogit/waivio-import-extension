@@ -1,22 +1,19 @@
 import { StyledDashboard } from './Dashboard.styled';
 import { DashboardButton } from './DasboardButton';
-import { sendMessageToContentScript, PARSE_COMMANDS } from '../services/pageParser';
+import manifest from '../../extension/manifest.json';
+import { mainButtonsConfig } from '../common/helper';
 
-export const Dashboard = () => {
-  const parseToJson = async (): Promise<void> => sendMessageToContentScript(PARSE_COMMANDS.TO_JSON);
-  const parseToXLSX = async (): Promise<void> => sendMessageToContentScript(PARSE_COMMANDS.TO_CSV);
-  const copyToClipboard = async (): Promise<void> => sendMessageToContentScript(PARSE_COMMANDS.TO_CLIPBOARD);
-  const scanAsins = async (): Promise<void> => sendMessageToContentScript(PARSE_COMMANDS.SCAN_ASINS);
-  const importToWaivio = async (): Promise<void> => sendMessageToContentScript(PARSE_COMMANDS.IMPORT_WAIVIO);
-
-  return (
+export const Dashboard = () => (
         <StyledDashboard>
-                <DashboardButton text={'Create JSON'} onClick={parseToJson} />
-                <DashboardButton text={'Create XLSX'} onClick={parseToXLSX}/>
-                <DashboardButton text={'Copy to clipboard'} onClick={copyToClipboard}/>
-                <DashboardButton text={'Scan for ASINs'} onClick={scanAsins}/>
-                <DashboardButton text={'Upload to Waivio'} onClick={importToWaivio}/>
-                <span style={{ marginBottom: '10px' }}>version 1.0.2</span>
+            {
+                mainButtonsConfig
+                  .map((button) => <DashboardButton
+                      text={button.text}
+                      onClick={button.onClick}
+                      id={button.id}
+                      key={button.id}
+                  />)
+            }
+            <span style={{ marginBottom: '10px' }}>version {manifest.version}</span>
         </StyledDashboard>
-  );
-};
+);

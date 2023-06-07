@@ -1,6 +1,7 @@
-import { formatToJsonObject, parsedObjectType } from '../getProduct';
+import { formatToJsonObject, getProduct } from '../getProduct';
 import Cookie = chrome.cookies.Cookie;
 import { EXTERNAL_URL } from '../constants';
+import { randomNameGenerator } from './commonHelper';
 
 type userType = {
   _id: string
@@ -20,10 +21,11 @@ const getUser = (token: string): Promise<getUserType> => fetch(EXTERNAL_URL.HIVE
   .then((result) => ({ result }))
   .catch((error) => ({ error }));
 
-export const downloadToWaivio = async (
-  exportObj: parsedObjectType,
-  exportName: string,
-): Promise<void> => {
+export const downloadToWaivio = async (): Promise<void> => {
+  const { product: exportObj, error } = getProduct();
+  if (!exportObj || error) return;
+  const exportName = randomNameGenerator(8);
+
   const objectType = exportObj.departments.includes('Books') ? 'book' : 'product';
   const backgroundResponse = await chrome.runtime.sendMessage({ action: 'getCookies', payload: '.waivio.com' });
   if (!backgroundResponse.cookies || !backgroundResponse.cookies.length) return;

@@ -1,12 +1,13 @@
 import * as XLSX from 'xlsx';
 import {
-  formatToCsvObject, formatToJsonObject, parsedObjectType,
+  formatToCsvObject, formatToJsonObject, getProduct,
 } from '../getProduct';
 import {
   getAsinsFromPage,
 } from './scanAsinHelper';
+import { randomNameGenerator } from './commonHelper';
 
-const stingToClipboard = (text: string) :void => {
+export const stingToClipboard = (text: string) :void => {
   const tempInput = document.createElement('textarea');
   tempInput.setAttribute('readonly', '');
   tempInput.value = text;
@@ -28,7 +29,11 @@ const regularFileDownload = (uriComponent : string, fileName: string, format: st
   downloadAnchorNode.remove();
 };
 
-export const downloadObjectAsJson = (exportObj: parsedObjectType, exportName: string): void => {
+export const downloadObjectAsJson = (): void => {
+  const { product: exportObj, error } = getProduct();
+  if (!exportObj || error) return;
+  const exportName = randomNameGenerator(8);
+
   const jsonFormat = formatToJsonObject(exportObj);
 
   regularFileDownload(
@@ -38,7 +43,10 @@ export const downloadObjectAsJson = (exportObj: parsedObjectType, exportName: st
   );
 };
 
-export const copyToClipboard = (exportObj: parsedObjectType, exportName: string): void => {
+export const copyToClipboard = (): void => {
+  const { product: exportObj, error } = getProduct();
+  if (!exportObj || error) return;
+
   const object = formatToCsvObject(exportObj);
 
   const tabRow = Object.values(object).join('\t');
@@ -47,7 +55,11 @@ export const copyToClipboard = (exportObj: parsedObjectType, exportName: string)
   alert('Product copied to clipboard');
 };
 
-export const downloadXLSX = (exportObj: parsedObjectType, exportName: string): void => {
+export const downloadXLSX = (): void => {
+  const { product: exportObj, error } = getProduct();
+  if (!exportObj || error) return;
+  const exportName = randomNameGenerator(8);
+
   const object = formatToCsvObject(exportObj);
   const worksheet = XLSX.utils.json_to_sheet([object]);
 
@@ -83,7 +95,8 @@ export const downloadXLSX = (exportObj: parsedObjectType, exportName: string): v
   stingToClipboard(tabRow);
 };
 
-export const downloadASIN = async (exportName: string): Promise<void> => {
+export const downloadASIN = async (): Promise<void> => {
+  const exportName = randomNameGenerator(8);
   const asins = await getAsinsFromPage();
 
   stingToClipboard(asins);

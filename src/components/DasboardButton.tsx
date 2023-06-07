@@ -3,12 +3,13 @@ import { StyledDashboardButton, StyledDashboardButtonContainer } from './Dasboar
 
 interface DashboardButtonProps {
     text: string
-    onClick: () => void
+    id: string
+    onClick: (event: any) => Promise<void>
 }
 
-export const DashboardButton : React.FC<DashboardButtonProps> = ({ text, onClick }) => (
+export const DashboardButton : React.FC<DashboardButtonProps> = ({ text, onClick, id }) => (
         <StyledDashboardButtonContainer>
-            <StyledDashboardButton onClick={onClick}>
+            <StyledDashboardButton onClick={onClick} id={id}>
                 {text}
             </StyledDashboardButton>
         </StyledDashboardButtonContainer>
