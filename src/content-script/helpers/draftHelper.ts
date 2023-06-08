@@ -135,8 +135,8 @@ const formatGptAnswer = ({
   paragraphs.splice(1, 0, linkToVideo);
 
   const formatted = paragraphs.join('\n\n');
-
-  return `${videoTitle}\n\n${formatted}\n\n[${author}](${linkToChannel})`;
+  const linkToAuthorAndChannel = `YouTube channel - ${author}: ${linkToChannel}`;
+  return `${videoTitle}\n\n${formatted}\n\n${linkToAuthorAndChannel}`;
 };
 
 const extractVideoId = (url: string): string => {
