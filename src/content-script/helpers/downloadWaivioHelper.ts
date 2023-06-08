@@ -57,6 +57,7 @@ export const downloadToWaivio = async (): Promise<void> => {
   formData.append('objectType', objectType);
   formData.append('useGPT', 'true');
   formData.append('forceImport', 'true');
+  formData.append('addDatafinityData', 'true');
 
   const headers = new Headers();
   headers.append('access-token', accessToken);
