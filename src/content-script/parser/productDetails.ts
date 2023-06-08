@@ -13,6 +13,20 @@ const manufacturerRegEx = /^(?!.*discontinued.*)(?=.*manufacturer).*$/;
 const groupIdRegEx = /asin/;
 const weightRegEx = /weight/;
 
+const getGroupIdFromScripts = ():string => {
+  const scriptInnerTexts = Array.from(document.querySelectorAll('script'))
+    .map((el) => el.innerText)
+    .filter((el) => el.includes('parentAsin'));
+
+  const regex = /jQuery\.parseJSON\((.*?)\)/;
+  const script = scriptInnerTexts.find((el) => regex.test(el));
+  if (!script) return '';
+  const regex2 = /"parentAsin":\s*"(.*?)",/;
+  const all = regex2.exec(script);
+  if (!all) return '';
+  return all[1] || '';
+};
+
 const constructDetailFrom2dArr = (details: string[][]): productDetailsType => {
   const productDetails = {} as productDetailsType;
   for (const detail of details) {
@@ -29,6 +43,9 @@ const constructDetailFrom2dArr = (details: string[][]): productDetailsType => {
       productDetails.weight = replaceInvisible(detail[1]);
     }
   }
+
+  const groupIdScripts = getGroupIdFromScripts();
+  if (groupIdScripts) productDetails.groupId = groupIdScripts;
   return productDetails;
 };
 
