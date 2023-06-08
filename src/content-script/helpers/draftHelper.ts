@@ -70,6 +70,7 @@ const getSubsByUrl = async (url: string): Promise<responseType> => {
 
 const getGptAnswer = async (query: string): Promise<responseType> => {
   try {
+    console.log('request sent');
     const response = await fetch(
       EXTERNAL_URL.WAIVIO_IMPORT_GPT_QUERY,
       {
@@ -107,11 +108,6 @@ const createQuery = ({
   const query = `rewrite in third person in 3 paragraphs (make it sound like a human), 
   add hashtags (composed of one word) at the very end, including #chatgpt,
   if following text would be in other language than english - rewrite it into english, here is the text: ${subs}
-  answer schema: 
-  First paragraph
-  Second paragraph
-  Third paragraph
-  Hashtags
   `;
 
   return query;
