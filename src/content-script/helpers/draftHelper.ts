@@ -139,10 +139,20 @@ const formatGptAnswer = ({
   return `${videoTitle}\n\n${formatted}\n\n[${author}](${linkToChannel})`;
 };
 
+const extractVideoId = (url: string): string => {
+  const regex = /watch\?v=([^&]+)/;
+  const match = url.match(regex);
+  if (match && match[1]) {
+    return match[1];
+  }
+  return '';
+};
+
 export const createDraft = async (): Promise<void> => {
   const videoTitle = getTitle();
   const { author, linkToChannel } = getAuthorAndLink();
   const linkToVideo = document.URL;
+  const videoId = extractVideoId(linkToVideo);
   const captions = getCaptionTracks();
 
   if (!captions.length) {
@@ -150,11 +160,19 @@ export const createDraft = async (): Promise<void> => {
     return;
   }
   const url = getSubsUrl(captions);
+  if (!url.includes(videoId)) {
+    if (window.confirm('We can\'t find subtitles for this video, please click ok to refresh the page')) {
+      window.open(linkToVideo, '_self');
+    }
+    return;
+  }
+
   const { result } = await getSubsByUrl(url);
   if (!result) {
     alert('Fetch subs error, try to reload page and try again');
     return;
   }
+
   const subs = cutSubs(result);
 
   const query = createQuery({ subs });
