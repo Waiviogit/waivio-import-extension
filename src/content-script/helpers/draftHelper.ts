@@ -31,6 +31,12 @@ interface formatAnswerInterface {
   linkToVideo: string
 }
 
+const convertHashtagsToLowerCase = (inputString: string): string => {
+  const regex = /#\w+/g;
+  const convertedString = inputString.replace(regex, (match) => match.toLowerCase());
+  return convertedString;
+};
+
 const getTitle = () => document.querySelector<HTMLElement>('h1.style-scope.ytd-watch-metadata')?.innerText ?? '';
 
 const getAuthorAndLink = (): authorLinkType => {
@@ -134,7 +140,8 @@ const formatGptAnswer = ({
   const paragraphs = answer.split('\n\n');
   paragraphs.splice(1, 0, linkToVideo);
 
-  const formatted = paragraphs.join('\n\n');
+  const formatted = convertHashtagsToLowerCase(paragraphs.join('\n\n'));
+
   const linkToAuthorAndChannel = `YouTube channel - ${author}: ${linkToChannel}`;
   return `${videoTitle}\n\n${formatted}\n\n${linkToAuthorAndChannel}`;
 };
