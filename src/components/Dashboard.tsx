@@ -49,7 +49,9 @@ export const Dashboard = () => {
   return (
         <StyledDashboard>
             {renderButton()}
-            <span style={{ marginBottom: '10px', color: '#99aab5', position: 'absolute', bottom: '0' }}>Version {manifest.version}</span>
+            <span style={{
+              marginBottom: '10px', color: '#99aab5', position: 'absolute', bottom: '0',
+            }}>Version {manifest.version}</span>
         </StyledDashboard>
   );
 };
