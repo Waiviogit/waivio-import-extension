@@ -32,6 +32,9 @@ export const mainButtonsConfig = [
       sendMessageToContentScript(event, PARSE_COMMANDS.IMPORT_WAIVIO)),
     id: 'btn5',
   },
+];
+
+export const youtubeButtonConfig = [
   {
     text: 'Create post draft',
     onClick: async (event:Event): Promise<void> => (
