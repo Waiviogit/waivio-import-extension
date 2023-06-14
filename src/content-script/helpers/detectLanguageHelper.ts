@@ -67,7 +67,7 @@ const getFormattedLanguages = (languages:Array<import('trigram-utils').TrigramTu
 
 const domainNativeLanguages = {
   com: ['en-US'],
-  ca: ['en-US'],
+  ca: ['en-US', 'fr-FR'],
   'com.mx': ['es-ES', 'en-US'],
   'com.br': ['pt-BR', 'en-US'],
   'co.uk': ['en-US'],
