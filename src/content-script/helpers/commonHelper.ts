@@ -27,6 +27,15 @@ export const make2dArray = (arr1d :string[]):string[][] => {
 
 export const replaceInvisible = (s = ''):string => s.replace(/‎|‏/g, '').trim();
 
+export const copyContent = async (text: string) => {
+  try {
+    await navigator.clipboard.writeText(text);
+    console.log('Content copied to clipboard');
+  } catch (err) {
+    console.error('Failed to copy: ', err);
+  }
+};
+
 export const invert = (obj:object): object => {
   const inverted = {};
   Object.keys(obj).forEach((key) => {
