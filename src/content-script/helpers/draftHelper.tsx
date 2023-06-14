@@ -1,4 +1,7 @@
+import React from 'react';
+import ReactDOM from 'react-dom/client';
 import { EXTERNAL_URL } from '../constants';
+import YoutubeDraftModal from '../components/youtubeDraftModal';
 
 type authorLinkType = {
     author: string
@@ -21,10 +24,11 @@ type responseType = {
 
 interface createQueryInterface {
     subs: string
+    author: string
+    linkToChannel: string
 }
 
 interface formatAnswerInterface {
-  videoTitle: string
   author: string
   linkToChannel: string
   answer: string
@@ -109,41 +113,27 @@ const cutSubs = (subs: string): string => {
 };
 
 const createQuery = ({
-  subs,
+  subs, author, linkToChannel,
 }: createQueryInterface): string => {
-  const query = `rewrite in third person in 3 paragraphs (make it sound like a human), 
-  add hashtags (composed of one word) at the very end, including #chatgpt,
+  const query = `act as professional journalist:
+  rewrite in third person in 3 paragraphs (make it sound like a human), create title,
+  make attribution to author ${author} channel ${linkToChannel},
+  add hashtags (composed of one word lowercase) at the very end, including #chatgpt,
   if following text would be in other language than english - rewrite it into english, here is the text: ${subs}
   `;
-
   return query;
 };
 
-const copyContent = async (text: string) => {
-  try {
-    await navigator.clipboard.writeText(text);
-    console.log('Content copied to clipboard');
-  } catch (err) {
-    console.error('Failed to copy: ', err);
-  }
-};
-
-const confirmCopy = async (string: string) => {
-  if (window.confirm(string)) {
-    await copyContent(string);
-  }
-};
-
 const formatGptAnswer = ({
-  answer, author, linkToChannel, videoTitle, linkToVideo,
+  answer, author, linkToChannel, linkToVideo,
 }: formatAnswerInterface) :string => {
   const paragraphs = answer.split('\n\n');
-  paragraphs.splice(1, 0, linkToVideo);
+  paragraphs.splice(2, 0, linkToVideo);
 
   const formatted = convertHashtagsToLowerCase(paragraphs.join('\n\n'));
 
   const linkToAuthorAndChannel = `YouTube channel - ${author}: ${linkToChannel}`;
-  return `${videoTitle}\n\n${formatted}\n\n${linkToAuthorAndChannel}`;
+  return `${formatted}\n\n${linkToAuthorAndChannel}`;
 };
 
 const extractVideoId = (url: string): string => {
@@ -182,16 +172,28 @@ export const createDraft = async (): Promise<void> => {
 
   const subs = cutSubs(result);
 
-  const query = createQuery({ subs });
+  const rootElement = document.createElement('div');
+  rootElement.id = 'react-chrome-modal';
+  document.body.appendChild(rootElement);
+  const rootModal = ReactDOM.createRoot(rootElement);
+  console.log(linkToVideo);
+  const query = createQuery({
+    subs, author, linkToChannel,
+  });
   const { result: postDraft, error } = await getGptAnswer(query);
   if (!postDraft) {
     // @ts-ignore
     alert(`Gpt error ${error?.message ?? ''}`);
     return;
   }
+
   const formatted = formatGptAnswer({
-    author, linkToChannel, linkToVideo, videoTitle, answer: postDraft,
+    answer: postDraft, linkToVideo, author, linkToChannel,
   });
 
-  await confirmCopy(formatted);
+  rootModal.render(
+      // @ts-ignore
+      <YoutubeDraftModal text={formatted}>
+      </YoutubeDraftModal>,
+  );
 };
