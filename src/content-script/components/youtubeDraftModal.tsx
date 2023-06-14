@@ -38,7 +38,7 @@ const YoutubeDraftModal = ({ text }: youtubeModalProps) => {
                     onOk={handleOk}
                     onCancel={handleCancel}
                     okText="Copy"
-                    cancelText="close"
+                    cancelText="Cancel"
                 >
                     {
                         text.split('\n\n')
