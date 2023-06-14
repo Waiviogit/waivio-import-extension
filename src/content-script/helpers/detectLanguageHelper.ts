@@ -65,12 +65,54 @@ const getFormattedLanguages = (languages:Array<import('trigram-utils').TrigramTu
   return result;
 };
 
+const domainNativeLanguages = {
+  com: ['en-US'],
+  ca: ['en-US'],
+  'com.mx': ['es-ES', 'en-US'],
+  'com.br': ['pt-BR', 'en-US'],
+  'co.uk': ['en-US'],
+  fr: ['fr-FR', 'en-US'],
+  it: ['it-IT', 'en-US'],
+  es: ['es-ES', 'en-US'],
+  de: ['de-DE', 'en-US'],
+  nl: ['nl-HU', 'en-US'],
+  se: ['sv-SE', 'en-US'],
+  pl: ['pl-PL', 'en-US'],
+  in: ['hi-IN', 'en-US'],
+  ae: ['ar-SA', 'en-US'],
+  sa: ['ar-SA', 'en-US'],
+  sg: ['en-US'],
+  'co.jp': ['ja-JP', 'en-US'],
+  'com.au': ['en-US'],
+};
+
+const getDomain = (): string => {
+  const domainRegex = /https?:\/\/www\.amazon\.(\w.+?)\//;
+  const match = document.URL.match(domainRegex);
+  if (!match) return 'com';
+  if (match.length < 2) {
+    return 'com';
+  }
+  return match[1];
+};
+
+const getDomainDefaultLanguage = () => {
+  const domain = getDomain() as keyof typeof domainNativeLanguages;
+  return domainNativeLanguages[domain][0];
+};
+
+const getLanguage = (language: string):string => {
+  const domain = getDomain() as keyof typeof domainNativeLanguages;
+  const domainLanguages = domainNativeLanguages[domain];
+  if (domainLanguages.includes(language)) return language;
+  return domainLanguages[0];
+};
+
 export const detectLanguage = (data: string): string => {
   const text = `${data.replace(/(?:!?\[(.*?)\]\((.*?)\))|(<\/?[^>]+(>|$))/g, '')}\n`;
   const existLanguages = francAll(text, { only: Object.values(languageList) });
-  if (!existLanguages.length) return 'en-US';
+  if (!existLanguages.length) return getDomainDefaultLanguage();
   const languages = getFormattedLanguages(existLanguages.slice(0, 2));
-  console.log(languages);
-  if (languages.length) return languages[0];
-  return 'en-US';
+  if (languages.length) return getLanguage(languages[0]);
+  return getDomainDefaultLanguage();
 };

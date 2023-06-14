@@ -13,7 +13,7 @@ const constructAmazonURL = (url: string): string => {
   const productId = match[1];
 
   // Extract the domain from the URL
-  const domainRegex = /https?:\/\/www\.amazon\.(\w+)\//;
+  const domainRegex = /https?:\/\/www\.amazon\.(\w.+?)\//;
   const domainMatch = url.match(domainRegex);
   if (!domainMatch || domainMatch.length < 2) {
     // Invalid domain format

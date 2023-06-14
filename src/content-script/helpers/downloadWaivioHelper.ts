@@ -52,8 +52,8 @@ export const downloadToWaivio = async (): Promise<void> => {
   const language = detectLanguage(
     `${jsonFormat.categories.join('')}${(jsonFormat?.descriptions ?? []).join('')}`,
   );
-  console.log('language');
-  console.log(language);
+
+  alert(language);
   const jsonData = JSON.stringify(jsonFormat);
 
   const formData = new FormData();
