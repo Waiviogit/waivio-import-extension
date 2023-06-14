@@ -26,3 +26,13 @@ export const make2dArray = (arr1d :string[]):string[][] => {
 };
 
 export const replaceInvisible = (s = ''):string => s.replace(/‎|‏/g, '').trim();
+
+export const invert = (obj:object): object => {
+  const inverted = {};
+  Object.keys(obj).forEach((key) => {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    inverted[obj[key]] = key;
+  });
+  return inverted;
+};
