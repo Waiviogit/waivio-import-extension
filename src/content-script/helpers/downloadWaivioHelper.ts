@@ -53,7 +53,6 @@ export const downloadToWaivio = async (): Promise<void> => {
     `${jsonFormat.categories.join('')}${(jsonFormat?.descriptions ?? []).join('')}`,
   );
 
-  alert(language);
   const jsonData = JSON.stringify(jsonFormat);
 
   const formData = new FormData();
@@ -65,24 +64,25 @@ export const downloadToWaivio = async (): Promise<void> => {
   formData.append('useGPT', 'true');
   formData.append('forceImport', 'true');
   formData.append('addDatafinityData', 'true');
+  formData.append('language', language);
 
   const headers = new Headers();
   headers.append('access-token', accessToken);
 
-  // fetch(EXTERNAL_URL.WAIVIO_IMPORT, {
-  //   method: 'POST',
-  //   body: formData,
-  //   headers,
-  // })
-  //   .then((response) => response.json())
-  //   .then((result) => {
-  //     if (result?.message) {
-  //       alert(result.message);
-  //       return;
-  //     }
-  //     alert(`Import successfully started by ${user}!`);
-  //   })
-  //   .catch((error) => {
-  //     alert(error.message);
-  //   });
+  fetch(EXTERNAL_URL.WAIVIO_IMPORT, {
+    method: 'POST',
+    body: formData,
+    headers,
+  })
+    .then((response) => response.json())
+    .then((result) => {
+      if (result?.message) {
+        alert(result.message);
+        return;
+      }
+      alert(`Import successfully started by ${user}!`);
+    })
+    .catch((error) => {
+      alert(error.message);
+    });
 };
