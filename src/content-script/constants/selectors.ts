@@ -6,6 +6,7 @@ export const AVATAR_SELECTOR = {
 
 export const BRAND_SELECTOR = {
   MAIN: '#productOverview_feature_div .po-brand span',
+  V2: '#nic-po-expander-content table td',
 };
 
 export const DEPARTMENT_SELECTOR = {
@@ -14,6 +15,7 @@ export const DEPARTMENT_SELECTOR = {
 
 export const DESCRIPTION_SELECTOR = {
   MAIN: '#featurebullets_feature_div li span',
+  V2: '#feature-bullets li span',
 };
 
 export const NAME_SELECTOR = {

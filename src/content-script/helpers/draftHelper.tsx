@@ -130,10 +130,10 @@ const formatGptAnswer = ({
   const paragraphs = answer.split('\n\n');
   paragraphs.splice(2, 0, linkToVideo);
 
-  const formatted = convertHashtagsToLowerCase(paragraphs.join('\n\n'));
+  const formatted = convertHashtagsToLowerCase(paragraphs.join('\n'));
 
   const linkToAuthorAndChannel = `YouTube channel - ${author}: ${linkToChannel}`;
-  return `${formatted}\n\n${linkToAuthorAndChannel}`;
+  return `${formatted}\n${linkToAuthorAndChannel}`;
 };
 
 const extractVideoId = (url: string): string => {

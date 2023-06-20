@@ -41,8 +41,8 @@ const YoutubeDraftModal = ({ text }: youtubeModalProps) => {
                     cancelText="Cancel"
                 >
                     {
-                        text.split('\n\n')
-                          .map((el) => <span><p>{el}</p><br/></span>)
+                        text.split('\n')
+                          .map((el) => <span><p>{el}</p></span>)
                     }
 
                 </Modal>

@@ -46,6 +46,10 @@ const constructDetailFrom2dArr = (details: string[][]): productDetailsType => {
 
   const groupIdScripts = getGroupIdFromScripts();
   if (groupIdScripts) productDetails.groupId = groupIdScripts;
+  if (!productDetails.weight && productDetails.dimension) {
+    const [, weight] = productDetails.dimension.split(';');
+    if (weight) productDetails.weight = weight;
+  }
   return productDetails;
 };
 
