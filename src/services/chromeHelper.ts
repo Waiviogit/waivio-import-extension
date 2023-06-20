@@ -5,6 +5,7 @@ type messageType = {
   action: string,
   payload: string
   buttonId: string
+  buttonText: string
 }
 
 interface sendMessageToTabInterface {
@@ -15,19 +16,24 @@ interface sendMessageToTabInterface {
 type extensionMessageType = {
   action: string
   id: string
+  buttonText: string
 }
 
-const enableButton = (id:string): void => {
+const enableButton = (id:string, buttonText:string): void => {
   const button = document.querySelector<HTMLButtonElement>(`#${id}`);
   if (!button) return;
   button.disabled = false;
+  button.innerText = buttonText;
 };
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   const data = message as extensionMessageType;
   switch (data.action) {
     case EXTENSION_COMMANDS.ENABLE:
-      enableButton(data.id);
+      enableButton(
+        data.id,
+        data.buttonText,
+      );
       break;
     default: break;
   }

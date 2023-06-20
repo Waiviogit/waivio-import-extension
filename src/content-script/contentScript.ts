@@ -25,7 +25,7 @@ chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
   await (downloadFileScript[downLoadType] || downloadFileScript.default)();
 
   await chrome.runtime.sendMessage({
-    action: EXTENSION_COMMANDS.ENABLE, id: message.buttonId,
+    action: EXTENSION_COMMANDS.ENABLE, id: message.buttonId, buttonText: message.buttonText,
   });
 });
 

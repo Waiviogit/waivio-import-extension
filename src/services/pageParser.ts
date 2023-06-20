@@ -7,7 +7,17 @@ export const sendMessageToContentScript = async (event: Event, message: string):
   if (!id || !url) return;
 
   const target = event.target as HTMLButtonElement;
+  const buttonText = target.innerText;
   target.disabled = true;
+  target.innerText = '';
 
-  await sendMessageToTab({ id, message: { action: message, payload: url, buttonId: target.id } });
+  await sendMessageToTab({
+    id,
+    message: {
+      action: message,
+      payload: url,
+      buttonId: target.id,
+      buttonText,
+    },
+  });
 };

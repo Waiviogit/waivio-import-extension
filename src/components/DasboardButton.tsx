@@ -1,4 +1,3 @@
-import React from 'react';
 import { StyledDashboardButton, StyledDashboardButtonContainer } from './DasboardButton.styled';
 
 interface DashboardButtonProps {
