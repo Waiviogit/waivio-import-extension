@@ -67,9 +67,8 @@ export const StyledDashboardButton = styled.button`
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    font-size: 12px;
+    font-size: 14px;
     text-align: center;
-    text-transform: uppercase;
     line-height: 16px;
     animation: ${pulseAnimation} 1s linear infinite;
   }
