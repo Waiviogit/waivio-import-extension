@@ -15,5 +15,5 @@ export const getAvatar = ():string => {
     .filter((el) => !!el);
   if (!images.length) return '';
 
-  return replaceInvisible(images[images.length - 1]);
+  return replaceInvisible(images[1]);
 };
