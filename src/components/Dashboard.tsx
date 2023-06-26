@@ -7,19 +7,33 @@ import { getCurrentTab } from '../services/chromeHelper';
 
 export const Dashboard = () => {
   const [currentUrl, setUrl] = useState('');
+  const [timeoutId, setIntervalId] = useState<NodeJS.Timer | undefined>(undefined);
 
   useEffect(() => {
-    // React advises to declare the async function directly inside useEffect
     async function getUrl() {
       const tab = await getCurrentTab();
-      const url = tab?.url ?? '';
-      setUrl(url);
+      clearTimeout(timeoutId);
+
+      if (tab?.status !== 'complete') {
+        setUrl('loading');
+
+        const id = setTimeout(getUrl, 100);
+        setIntervalId(id);
+      } else {
+        const url = tab?.url ?? '';
+        setUrl(url);
+      }
     }
 
     getUrl();
   }, []);
 
   const renderButton = () => {
+    if (currentUrl === 'loading') {
+      return (
+          <h2>Loading...</h2>
+      );
+    }
     if (currentUrl.includes('youtube')) {
       return (
         youtubeButtonConfig
