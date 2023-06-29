@@ -4,6 +4,7 @@ import { replaceInvisible } from '../helpers/commonHelper';
 export const getAvatar = ():string => {
   const image = document.querySelector<HTMLImageElement>(AVATAR_SELECTOR.MAIN)
       || document.querySelector<HTMLImageElement>(AVATAR_SELECTOR.ALTERNATIVE_1)
+      || document.querySelector<HTMLImageElement>('.imgTagWrapper img')
       || document.querySelector<HTMLImageElement>(AVATAR_SELECTOR.ALTERNATIVE_2);
 
   if (image) return replaceInvisible(image?.src);
