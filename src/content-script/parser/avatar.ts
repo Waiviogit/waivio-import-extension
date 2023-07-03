@@ -1,20 +1,10 @@
-import { AVATAR_SELECTOR, GALLERY_SELECTOR } from '../constants';
 import { replaceInvisible } from '../helpers/commonHelper';
 
-export const getAvatar = ():string => {
-  const image = document.querySelector<HTMLImageElement>(AVATAR_SELECTOR.MAIN)
-      || document.querySelector<HTMLImageElement>(AVATAR_SELECTOR.ALTERNATIVE_1)
-      || document.querySelector<HTMLImageElement>('.imgTagWrapper img')
-      || document.querySelector<HTMLImageElement>(AVATAR_SELECTOR.ALTERNATIVE_2);
-
-  if (image) return replaceInvisible(image?.src);
-  const firstGalleryItem = document.querySelector<HTMLElement>('[data-csa-c-posy="1"]');
-  if (!firstGalleryItem) return '';
-  firstGalleryItem.click();
-  const images = Array.from(document.querySelectorAll<HTMLImageElement>(GALLERY_SELECTOR.MAIN))
-    .map((img) => img.src)
-    .filter((el) => !!el);
-  if (!images.length) return '';
-
-  return replaceInvisible(images[1]);
+export const getAvatar = () => {
+  const gallery = Array.from(document.querySelectorAll<HTMLElement>('li.imageThumbnail'));
+  for (const item of gallery) {
+    item.click();
+  }
+  const avatar = document.querySelector<HTMLImageElement>('li[data-csa-c-posy="1"] .imgTagWrapper img');
+  return replaceInvisible(avatar?.src) ?? '';
 };
