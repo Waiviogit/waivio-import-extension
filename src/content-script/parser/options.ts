@@ -1,4 +1,4 @@
-import { getAvatar } from './avatar';
+import { getAvatarAmazon } from './avatar';
 import { make2dArray } from '../helpers/commonHelper';
 import { OPTION_SELECTOR } from '../constants';
 
@@ -25,7 +25,7 @@ const getOptionObject = (category: string, value: string): OptionType => {
     value: value.trim(),
   } as OptionType;
   if (option.category === 'Color') {
-    option.image = getAvatar();
+    option.image = getAvatarAmazon();
   }
   return option;
 };

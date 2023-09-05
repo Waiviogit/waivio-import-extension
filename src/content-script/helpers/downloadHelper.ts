@@ -29,8 +29,8 @@ const regularFileDownload = (uriComponent : string, fileName: string, format: st
   downloadAnchorNode.remove();
 };
 
-export const downloadObjectAsJson = (): void => {
-  const { product: exportObj, error } = getProduct();
+export const downloadObjectAsJson = (source: string): void => {
+  const { product: exportObj, error } = getProduct(source);
   if (!exportObj || error) return;
   const exportName = randomNameGenerator(8);
 
@@ -43,8 +43,8 @@ export const downloadObjectAsJson = (): void => {
   );
 };
 
-export const copyToClipboard = (): void => {
-  const { product: exportObj, error } = getProduct();
+export const copyToClipboard = (source: string): void => {
+  const { product: exportObj, error } = getProduct(source);
   if (!exportObj || error) return;
 
   const object = formatToCsvObject(exportObj);
@@ -55,8 +55,8 @@ export const copyToClipboard = (): void => {
   alert('Product copied to clipboard');
 };
 
-export const downloadXLSX = (): void => {
-  const { product: exportObj, error } = getProduct();
+export const downloadXLSX = (source: string): void => {
+  const { product: exportObj, error } = getProduct(source);
   if (!exportObj || error) return;
   const exportName = randomNameGenerator(8);
 

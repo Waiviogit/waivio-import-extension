@@ -1,6 +1,10 @@
 import { getCurrentTab, sendMessageToTab } from './chromeHelper';
 
-export const sendMessageToContentScript = async (event: Event, message: string): Promise<void> => {
+export const sendMessageToContentScript = async (
+  event: Event,
+  action: string,
+  source?: string,
+): Promise<void> => {
   const tab = await getCurrentTab();
   const id = tab?.id;
   const url = tab?.url;
@@ -14,10 +18,11 @@ export const sendMessageToContentScript = async (event: Event, message: string):
   await sendMessageToTab({
     id,
     message: {
-      action: message,
+      action,
       payload: url,
       buttonId: target.id,
       buttonText,
+      source,
     },
   });
 };

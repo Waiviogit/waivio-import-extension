@@ -15,7 +15,7 @@ const brandV2 = ():string => {
   return '';
 };
 
-export const getBrand = (): string => {
+export const getBrandAmazon = (): string => {
   const brandElements = Array.from(document.querySelectorAll<HTMLElement>(BRAND_SELECTOR.MAIN));
   const innerHtml:string[] = [];
 
@@ -28,4 +28,12 @@ export const getBrand = (): string => {
     return brandV2();
   }
   return result;
+};
+
+export const getBrandSephora = (): string => {
+  const brandElement = document.querySelector<HTMLElement>(BRAND_SELECTOR.SEPHORA);
+  if (!brandElement) return '';
+
+  const brand = brandElement?.innerText ?? '';
+  return replaceInvisible(brand);
 };

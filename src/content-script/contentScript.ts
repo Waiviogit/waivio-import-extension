@@ -20,9 +20,9 @@ chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
   if (!message.action || typeof message.action !== 'string') return;
 
   const downLoadType = message.action as keyof typeof downloadFileScript;
-  if (!urlValidation(message.payload, message.action)) return;
+  if (!urlValidation(message.payload, message.action, message.source)) return;
 
-  await (downloadFileScript[downLoadType] || downloadFileScript.default)();
+  await (downloadFileScript[downLoadType] || downloadFileScript.default)(message.source);
 
   await chrome.runtime.sendMessage({
     action: EXTENSION_COMMANDS.ENABLE, id: message.buttonId, buttonText: message.buttonText,

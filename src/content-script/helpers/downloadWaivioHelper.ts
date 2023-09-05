@@ -22,8 +22,8 @@ const getUser = (token: string): Promise<getUserType> => fetch(EXTERNAL_URL.HIVE
   .then((result) => ({ result }))
   .catch((error) => ({ error }));
 
-export const downloadToWaivio = async (): Promise<void> => {
-  const { product: exportObj, error } = getProduct();
+export const downloadToWaivio = async (source: string): Promise<void> => {
+  const { product: exportObj, error } = getProduct(source);
   if (!exportObj || error) return;
   const exportName = randomNameGenerator(8);
 

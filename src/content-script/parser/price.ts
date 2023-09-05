@@ -1,3 +1,5 @@
+import { PRICE_SELECTOR } from '../constants';
+
 const CURRENCY_PREFIX = {
   A$: 'AUD',
   $: 'USD',
@@ -47,13 +49,28 @@ const priceFromSeparateSpan = (): priceType => {
   return price;
 };
 
-export const getPrice = (): priceType => {
+export const getPriceAmazon = (): priceType => {
   const price = {
     mostRecentPriceCurrency: '',
     mostRecentPriceAmount: '',
   };
-  const priceElement = document.querySelector<HTMLElement>('#corePrice_desktop .a-offscreen');
+  const priceElement = document.querySelector<HTMLElement>(PRICE_SELECTOR.AMAZON);
   if (!priceElement) return priceFromSeparateSpan();
+  const prefix = extractCurrency(priceElement.innerText) as keyof typeof CURRENCY_PREFIX;
+  const mostRecentPriceCurrency = CURRENCY_PREFIX[prefix];
+  const mostRecentPriceAmount = extractNumericValue(priceElement.innerText);
+  price.mostRecentPriceCurrency = mostRecentPriceCurrency;
+  price.mostRecentPriceAmount = mostRecentPriceAmount;
+  return price;
+};
+
+export const getPriceSephora = (): priceType => {
+  const price = {
+    mostRecentPriceCurrency: '',
+    mostRecentPriceAmount: '',
+  };
+  const priceElement = document.querySelector<HTMLElement>(PRICE_SELECTOR.SEPHORA);
+  if (!priceElement) return price;
   const prefix = extractCurrency(priceElement.innerText) as keyof typeof CURRENCY_PREFIX;
   const mostRecentPriceCurrency = CURRENCY_PREFIX[prefix];
   const mostRecentPriceAmount = extractNumericValue(priceElement.innerText);

@@ -1,16 +1,17 @@
 import {
-  getAvatar,
-  getBrand,
-  getDepartments,
-  productTitle,
-  getDescription,
+  getAvatarAmazon,
+  getBrandAmazon,
+  getDepartmentsAmazon,
+  productTitleAmazon,
+  getDescriptionAmazon,
   getOptions,
-  getProductId,
-  getPrice,
-  getProductDetails,
-  OptionType, priceType, getFeatures, featuresType, getGalleryItems,
+  getProductIdAmazon,
+  getPriceAmazon,
+  getProductDetailsAmazon,
+  OptionType, priceType, getFeaturesAmazon, featuresType, getGalleryItemsAmazon,
 } from './parser';
 import { productSchema } from './validation';
+import { SOURCE_TYPES } from '../common/constants';
 
 export type parsedObjectType = {
   name: string
@@ -82,19 +83,19 @@ type getProductReturnedType = {
   error?: Error
 }
 
-export const getProduct = (): getProductReturnedType => {
+const getProductFromAmazon = (): getProductReturnedType => {
   const object: parsedObjectType = {
-    name: productTitle(),
-    avatar: getAvatar(),
-    brand: getBrand(),
-    departments: getDepartments(),
-    description: getDescription(),
+    name: productTitleAmazon(),
+    avatar: getAvatarAmazon(),
+    brand: getBrandAmazon(),
+    departments: getDepartmentsAmazon(),
+    description: getDescriptionAmazon(),
     options: getOptions(),
-    price: getPrice(),
-    productId: getProductId(),
-    features: getFeatures(),
-    ...getProductDetails(),
-    imageURLs: getGalleryItems(),
+    price: getPriceAmazon(),
+    productId: getProductIdAmazon(),
+    features: getFeaturesAmazon(),
+    ...getProductDetailsAmazon(),
+    imageURLs: getGalleryItemsAmazon(),
   };
   if (object.productId === object.groupId) {
     delete object.groupId;
@@ -107,6 +108,14 @@ export const getProduct = (): getProductReturnedType => {
   }
 
   return { product: object };
+};
+
+export const getProduct = (source: string): getProductReturnedType => {
+  switch (source) {
+    case SOURCE_TYPES.AMAZON:
+      return getProductFromAmazon();
+    default: return { error: new Error('Source not found') };
+  }
 };
 
 export const formatToJsonObject = (object: parsedObjectType):exportJsonType => {

@@ -60,7 +60,7 @@ const getAlternativeDetails = (): productDetailsType => {
   return constructDetailFrom2dArr(details);
 };
 
-export const getProductDetails = (): productDetailsType => {
+export const getProductDetailsAmazon = (): productDetailsType => {
   const details = Array.from(document.querySelectorAll<HTMLElement>(DETAILS_SELECTOR.MAIN));
   if (!details.length) return getAlternativeDetails();
 

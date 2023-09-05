@@ -29,7 +29,7 @@ const getRating = (): featuresType => {
   return ratingElement;
 };
 
-export const getFeatures = () => {
+export const getFeaturesAmazon = () => {
   const features = [] as featuresType[];
   features.push(getRating());
   const details = Array.from(document.querySelectorAll<HTMLElement>(DETAILS_SELECTOR.TABLE))

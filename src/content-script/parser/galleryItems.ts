@@ -1,4 +1,4 @@
-export const getGalleryItems = (): string[] => {
+export const getGalleryItemsAmazon = (): string[] => {
   const altImages = Array.from(
     document.querySelectorAll<HTMLElement>('#altImages li.a-spacing-small.item.imageThumbnail.a-declarative'),
   );

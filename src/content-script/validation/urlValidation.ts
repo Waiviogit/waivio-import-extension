@@ -1,4 +1,4 @@
-import { PARSE_COMMANDS } from '../../common/constants';
+import { PARSE_COMMANDS, SOURCE_TYPES } from '../../common/constants';
 
 const aboutFormatText = 'The URL must be in the format:';
 const constructAmazonURL = (url: string): string => {
@@ -25,19 +25,31 @@ const constructAmazonURL = (url: string): string => {
   return `https://www.amazon.${domain}/dp/${productId}`;
 };
 
-const validatePage = (url: string):boolean => {
-  const regex = /^https:\/\/www\.amazon[^\/]+\/dp\/[A-Z0-9]{10}(?!\/)/;
+const notValidPageAmazonAction = (url: string):void => {
+  const validUrl = constructAmazonURL(url);
+  if (!validUrl) {
+    alert(`${aboutFormatText} \nhttps://www.amazon.com/dp/ASIN_NUMBER`);
+    return;
+  }
+  if (window.confirm(`${aboutFormatText} \n${validUrl}\n\nPress "OK" to be redirected to this page.`)) {
+    window.open(validUrl, '_self');
+  }
+};
+
+const validatePage = (url: string, source: string):boolean => {
+  const regexBySource = {
+    [SOURCE_TYPES.AMAZON]: /^https:\/\/www\.amazon[^\/]+\/dp\/[A-Z0-9]{10}(?!\/)/,
+    [SOURCE_TYPES.SEPHORA]: /^https:\/\/www\.sephora[^\/]+\//,
+  };
+  const errorMessageBySource = {
+    [SOURCE_TYPES.AMAZON]: notValidPageAmazonAction,
+    default: ():void => {},
+  };
+  const regex = regexBySource[source];
 
   const result = regex.test(url);
   if (!result) {
-    const validUrl = constructAmazonURL(url);
-    if (!validUrl) {
-      alert(`${aboutFormatText} \nhttps://www.amazon.com/dp/ASIN_NUMBER`);
-      return result;
-    }
-    if (window.confirm(`${aboutFormatText} \n${validUrl}\n\nPress "OK" to be redirected to this page.`)) {
-      window.open(validUrl, '_self');
-    }
+    errorMessageBySource[source](url);
   }
   return result;
 };
@@ -62,7 +74,7 @@ const validatePageForYoutube = (url: string):boolean => {
   return result;
 };
 
-export const urlValidation = (url: string, message: string):boolean => {
+export const urlValidation = (url: string, message: string, source: string):boolean => {
   const validationType = {
     [PARSE_COMMANDS.TO_JSON]: validatePage,
     [PARSE_COMMANDS.TO_CSV]: validatePage,
@@ -73,5 +85,5 @@ export const urlValidation = (url: string, message: string):boolean => {
   };
   const type = message as keyof typeof PARSE_COMMANDS;
 
-  return validationType[type](url);
+  return validationType[type](url, source);
 };

@@ -7,10 +7,17 @@ export const AVATAR_SELECTOR = {
 export const BRAND_SELECTOR = {
   MAIN: '#productOverview_feature_div .po-brand span',
   V2: '#nic-po-expander-content table td',
+  SEPHORA: '[data-at="brand_name"]',
 };
 
 export const DEPARTMENT_SELECTOR = {
   MAIN: '#wayfinding-breadcrumbs_feature_div li:not(.a-breadcrumb-divider)',
+  SEPHORA: '[data-at="pdp_bread_crumb"]',
+};
+
+export const PRICE_SELECTOR = {
+  AMAZON: '#corePrice_desktop .a-offscreen',
+  SEPHORA: '[data-comp="Price "] b',
 };
 
 export const DESCRIPTION_SELECTOR = {
@@ -20,6 +27,7 @@ export const DESCRIPTION_SELECTOR = {
 
 export const NAME_SELECTOR = {
   MAIN: '#productTitle',
+  SEPHORA: '[data-at="product_name"]',
 };
 
 export const OPTION_SELECTOR = {

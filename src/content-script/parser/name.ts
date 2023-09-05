@@ -1,8 +1,16 @@
 import { NAME_SELECTOR } from '../constants';
 import { replaceInvisible } from '../helpers/commonHelper';
 
-export const productTitle = (): string => {
+export const productTitleAmazon = (): string => {
   const nameElement = document.querySelector<HTMLElement>(NAME_SELECTOR.MAIN);
+  if (!nameElement) return '';
+
+  const title = nameElement?.innerText ?? '';
+  return replaceInvisible(title);
+};
+
+export const productTitleSephora = (): string => {
+  const nameElement = document.querySelector<HTMLElement>(NAME_SELECTOR.SEPHORA);
   if (!nameElement) return '';
 
   const title = nameElement?.innerText ?? '';

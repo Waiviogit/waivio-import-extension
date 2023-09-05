@@ -6,6 +6,7 @@ type messageType = {
   payload: string
   buttonId: string
   buttonText: string
+  source?: string | undefined
 }
 
 interface sendMessageToTabInterface {
@@ -17,6 +18,7 @@ type extensionMessageType = {
   action: string
   id: string
   buttonText: string
+  source?: string | undefined
 }
 
 const enableButton = (id:string, buttonText:string): void => {

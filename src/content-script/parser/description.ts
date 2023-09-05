@@ -12,7 +12,7 @@ const descriptionV2 = ():string => {
   }
   return textPoints.join('');
 };
-export const getDescription = (): string => {
+export const getDescriptionAmazon = (): string => {
   const bulletPoints = Array.from(
     document.querySelectorAll<HTMLElement>(DESCRIPTION_SELECTOR.MAIN),
   );
