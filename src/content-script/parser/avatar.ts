@@ -5,6 +5,8 @@ export const getAvatar = () => {
   for (const item of gallery) {
     item.click();
   }
-  const avatar = document.querySelector<HTMLImageElement>('li[data-csa-c-posy="1"] .imgTagWrapper img');
+  const avatar = document.querySelector<HTMLImageElement>('li[data-csa-c-posy="1"] .imgTagWrapper img')
+      || document.querySelector<HTMLImageElement>('#imageBlockContainer img:not(#sitbLogoImg)');
+
   return replaceInvisible(avatar?.src) ?? '';
 };
