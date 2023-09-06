@@ -28,3 +28,17 @@ export const getDescriptionAmazon = (): string => {
   }
   return textPoints.join('');
 };
+
+export const getDescriptionSephora = (): string => {
+  const script = document.querySelector<HTMLElement>('#linkStore')?.innerText;
+  if (!script) return '';
+  try {
+    const json = JSON.parse(script);
+    const description = json?.page?.product?.productDetails?.shortDescription;
+    if (!description) return '';
+
+    return description.replace(/<[^>]+>/g, '');
+  } catch (error) {
+    return '';
+  }
+};

@@ -55,7 +55,7 @@ export const Dashboard = () => {
               />)
       );
     }
-    if (currentUrl.includes('sephora')) {
+    if (currentUrl.includes('sephora.com')) {
       return (sephoraButtonsConfig
         .map((button) => <DashboardButton
               text={button.text}

@@ -8,10 +8,27 @@ import {
   getProductIdAmazon,
   getPriceAmazon,
   getProductDetailsAmazon,
-  OptionType, priceType, getFeaturesAmazon, featuresType, getGalleryItemsAmazon,
+  OptionType,
+  priceType,
+  getFeaturesAmazon,
+  featuresType,
+  getGalleryItemsAmazon,
+  productTitleSephora,
+  getAvatarSephora,
+  getBrandSephora,
+  getDepartmentsSephora,
+  getPriceSephora,
+  getSephoraOptions,
+  getDescriptionSephora,
+  getProductIdSephora, getGroupIdSephora,
 } from './parser';
 import { productSchema } from './validation';
 import { SOURCE_TYPES } from '../common/constants';
+
+export type productIdType = {
+  key: string
+  value: string
+}
 
 export type parsedObjectType = {
   name: string
@@ -22,7 +39,8 @@ export type parsedObjectType = {
   options: OptionType[]
   price?: priceType
   features: featuresType[]
-  productId: string
+  productId?: string
+  productIds?: productIdType[]
   dimension?: string
   groupId?: string
   manufacturer?: string
@@ -35,7 +53,8 @@ export type exportJsonType = {
   primaryImageURLs: string[]
   waivio_options: OptionType[]
   name: string
-  asins: string
+  asins?: string
+  waivio_product_ids?: productIdType[]
   categories: string[]
   descriptions?: string[]
   brand?: string
@@ -75,6 +94,7 @@ export type exportCSVType = {
   merchantLink?: string
   sizes?: string
   waivio_tags?: string
+  waivio_product_ids: string
   weight?: string
 }
 
@@ -110,10 +130,43 @@ const getProductFromAmazon = (): getProductReturnedType => {
   return { product: object };
 };
 
+const getProductFromSephora = (): getProductReturnedType => {
+  const { avatar, gallery } = getAvatarSephora();
+
+  const productId1 = getProductIdSephora();
+
+  const object: parsedObjectType = {
+    name: productTitleSephora(),
+    avatar,
+    brand: getBrandSephora(),
+    departments: getDepartmentsSephora(),
+    description: getDescriptionSephora(),
+    options: getSephoraOptions(),
+    price: getPriceSephora(),
+    productIds: [],
+    features: [],
+    imageURLs: gallery,
+    groupId: getGroupIdSephora(),
+  };
+  if (productId1) {
+    object.productIds?.push(productId1);
+  }
+
+  const validation = productSchema.validate(object);
+  if (validation.error) {
+    alert(validation.error.message);
+    return { error: validation.error };
+  }
+
+  return { product: object };
+};
+
 export const getProduct = (source: string): getProductReturnedType => {
   switch (source) {
     case SOURCE_TYPES.AMAZON:
       return getProductFromAmazon();
+    case SOURCE_TYPES.SEPHORA:
+      return getProductFromSephora();
     default: return { error: new Error('Source not found') };
   }
 };
@@ -124,12 +177,18 @@ export const formatToJsonObject = (object: parsedObjectType):exportJsonType => {
     waivio_options: object.options,
     name: object.name,
     categories: object.departments,
-    asins: object.productId,
     features: object.features,
   } as exportJsonType;
   if (object.description) {
     exportObject.descriptions = [object.description];
   }
+  if (object.productId) {
+    exportObject.asins = object.productId;
+  }
+  if (object.productIds) {
+    exportObject.waivio_product_ids = object.productIds;
+  }
+
   if (object.brand) {
     exportObject.brand = object.brand;
   }
@@ -185,6 +244,7 @@ export const formatToCsvObject = (object: parsedObjectType):exportCSVType => {
     primaryImageURLs: object.avatar,
     sizes: '',
     waivio_options: object.options.map((o) => `category:${o.category};${o.image ? `image:${o.image};` : ''} value:${o.value}*`).join(''),
+    waivio_product_ids: (object?.productIds ?? []).map((o) => `key:${o.key}; value:${o.value}*`).join(''),
     waivio_tags: '',
     weight: object.weight || '',
   } as exportCSVType;

@@ -1,4 +1,4 @@
-import { getAvatarAmazon } from './avatar';
+import { getAvatarAmazon, getAvatarSephora } from './avatar';
 import { make2dArray } from '../helpers/commonHelper';
 import { OPTION_SELECTOR } from '../constants';
 
@@ -16,7 +16,7 @@ const capitalizeEachWord = (string: string): string => {
   return arr.join(' ');
 };
 
-const getOptionObject = (category: string, value: string): OptionType => {
+const getOptionObject = (category: string, value: string, source = 'amazon'): OptionType => {
   const option = {
     category: capitalizeEachWord(category
       .trim()
@@ -24,8 +24,12 @@ const getOptionObject = (category: string, value: string): OptionType => {
       .replace(/  +/g, ' ')),
     value: value.trim(),
   } as OptionType;
-  if (option.category === 'Color') {
+  if (option.category === 'Color' && source === 'amazon') {
     option.image = getAvatarAmazon();
+  }
+  if (option.category === 'Color' && source === 'sephora') {
+    const { avatar } = getAvatarSephora();
+    option.image = avatar;
   }
   return option;
 };
@@ -96,6 +100,39 @@ export const getOptions = (): OptionType[] => {
     if (!category || !value) continue;
 
     productOptions.push(getOptionObject(category, value));
+  }
+
+  return productOptions;
+};
+
+export const getSephoraOptions = (): OptionType[] => {
+  const productOptions = [];
+  const mainOption = document
+    .querySelector<HTMLElement>('div[data-comp="SwatchDescription "]')?.innerText;
+  if (mainOption) {
+    const keyValueMain = mainOption.split(':');
+    productOptions.push(getOptionObject(keyValueMain[0], keyValueMain[1], 'sephora'));
+  }
+
+  const sizeLabel = document
+    .querySelector<HTMLElement>('span[data-at="sku_size_label"]')?.innerText;
+  if (sizeLabel) {
+    const sizeValue = sizeLabel.replace(/size/i, '');
+    productOptions.push(getOptionObject('Size', sizeValue));
+  }
+
+  const swatchGroup = Array.from(document.querySelectorAll<HTMLElement>('div[data-comp="SwatchGroup "]'));
+
+  if (swatchGroup.length <= 1) return productOptions;
+
+  const selectedElement = swatchGroup.find((element) => {
+    const buttonWithAriaLabelSelected = element
+      .querySelector<HTMLElement>('button[aria-selected="true"]');
+    return buttonWithAriaLabelSelected !== null;
+  });
+  if (selectedElement) {
+    const swatch = selectedElement.querySelector('p')?.innerText;
+    if (swatch) productOptions.push(getOptionObject('Product group', swatch));
   }
 
   return productOptions;

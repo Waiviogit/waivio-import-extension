@@ -18,10 +18,13 @@ export const productSchema = Joi.object().keys({
     });
     return errors;
   }),
-  productId: Joi.string().required(),
+  productId: Joi.string(),
+  productIds: Joi.array().min(1),
   options: Joi.array().items(Joi.object().keys({
     category: Joi.string().required(),
     value: Joi.string().required(),
     image: Joi.string(),
   })),
-}).options({ allowUnknown: true });
+})
+  .or('productId', 'productIds')
+  .options({ allowUnknown: true });
