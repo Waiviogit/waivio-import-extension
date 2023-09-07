@@ -16,3 +16,10 @@ export const productTitleSephora = (): string => {
   const title = nameElement?.innerText ?? '';
   return replaceInvisible(title);
 };
+
+export const productTitleWalmart = (): string => {
+  const nameElement = document.querySelector<HTMLElement>(NAME_SELECTOR.WALMART);
+  if (!nameElement) return '';
+  const title = nameElement?.innerText ?? '';
+  return replaceInvisible(title);
+};

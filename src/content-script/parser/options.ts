@@ -1,4 +1,4 @@
-import { getAvatarAmazon, getAvatarSephora } from './avatar';
+import { getAvatarAmazon, getAvatarSephora, getAvatarWalmart } from './avatar';
 import { make2dArray } from '../helpers/commonHelper';
 import { OPTION_SELECTOR } from '../constants';
 
@@ -29,6 +29,10 @@ const getOptionObject = (category: string, value: string, source = 'amazon'): Op
   }
   if (option.category === 'Color' && source === 'sephora') {
     const { avatar } = getAvatarSephora();
+    option.image = avatar;
+  }
+  if (option.category === 'Color' && source === 'walmart') {
+    const { avatar } = getAvatarWalmart();
     option.image = avatar;
   }
   return option;
@@ -133,6 +137,29 @@ export const getSephoraOptions = (): OptionType[] => {
   if (selectedElement) {
     const swatch = selectedElement.querySelector('p')?.innerText;
     if (swatch) productOptions.push(getOptionObject('Product group', swatch));
+  }
+
+  return productOptions;
+};
+
+export const getWalmartOptions = () => {
+  const productOptions = [];
+  const elements = [];
+  for (let i = 0; i < 10; i++) {
+    const element = document
+      .querySelectorAll<HTMLElement>(`div[data-testid="variant-group-${i}"] span`);
+    if (!element.length) break;
+    elements.push(element);
+  }
+  const variants = elements.map((element) => {
+    const category = element[0]?.innerText;
+    const value = element[1]?.innerText;
+
+    return [category, value];
+  });
+
+  for (const variant of variants) {
+    productOptions.push(getOptionObject(variant[0], variant[1], 'walmart'));
   }
 
   return productOptions;

@@ -28,6 +28,7 @@ export const DESCRIPTION_SELECTOR = {
 export const NAME_SELECTOR = {
   MAIN: '#productTitle',
   SEPHORA: '[data-at="product_name"]',
+  WALMART: '#main-title',
 };
 
 export const OPTION_SELECTOR = {

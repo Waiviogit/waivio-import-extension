@@ -24,3 +24,17 @@ export const getDepartmentsSephora = ():string[] => {
   }
   return departments;
 };
+
+export const getDepartmentsWalmart = ():string[] => {
+  const departments = [];
+  const elements = Array.from(
+    document.querySelectorAll<HTMLElement>('nav[aria-label="breadcrumb"] li'),
+  )
+    .map((el) => el?.innerText?.replace(/\//, ''));
+
+  for (const departmentElement of elements) {
+    if (departmentElement) departments.push(replaceInvisible(departmentElement));
+  }
+
+  return departments;
+};

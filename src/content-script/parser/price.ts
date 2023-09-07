@@ -78,3 +78,18 @@ export const getPriceSephora = (): priceType => {
   price.mostRecentPriceAmount = mostRecentPriceAmount;
   return price;
 };
+
+export const getPriceWalmart = (): priceType => {
+  const price = {
+    mostRecentPriceCurrency: '',
+    mostRecentPriceAmount: '',
+  };
+  const priceElement = document.querySelector<HTMLElement>('span[itemprop="price"]');
+  if (!priceElement) return price;
+  const prefix = extractCurrency(priceElement.innerText) as keyof typeof CURRENCY_PREFIX;
+  const mostRecentPriceCurrency = CURRENCY_PREFIX[prefix];
+  const mostRecentPriceAmount = extractNumericValue(priceElement.innerText);
+  price.mostRecentPriceCurrency = mostRecentPriceCurrency;
+  price.mostRecentPriceAmount = mostRecentPriceAmount;
+  return price;
+};

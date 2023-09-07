@@ -25,3 +25,22 @@ export const getGroupIdSephora = ():string => {
   if (!match[1]) return '';
   return match[1];
 };
+
+export const getProductIdWalmart = ():productIdType| undefined => {
+  const url = document.URL;
+  const match = url.match(/\/ip\/([^\/]+)\/(.+\d)/);
+  if (!match) return;
+  if (!match[2]) return;
+  return {
+    key: 'walmart',
+    value: match[2],
+  };
+};
+
+export const getGroupIdWalmart = ():string => {
+  const url = document.URL;
+  const match = url.match(/\/ip\/([^\/]+)\/(.+\d)/);
+  if (!match) return '';
+  if (!match[1]) return '';
+  return match[1];
+};

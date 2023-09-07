@@ -34,11 +34,19 @@ export const getDescriptionSephora = (): string => {
   if (!script) return '';
   try {
     const json = JSON.parse(script);
-    const description = json?.page?.product?.productDetails?.shortDescription;
-    if (!description) return '';
+    const description = json?.page?.product?.productDetails?.longDescription;
+    const description2 = json?.page?.product?.productDetails?.shortDescription;
+    if (!description && !description2) return '';
 
-    return description.replace(/<[^>]+>/g, '');
+    if (description) return description.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+    return description2.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
   } catch (error) {
     return '';
   }
+};
+
+export const getDescriptionWalmart = (): string => {
+  const description = document.querySelector<HTMLElement>('div[data-testid="product-description-content"]');
+  if (!description) return '';
+  return description.innerText;
 };

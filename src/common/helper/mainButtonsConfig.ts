@@ -101,6 +101,50 @@ export const sephoraButtonsConfig = [
   },
 ];
 
+export const walmartButtonsConfig = [
+  {
+    text: BUTTON_TEXT.CREATE_JSON,
+    onClick: async (event:Event): Promise<void> => (
+      sendMessageToContentScript(
+        event,
+        PARSE_COMMANDS.TO_JSON,
+        SOURCE_TYPES.WALMART,
+      )),
+    id: generateUniqueId(),
+  },
+  {
+    text: BUTTON_TEXT.CREATE_XLSX,
+    onClick: async (event:Event): Promise<void> => (
+      sendMessageToContentScript(
+        event,
+        PARSE_COMMANDS.TO_CSV,
+        SOURCE_TYPES.WALMART,
+      )),
+    id: generateUniqueId(),
+  },
+  {
+    text: BUTTON_TEXT.COPY_TO_CLIPBOARD,
+    onClick: async (event:Event): Promise<void> => (
+      sendMessageToContentScript(
+        event,
+        PARSE_COMMANDS.TO_CLIPBOARD,
+        SOURCE_TYPES.WALMART,
+      )),
+    id: generateUniqueId(),
+  },
+  {
+    text: BUTTON_TEXT.UPLOAD_TO_WAIVIO,
+    onClick: async (event:Event): Promise<void> => (
+      sendMessageToContentScript(
+        event,
+        PARSE_COMMANDS.IMPORT_WAIVIO,
+        SOURCE_TYPES.WALMART,
+      )
+    ),
+    id: generateUniqueId(),
+  },
+];
+
 export const youtubeButtonConfig = [
   {
     text: BUTTON_TEXT.CREATE_POST_DRAFT,

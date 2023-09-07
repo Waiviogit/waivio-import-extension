@@ -37,3 +37,18 @@ export const getBrandSephora = (): string => {
   const brand = brandElement?.innerText ?? '';
   return replaceInvisible(brand);
 };
+
+export const getBrandWalmart = (): string => {
+  const elements = document
+    .querySelectorAll('section[aria-describedby="delivery-instructions"]');
+  if (!elements.length) return '';
+  if (!elements[1]) return '';
+
+  const features = Array.from(
+    elements[1].querySelectorAll<HTMLElement>('.nt1 .pb2'),
+  )
+    .map((el) => el.innerText);
+  const brand = features.find((el) => /brand/i.test(el));
+  if (!brand) return '';
+  return replaceInvisible(brand.split('\n')[1]);
+};

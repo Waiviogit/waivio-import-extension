@@ -20,7 +20,17 @@ import {
   getPriceSephora,
   getSephoraOptions,
   getDescriptionSephora,
-  getProductIdSephora, getGroupIdSephora,
+  getProductIdSephora,
+  getGroupIdSephora,
+  getAvatarWalmart,
+  getGroupIdWalmart,
+  productTitleWalmart,
+  getDepartmentsWalmart,
+  getDescriptionWalmart,
+  getProductIdWalmart,
+  getWalmartOptions,
+  getPriceWalmart,
+  getBrandWalmart, getFeaturesWalmart,
 } from './parser';
 import { productSchema } from './validation';
 import { SOURCE_TYPES } from '../common/constants';
@@ -161,12 +171,45 @@ const getProductFromSephora = (): getProductReturnedType => {
   return { product: object };
 };
 
+const getProductFromWalmart = (): getProductReturnedType => {
+  const { avatar, gallery } = getAvatarWalmart();
+
+  const productId1 = getProductIdWalmart();
+
+  const object: parsedObjectType = {
+    name: productTitleWalmart(),
+    avatar,
+    brand: getBrandWalmart(),
+    departments: getDepartmentsWalmart(),
+    description: getDescriptionWalmart(),
+    options: getWalmartOptions(),
+    price: getPriceWalmart(),
+    productIds: [],
+    features: getFeaturesWalmart(),
+    imageURLs: gallery,
+    groupId: getGroupIdWalmart(),
+  };
+  if (productId1) {
+    object.productIds?.push(productId1);
+  }
+
+  const validation = productSchema.validate(object);
+  if (validation.error) {
+    alert(validation.error.message);
+    return { error: validation.error };
+  }
+
+  return { product: object };
+};
+
 export const getProduct = (source: string): getProductReturnedType => {
   switch (source) {
     case SOURCE_TYPES.AMAZON:
       return getProductFromAmazon();
     case SOURCE_TYPES.SEPHORA:
       return getProductFromSephora();
+    case SOURCE_TYPES.WALMART:
+      return getProductFromWalmart();
     default: return { error: new Error('Source not found') };
   }
 };

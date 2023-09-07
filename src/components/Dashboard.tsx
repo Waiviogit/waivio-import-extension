@@ -2,7 +2,9 @@ import { useEffect, useState } from 'react';
 import { StyledDashboard } from './Dashboard.styled';
 import { DashboardButton } from './DasboardButton';
 import manifest from '../../extension/manifest.json';
-import { mainButtonsConfig, sephoraButtonsConfig, youtubeButtonConfig } from '../common/helper';
+import {
+  mainButtonsConfig, sephoraButtonsConfig, walmartButtonsConfig, youtubeButtonConfig,
+} from '../common/helper';
 import { getCurrentTab } from '../services/chromeHelper';
 
 export const Dashboard = () => {
@@ -63,6 +65,16 @@ export const Dashboard = () => {
               id={button.id}
               key={button.id}
           />)
+      );
+    }
+    if (currentUrl.includes('walmart.com')) {
+      return (walmartButtonsConfig
+        .map((button) => <DashboardButton
+                  text={button.text}
+                  onClick={button.onClick}
+                  id={button.id}
+                  key={button.id}
+              />)
       );
     }
     return (

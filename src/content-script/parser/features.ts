@@ -50,3 +50,31 @@ export const getFeaturesAmazon = () => {
   }
   return features;
 };
+
+export const getFeaturesWalmart = () => {
+  const features = [] as featuresType[];
+  const elements = document
+    .querySelectorAll('section[aria-describedby="delivery-instructions"]');
+  if (!elements.length) return features;
+  if (!elements[1]) return features;
+
+  const featuresStrings = Array.from(
+    elements[1].querySelectorAll<HTMLElement>('.nt1 .pb2'),
+  )
+    .map((el) => el.innerText)
+    .filter(
+      (el) => !/brand/i.test(el)
+            && !/manufacturer/i.test(el)
+            && !/size/i.test(el)
+            && !/color/i.test(el),
+    );
+
+  for (const featuresString of featuresStrings) {
+    const detail = featuresString.split('\n');
+    features.push({
+      key: replaceInvisible(detail[0]).replace(/:/g, '').trim(),
+      value: [replaceInvisible(detail[1])],
+    });
+  }
+  return features;
+};
