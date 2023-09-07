@@ -51,10 +51,68 @@ export const getFeaturesAmazon = () => {
   return features;
 };
 
+const getRatingSephora = ():string => {
+  const ratingMap = {
+    '0 stars': '0',
+    '0.5 stars': '0.5',
+    '1 stars': '1',
+    '1.5 stars': '1.5',
+    '2 stars': '2',
+    '2.5 stars': '2.5',
+    '3 stars': '3',
+    '3.5 stars': '3.5',
+    '4 stars': '4',
+    '4.5 stars': '4.5',
+    '5 stars': '5',
+  };
+
+  for (const ratingMapElement of Object.keys(ratingMap)) {
+    const element = document
+      .querySelector(`a[data-comp="ReviewsAnchor StyledComponent BaseComponent "] span[aria-label="${ratingMapElement}"]`);
+    if (element) { // @ts-ignore
+      return ratingMap[ratingMapElement];
+    }
+  }
+  return '0';
+};
+
+export const getFeaturesSephora = () => {
+  const features = [] as featuresType[];
+  features.push({
+    key: 'Overall Rating',
+    value: [getRatingSephora()],
+  });
+
+  return features;
+};
+
+const getRatingWalmart = (): featuresType => {
+  const ratingElement = {
+    key: 'Overall Rating',
+    value: [] as string [],
+  };
+  const rating = document
+    .querySelector<HTMLElement>('div[data-testid="reviews-and-ratings"] span.rating-number')?.innerText;
+  if (!rating) {
+    ratingElement.value.push('0');
+    return ratingElement;
+  }
+  const match = rating.match(/\(([^)]*)\)/);
+
+  if (!match) {
+    ratingElement.value.push('0');
+    return ratingElement;
+  }
+  ratingElement.value.push(match[1]);
+  return ratingElement;
+};
+
 export const getFeaturesWalmart = () => {
   const features = [] as featuresType[];
   const elements = document
     .querySelectorAll('section[aria-describedby="delivery-instructions"]');
+
+  features.push(getRatingWalmart());
   if (!elements.length) return features;
   if (!elements[1]) return features;
 

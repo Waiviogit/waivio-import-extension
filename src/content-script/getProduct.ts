@@ -30,7 +30,7 @@ import {
   getProductIdWalmart,
   getWalmartOptions,
   getPriceWalmart,
-  getBrandWalmart, getFeaturesWalmart,
+  getBrandWalmart, getFeaturesWalmart, getFeaturesSephora,
 } from './parser';
 import { productSchema } from './validation';
 import { SOURCE_TYPES } from '../common/constants';
@@ -154,7 +154,7 @@ const getProductFromSephora = (): getProductReturnedType => {
     options: getSephoraOptions(),
     price: getPriceSephora(),
     productIds: [],
-    features: [],
+    features: getFeaturesSephora(),
     imageURLs: gallery,
     groupId: getGroupIdSephora(),
   };
