@@ -20,6 +20,18 @@ export const getProductIdSephora = ():productIdType| undefined => {
   };
 };
 
+export const getProductIdSephoraSku = ():productIdType| undefined => {
+  const url = document.URL;
+
+  const sku = url.match(/skuId=(\d+)/);
+
+  if (!sku) return;
+  return {
+    key: 'skuId',
+    value: sku[1],
+  };
+};
+
 export const getGroupIdSephora = ():string => {
   const url = document.URL;
   const product = url.match(/P\d+/);

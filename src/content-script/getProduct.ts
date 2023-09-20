@@ -30,7 +30,7 @@ import {
   getProductIdWalmart,
   getWalmartOptions,
   getPriceWalmart,
-  getBrandWalmart, getFeaturesWalmart, getFeaturesSephora,
+  getBrandWalmart, getFeaturesWalmart, getFeaturesSephora, getProductIdSephoraSku,
 } from './parser';
 import { productSchema } from './validation';
 import { SOURCE_TYPES } from '../common/constants';
@@ -144,6 +144,7 @@ const getProductFromSephora = (): getProductReturnedType => {
   const { avatar, gallery } = getAvatarSephora();
 
   const productId1 = getProductIdSephora();
+  const productId2 = getProductIdSephoraSku();
 
   const object: parsedObjectType = {
     name: productTitleSephora(),
@@ -160,6 +161,9 @@ const getProductFromSephora = (): getProductReturnedType => {
   };
   if (productId1) {
     object.productIds?.push(productId1);
+  }
+  if (productId2) {
+    object.productIds?.push(productId2);
   }
 
   const validation = productSchema.validate(object);
