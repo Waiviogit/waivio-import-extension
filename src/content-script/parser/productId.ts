@@ -9,26 +9,28 @@ export const getProductIdAmazon = (): string => {
 
 export const getProductIdSephora = ():productIdType| undefined => {
   const url = document.URL;
-  const match = url.match(/\/product\/(.*?)(\?skuId=\d+)/);
-  if (!match) return;
-  if (!match[2]) return;
+
+  const product = url.match(/P\d+/);
+  const sku = url.match(/\?skuId=\d+/);
+  if (!product) return;
+  if (!sku) return;
   return {
     key: 'sephora.com',
-    value: `${match[1]}${match[2]}`,
+    value: `${product[0]}${sku[0]}`,
   };
 };
 
 export const getGroupIdSephora = ():string => {
   const url = document.URL;
-  const match = url.match(/\/product\/(.*?)(\?skuId=\d+)/);
-  if (!match) return '';
-  if (!match[1]) return '';
-  return match[1];
+  const product = url.match(/P\d+/);
+  if (!product) return '';
+
+  return product[0];
 };
 
 export const getProductIdWalmart = ():productIdType| undefined => {
   const url = document.URL;
-  const match = url.match(/\/ip\/([^\/]+)\/(.+\d)/);
+  const match = url.match(/\/ip\/([^\/]+)\/(.\d+)/);
   if (!match) return;
   if (!match[2]) return;
   return {
@@ -39,7 +41,7 @@ export const getProductIdWalmart = ():productIdType| undefined => {
 
 export const getGroupIdWalmart = ():string => {
   const url = document.URL;
-  const match = url.match(/\/ip\/([^\/]+)\/(.+\d)/);
+  const match = url.match(/\/ip\/([^\/]+)\/(.\d+)/);
   if (!match) return '';
   if (!match[1]) return '';
   return match[1];
