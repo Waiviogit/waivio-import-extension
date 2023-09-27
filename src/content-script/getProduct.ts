@@ -30,7 +30,10 @@ import {
   getProductIdWalmart,
   getWalmartOptions,
   getPriceWalmart,
-  getBrandWalmart, getFeaturesWalmart, getFeaturesSephora, getProductIdSephoraSku,
+  getBrandWalmart,
+  getFeaturesWalmart,
+  getFeaturesSephora,
+  getPossibleIdsWalmart,
 } from './parser';
 import { productSchema } from './validation';
 import { SOURCE_TYPES } from '../common/constants';
@@ -144,7 +147,6 @@ const getProductFromSephora = (): getProductReturnedType => {
   const { avatar, gallery } = getAvatarSephora();
 
   const productId1 = getProductIdSephora();
-  const productId2 = getProductIdSephoraSku();
 
   const object: parsedObjectType = {
     name: productTitleSephora(),
@@ -162,9 +164,6 @@ const getProductFromSephora = (): getProductReturnedType => {
   if (productId1) {
     object.productIds?.push(productId1);
   }
-  if (productId2) {
-    object.productIds?.push(productId2);
-  }
 
   const validation = productSchema.validate(object);
   if (validation.error) {
@@ -179,6 +178,9 @@ const getProductFromWalmart = (): getProductReturnedType => {
   const { avatar, gallery } = getAvatarWalmart();
 
   const productId1 = getProductIdWalmart();
+
+  const allPossibleIds = getPossibleIdsWalmart();
+  console.log(allPossibleIds);
 
   const object: parsedObjectType = {
     name: productTitleWalmart(),
@@ -195,6 +197,10 @@ const getProductFromWalmart = (): getProductReturnedType => {
   };
   if (productId1) {
     object.productIds?.push(productId1);
+  }
+
+  if (allPossibleIds.length) {
+    object.productIds?.push(...allPossibleIds);
   }
 
   const validation = productSchema.validate(object);
