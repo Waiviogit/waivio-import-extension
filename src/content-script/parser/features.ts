@@ -1,5 +1,6 @@
 import { DETAILS_SELECTOR } from '../constants';
 import { make2dArray, replaceInvisible } from '../helpers/commonHelper';
+import { getProductIdSephoraSku } from './productId';
 
 const modelRegEx = /model number/;
 
@@ -82,6 +83,14 @@ export const getFeaturesSephora = () => {
     key: 'Overall Rating',
     value: [getRatingSephora()],
   });
+
+  const sku = getProductIdSephoraSku();
+  if (sku) {
+    features.push({
+      key: sku.key,
+      value: [sku.value],
+    });
+  }
 
   return features;
 };
