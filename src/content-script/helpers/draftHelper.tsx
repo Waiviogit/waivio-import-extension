@@ -52,15 +52,51 @@ const getAuthorAndLink = (): authorLinkType => {
   };
 };
 
+const extractVideoId = (url: string): string => {
+  const regex = /watch\?v=([^&]+)/;
+  const match = url.match(regex);
+  if (match && match[1]) {
+    return match[1];
+  }
+  return '';
+};
+
+const getCaptionTracksAlternative = (): captionTrackType[] => {
+  const videoId = extractVideoId(document.URL);
+  const scriptInnerTexts = Array.from(document.querySelectorAll('script')).map((el) => el.innerText);
+  const regex = new RegExp(`"baseUrl":"https://www.youtube.com/api/timedtext\\?v=${videoId}.*?"isTranslatable":true.*?}`);
+
+  const script = scriptInnerTexts.find((el) => regex.test(el));
+
+  const regex2 = /"captionTracks":(.*?)]/;
+
+  const found = regex2.exec(script || '');
+  if (!found) return [];
+
+  const [, match] = found;
+
+  try {
+    const captionTracks = JSON.parse(`${match}]`);
+    return captionTracks;
+  } catch (error) {
+    return [];
+  }
+};
+
 const getCaptionTracks = (): captionTrackType[] => {
   const regex = /({"captionTracks":.*isTranslatable":(true|false)}])/;
   const scriptInnerTexts = Array.from(document.querySelectorAll('script')).map((el) => el.innerText);
   const script = scriptInnerTexts.find((el) => regex.test(el));
   const found = regex.exec(script || '');
-  if (!found) return [];
+  if (!found) return getCaptionTracksAlternative();
   const [match] = found;
-  const { captionTracks } = JSON.parse(`${match}}`);
-  return captionTracks;
+
+  try {
+    const { captionTracks } = JSON.parse(`${match}}`);
+    return captionTracks;
+  } catch (error) {
+    return getCaptionTracksAlternative();
+  }
 };
 
 const getSubsByUrl = async (url: string): Promise<responseType> => {
@@ -134,15 +170,6 @@ const formatGptAnswer = ({
 
   const linkToAuthorAndChannel = `YouTube channel - ${author}: ${linkToChannel}`;
   return `${formatted}\n${linkToAuthorAndChannel}`;
-};
-
-const extractVideoId = (url: string): string => {
-  const regex = /watch\?v=([^&]+)/;
-  const match = url.match(regex);
-  if (match && match[1]) {
-    return match[1];
-  }
-  return '';
 };
 
 export const createDraft = async (): Promise<void> => {
