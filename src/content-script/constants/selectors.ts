@@ -36,7 +36,7 @@ export const OPTION_SELECTOR = {
   OPTION_NAME: '.a-form-label',
   OPTION_VALUE: '.selection',
   INLINE_OPTION: '#twister-plus-inline-twister-card span div div div span:not(.inline-twister-dim-title-value-truncate)',
-  TMM_OPTION: '#tmmSwatches span span span span:not(.olp-from, .a-declarative, .a-color-base, .kcpAppsPopOver, .price, .a-color-price, .a-size-base, .kcpAppBaseBox_, .audible_mm_title, .a-color-secondary, .audible_mm_price)',
+  TMM_OPTION: '#tmmSwatches .selected span span span span:not(.olp-from, .a-declarative, .a-color-base, .kcpAppsPopOver, .price, .a-color-price, .a-size-base, .kcpAppBaseBox_, .audible_mm_title, .a-color-secondary, .audible_mm_price)',
 };
 
 export const DETAILS_SELECTOR = {
