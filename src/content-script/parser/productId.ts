@@ -5,7 +5,9 @@ const PRODUCT_ID_TYPES = ['ean', 'ean8', 'ean13', 'isbn10', 'isbn13', 'asin'];
 
 export const getProductIdAmazon = (): string => {
   const url = document.URL;
-  const match = url.match(/\/dp\/([A-Z0-9]+)/);
+  let match = url.match(/\/dp\/([A-Z0-9]+)/);
+  if (!match) match = url.match(/\/product\/([A-Z0-9]+)/);
+
   return match ? replaceInvisible(match[1]) : '';
 };
 

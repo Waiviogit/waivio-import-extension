@@ -38,7 +38,7 @@ const notValidPageAmazonAction = (url: string):void => {
 
 const validatePage = (url: string, source: string):boolean => {
   const regexBySource = {
-    [SOURCE_TYPES.AMAZON]: /^https:\/\/www\.amazon[^\/]+\/dp\/[A-Z0-9]{10}(?!\/)/,
+    [SOURCE_TYPES.AMAZON]: /(^https:\/\/www\.amazon[^\/]+\/dp\/[A-Z0-9]{10}(?!\/)|^https:\/\/www\.amazon[^\/]+\/gp\/product\/[A-Z0-9]{10})/,
     [SOURCE_TYPES.SEPHORA]: /^https:\/\/www\.sephora[^\/]+\//,
     [SOURCE_TYPES.WALMART]: /^https:\/\/www\.walmart[^\/]+\//,
   };
