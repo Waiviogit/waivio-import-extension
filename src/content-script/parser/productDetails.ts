@@ -41,7 +41,7 @@ const getGroupIdFromAllOptions = ():string => {
   let match = url.match(/\/dp\/([A-Z0-9]+)/);
   if (!match) match = url.match(/\/product\/([A-Z0-9]+)/);
 
-  if (match && match[1])asins.push(match[1]);
+  if (match && match[1] && !asins.includes(match[1]))asins.push(match[1]);
 
   // Custom alphanumeric sorting
   asins.sort((a, b) => a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' }));
