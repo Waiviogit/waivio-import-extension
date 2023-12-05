@@ -27,6 +27,30 @@ const getGroupIdFromScripts = ():string => {
   return all[1] || '';
 };
 
+// for books
+const getGroupIdFromAllOptions = ():string => {
+  const asins = Array.from(document.querySelectorAll<HTMLLinkElement>('li.swatchElement a'))
+    .map((el) => el.href)
+    .filter((el) => el.includes('dp'))
+    .map((el) => { const match = el.match(/\/dp\/([A-Z0-9]+)/); return match ? match[1] : ''; })
+    .filter((el, index, self) => el && index === self.indexOf(el));
+
+  if (!asins.length) return '';
+
+  const url = document.URL;
+  let match = url.match(/\/dp\/([A-Z0-9]+)/);
+  if (!match) match = url.match(/\/product\/([A-Z0-9]+)/);
+
+  if (match && match[1])asins.push(match[1]);
+
+  // Custom alphanumeric sorting
+  asins.sort((a, b) => a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' }));
+
+  const asinsString = asins.join('');
+
+  return asinsString;
+};
+
 const constructDetailFrom2dArr = (details: string[][]): productDetailsType => {
   const productDetails = {} as productDetailsType;
   for (const detail of details) {
@@ -46,6 +70,11 @@ const constructDetailFrom2dArr = (details: string[][]): productDetailsType => {
 
   const groupIdScripts = getGroupIdFromScripts();
   if (groupIdScripts) productDetails.groupId = groupIdScripts;
+
+  // special groupId for books
+  const groupIdOptions = getGroupIdFromAllOptions();
+  if (groupIdOptions) productDetails.groupId = groupIdOptions;
+
   if (!productDetails.weight && productDetails.dimension) {
     const [, weight] = productDetails.dimension.split(';');
     if (weight) productDetails.weight = weight;
