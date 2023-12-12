@@ -30,6 +30,22 @@ const getRating = (): featuresType => {
   return ratingElement;
 };
 
+const getPublisherFromDetails = ():string => {
+  const details = Array.from(document.querySelectorAll<HTMLElement>(DETAILS_SELECTOR.MAIN));
+  if (!details?.length) return '';
+  const arr1d = details.map((el) => el?.innerText);
+  const arr2d = make2dArray(arr1d);
+  for (const detail of arr2d) {
+    if (/publisher/.test(detail[0].toLocaleLowerCase())) {
+      const str = replaceInvisible(detail[1]);
+
+      return str.replace(/\(([^)]*)\)/, '').trim();
+    }
+  }
+
+  return '';
+};
+
 export const getFeaturesAmazon = () => {
   const features = [] as featuresType[];
   features.push(getRating());
@@ -49,6 +65,24 @@ export const getFeaturesAmazon = () => {
       });
     }
   }
+
+  // features for books
+  const authors = Array.from(document.querySelectorAll<HTMLElement>('#bylineInfo span.author a'))
+    .map((el) => el?.innerText);
+  if (authors.length) {
+    features.push({
+      key: 'Author',
+      value: authors,
+    });
+  }
+  const publisher = getPublisherFromDetails();
+  if (publisher) {
+    features.push({
+      key: 'publisher',
+      value: [publisher],
+    });
+  }
+
   return features;
 };
 
