@@ -29,8 +29,12 @@ const getGroupIdFromScripts = ():string => {
 
 // for books
 const getGroupIdFromAllOptions = ():string => {
-  const asins = Array.from(document.querySelectorAll<HTMLLinkElement>('li.swatchElement a'))
-    .map((el) => el.href)
+  let refs = Array.from(document.querySelectorAll<HTMLLinkElement>('li.swatchElement a'));
+  if (!refs.length) {
+    refs = Array.from(document.querySelectorAll<HTMLLinkElement>('#tmmSwatches a'));
+  }
+
+  const asins = refs.map((el) => el.href)
     .filter((el) => el.includes('dp'))
     .map((el) => { const match = el.match(/\/dp\/([A-Z0-9]+)/); return match ? match[1] : ''; })
     .filter((el, index, self) => el && index === self.indexOf(el));
