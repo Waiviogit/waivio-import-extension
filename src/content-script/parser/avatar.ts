@@ -8,6 +8,12 @@ export const getAvatarAmazon = () => {
   const avatar = document.querySelector<HTMLImageElement>('li[data-csa-c-posy="1"] .imgTagWrapper img')
       || document.querySelector<HTMLImageElement>('#imageBlockContainer img:not(#sitbLogoImg)');
 
+  if (!avatar?.src) {
+    const audiobookAvatar = document.querySelector<HTMLImageElement>('#audibleimageblock_feature_div img')?.src;
+
+    return audiobookAvatar ?? '';
+  }
+
   return replaceInvisible(avatar?.src) ?? '';
 };
 

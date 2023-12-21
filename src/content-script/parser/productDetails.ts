@@ -28,7 +28,27 @@ const getGroupIdFromScripts = ():string => {
 };
 
 // for books
+
+const getKindleAsin = ():string => {
+  const kindleUrl = document.querySelector<HTMLLinkElement>('#tmm-grid-swatch-KINDLE a')?.href;
+  if (!kindleUrl) return '';
+  // eslint-disable-next-line no-script-url
+  if (kindleUrl === 'javascript:void(0)') {
+    const url = document.URL;
+    let match = url.match(/\/dp\/([A-Z0-9]+)/);
+    if (!match) match = url.match(/\/product\/([A-Z0-9]+)/);
+    if (match && match[1]) return match[1];
+    return '';
+  }
+
+  const match = kindleUrl.match(/\/dp\/([A-Z0-9]+)/);
+  return match ? match[1] : '';
+};
+
 const getGroupIdFromAllOptions = ():string => {
+  const kindleAsin = getKindleAsin();
+  if (kindleAsin) return `GID_${kindleAsin}`;
+
   let refs = Array.from(document.querySelectorAll<HTMLLinkElement>('li.swatchElement a'));
   if (!refs.length) {
     refs = Array.from(document.querySelectorAll<HTMLLinkElement>('#tmmSwatches a'));

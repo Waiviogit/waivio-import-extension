@@ -27,7 +27,11 @@ export const downloadToWaivio = async (source: string): Promise<void> => {
   if (!exportObj || error) return;
   const exportName = randomNameGenerator(8);
 
-  const objectType = exportObj.departments.includes('Books') ? 'book' : 'product';
+  const objectType = exportObj.departments
+    .some((el) => ['Kindle Store', 'Books', 'Audible Books & Originals'].includes(el))
+    ? 'book'
+    : 'product';
+
   const backgroundResponse = await chrome.runtime.sendMessage({ action: 'getCookies', payload: '.waivio.com' });
   if (!backgroundResponse.cookies || !backgroundResponse.cookies.length) return;
   const cookies = backgroundResponse.cookies as Cookie[];
