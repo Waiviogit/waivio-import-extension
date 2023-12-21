@@ -44,7 +44,7 @@ const getTmmOptions = () => {
   const options = Array
     .from(document.querySelectorAll<HTMLElement>(OPTION_SELECTOR.TMM_OPTION))
     .map((el) => el.innerText.trim())
-    .filter((el) => !!el && !/free/.test(el.toLowerCase()))
+    .filter((el) => !!el && !/(free)|(membership trial)|(available instantly)/i.test(el.toLowerCase()))
     .filter((el, index, self) => index === self.indexOf(el));
 
   for (const option of options) {
