@@ -8,6 +8,8 @@ export type OptionType = {
   image?: string
 }
 
+const optionsFilter = (el: OptionType) => !/(unavailable|stock)/ig.test(el.category);
+
 const capitalizeEachWord = (string: string): string => {
   const arr = string.split(' ');
   for (let i = 0; i < arr.length; i++) {
@@ -93,7 +95,10 @@ const getInlineOptions = (): OptionType[] => {
 
 export const getOptions = (): OptionType[] => {
   const options = Array.from(document.querySelectorAll<HTMLElement>(OPTION_SELECTOR.TWISTER_ID));
-  if (!options.length) return getInlineOptions();
+  if (!options.length) {
+    const productOptions = getInlineOptions();
+    return productOptions.filter(optionsFilter);
+  }
 
   const productOptions = [];
   for (const option of options) {
@@ -106,7 +111,7 @@ export const getOptions = (): OptionType[] => {
     productOptions.push(getOptionObject(category, value));
   }
 
-  return productOptions;
+  return productOptions.filter(optionsFilter);
 };
 
 export const getSephoraOptions = (): OptionType[] => {
