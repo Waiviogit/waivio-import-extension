@@ -3,6 +3,9 @@ import { make2dArray, replaceInvisible } from '../helpers/commonHelper';
 import { getProductIdSephoraSku } from './productId';
 
 const modelRegEx = /model number/;
+const languageRegEx = /language/i;
+const printLengthRegEx = /print length/i;
+const publicationDateRegEx = /publication date/i;
 
 export type featuresType = {
   key: string,
@@ -61,6 +64,27 @@ export const getFeaturesAmazon = () => {
     if (modelRegEx.test(detail[0].toLocaleLowerCase())) {
       features.push({
         key: replaceInvisible(detail[0]).replace(/:/g, '').trim(),
+        value: [replaceInvisible(detail[1])],
+      });
+      continue;
+    }
+    if (languageRegEx.test(detail[0].toLocaleLowerCase())) {
+      features.push({
+        key: 'language',
+        value: [replaceInvisible(detail[1])],
+      });
+      continue;
+    }
+    if (printLengthRegEx.test(detail[0].toLocaleLowerCase())) {
+      features.push({
+        key: 'pages',
+        value: [replaceInvisible(detail[1])],
+      });
+      continue;
+    }
+    if (publicationDateRegEx.test(detail[0].toLocaleLowerCase())) {
+      features.push({
+        key: 'publicationDate',
         value: [replaceInvisible(detail[1])],
       });
     }
