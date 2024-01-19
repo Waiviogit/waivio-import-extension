@@ -3,7 +3,7 @@ import { StyledDashboard } from './Dashboard.styled';
 import { DashboardButton } from './DasboardButton';
 import manifest from '../../extension/manifest.json';
 import {
-  mainButtonsConfig, sephoraButtonsConfig, walmartButtonsConfig, youtubeButtonConfig,
+  mainButtonsConfig, openstreetmapButtonConfig, sephoraButtonsConfig, walmartButtonsConfig, youtubeButtonConfig,
 } from '../common/helper';
 import { getCurrentTab } from '../services/chromeHelper';
 
@@ -69,6 +69,17 @@ export const Dashboard = () => {
     }
     if (currentUrl.includes('walmart.com')) {
       return (walmartButtonsConfig
+        .map((button) => <DashboardButton
+                  text={button.text}
+                  onClick={button.onClick}
+                  id={button.id}
+                  key={button.id}
+              />)
+      );
+    }
+
+    if (currentUrl.includes('openstreetmap.org')) {
+      return (openstreetmapButtonConfig
         .map((button) => <DashboardButton
                   text={button.text}
                   onClick={button.onClick}

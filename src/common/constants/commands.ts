@@ -4,6 +4,7 @@ export const PARSE_COMMANDS = {
   TO_CLIPBOARD: 'to_clipboard',
   SCAN_ASINS: 'scan_asins',
   IMPORT_WAIVIO: 'import_waivio',
+  IMPORT_WAIVIO_OPENSTREETMAP: 'import_waivio_openstreetmap',
   CREATE_DRAFT: 'create_draft',
 };
 

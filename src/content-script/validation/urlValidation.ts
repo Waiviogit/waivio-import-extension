@@ -75,6 +75,16 @@ const validatePageForYoutube = (url: string):boolean => {
   return result;
 };
 
+const validatePageForOpenstreetmap = (url: string):boolean => {
+  const regex = /(^https?:\/\/(?:www\.)?openstreetmap\.org\/node\/[0-9]|^https?:\/\/(?:www\.)?openstreetmap\.org\/way\/[0-9])/;
+
+  const result = regex.test(url);
+  if (!result) {
+    alert('The URL must be openstreetmap business, example: https://www.openstreetmap.org/node/338486362#map=18/52.23000/21.00375');
+  }
+  return result;
+};
+
 export const urlValidation = (url: string, message: string, source: string):boolean => {
   const validationType = {
     [PARSE_COMMANDS.TO_JSON]: validatePage,
@@ -83,6 +93,7 @@ export const urlValidation = (url: string, message: string, source: string):bool
     [PARSE_COMMANDS.SCAN_ASINS]: validatePageForAsin,
     [PARSE_COMMANDS.IMPORT_WAIVIO]: validatePage,
     [PARSE_COMMANDS.CREATE_DRAFT]: validatePageForYoutube,
+    [PARSE_COMMANDS.IMPORT_WAIVIO_OPENSTREETMAP]: validatePageForOpenstreetmap,
   };
   const type = message as keyof typeof PARSE_COMMANDS;
 

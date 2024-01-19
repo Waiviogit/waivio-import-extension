@@ -153,3 +153,12 @@ export const youtubeButtonConfig = [
     id: generateUniqueId(),
   },
 ];
+
+export const openstreetmapButtonConfig = [
+  {
+    text: BUTTON_TEXT.UPLOAD_TO_WAIVIO,
+    onClick: async (event:Event): Promise<void> => (
+      sendMessageToContentScript(event, PARSE_COMMANDS.IMPORT_WAIVIO_OPENSTREETMAP)),
+    id: generateUniqueId(),
+  },
+];
