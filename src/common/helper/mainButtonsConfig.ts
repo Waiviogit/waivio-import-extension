@@ -161,4 +161,14 @@ export const openstreetmapButtonConfig = [
       sendMessageToContentScript(event, PARSE_COMMANDS.IMPORT_WAIVIO_OPENSTREETMAP)),
     id: generateUniqueId(),
   },
+  {
+    text: BUTTON_TEXT.CREATE_JSON,
+    onClick: async (event:Event): Promise<void> => (
+      sendMessageToContentScript(
+        event,
+        PARSE_COMMANDS.TO_JSON,
+        SOURCE_TYPES.OPENSTREETMAP,
+      )),
+    id: generateUniqueId(),
+  },
 ];

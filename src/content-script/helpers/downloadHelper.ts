@@ -6,6 +6,8 @@ import {
   getAsinsFromPage,
 } from './scanAsinHelper';
 import { randomNameGenerator } from './commonHelper';
+import { SOURCE_TYPES } from '../../common/constants';
+import formBusinessObject from '../openstreetmap/formBusinessObject';
 
 export const stingToClipboard = (text: string) :void => {
   const tempInput = document.createElement('textarea');
@@ -30,17 +32,28 @@ const regularFileDownload = (uriComponent : string, fileName: string, format: st
 };
 
 export const downloadObjectAsJson = (source: string): void => {
-  const { product: exportObj, error } = getProduct(source);
-  if (!exportObj || error) return;
   const exportName = randomNameGenerator(8);
 
-  const jsonFormat = formatToJsonObject(exportObj);
+  if (![SOURCE_TYPES.OPENSTREETMAP].includes(source)) {
+    const { product: exportObj, error } = getProduct(source);
+    if (!exportObj || error) return;
+    const jsonFormat = formatToJsonObject(exportObj);
+    regularFileDownload(
+      JSON.stringify(jsonFormat),
+      exportName,
+      'json',
+    );
+    return;
+  }
 
-  regularFileDownload(
-    JSON.stringify(jsonFormat),
-    exportName,
-    'json',
-  );
+
+  formBusinessObject()
+    .then((result) => regularFileDownload(
+      JSON.stringify(result),
+      exportName,
+      'json',
+    ))
+    .catch((e) => alert('error downloading json'));
 };
 
 export const copyToClipboard = (source: string): void => {

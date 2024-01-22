@@ -41,6 +41,7 @@ const validatePage = (url: string, source: string):boolean => {
     [SOURCE_TYPES.AMAZON]: /(^https:\/\/www\.amazon[^\/]+\/dp\/[A-Z0-9]{10}(?!\/)|^https:\/\/www\.amazon[^\/]+\/gp\/product\/[A-Z0-9]{10})/,
     [SOURCE_TYPES.SEPHORA]: /^https:\/\/www\.sephora[^\/]+\//,
     [SOURCE_TYPES.WALMART]: /^https:\/\/www\.walmart[^\/]+\//,
+    [SOURCE_TYPES.OPENSTREETMAP]: /(^https?:\/\/(?:www\.)?openstreetmap\.org\/node\/[0-9]|^https?:\/\/(?:www\.)?openstreetmap\.org\/way\/[0-9])/,
   };
   const errorMessageBySource = {
     [SOURCE_TYPES.AMAZON]: notValidPageAmazonAction,
