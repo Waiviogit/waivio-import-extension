@@ -10,8 +10,9 @@ export const StyledDashboardSelect = styled.select`
   border-radius: 10px;
   color: #f87007;
   border: 1px solid #f87007;
-  background: white;
+  background: #fff5ee;
   cursor: pointer;
+  outline: none;
 `;
 
 export const StyledDashboardOption = styled.option`
