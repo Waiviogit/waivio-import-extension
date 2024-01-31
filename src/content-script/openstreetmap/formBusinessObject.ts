@@ -16,6 +16,8 @@ type openstreetmapTagType = {
   'contact:instagram'?: string
   'contact:github'?: string
   'contact:phone'?: string
+  'contact:website'?: string
+   phone?: string
   'brand:wikidata'?: string
 }
 
@@ -164,8 +166,10 @@ const formBusinessObject = async (): Promise<businessImportType|undefined> => {
     ...(element.lat && element.lon && { latitude: element.lat, longitude: element.lon }),
     ...(tags.opening_hours && { workingHours: tags.opening_hours }),
     ...(tags.website && { websites: [tags.website] }),
+    ...(tags['contact:website'] && { websites: [tags['contact:website']] }),
     ...(Object.keys(socialLinks).length !== 0 && { socialLinks }),
     ...(tags['contact:phone'] && { phone: tags['contact:phone'] }),
+    ...(tags.phone && { phone: tags.phone }),
     companyIds: [{ companyIdType: 'openstrmaps', companyId: id }],
   } as businessImportType;
 

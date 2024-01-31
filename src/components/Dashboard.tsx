@@ -3,13 +3,27 @@ import { StyledDashboard } from './Dashboard.styled';
 import { DashboardButton } from './DasboardButton';
 import manifest from '../../extension/manifest.json';
 import {
-  mainButtonsConfig, openstreetmapButtonConfig, sephoraButtonsConfig, walmartButtonsConfig, youtubeButtonConfig,
+  mainButtonsConfig,
+  sephoraButtonsConfig,
+  walmartButtonsConfig,
+  youtubeButtonConfig,
 } from '../common/helper';
 import { getCurrentTab } from '../services/chromeHelper';
+import { DashboardSelect } from './DashboardSelect';
+import { SELECT_MAP_VALUES } from '../common/constants/components';
+import { BUTTON_TEXT, PARSE_COMMANDS, SOURCE_TYPES } from '../common/constants';
+import { sendMessageToContentScript } from '../services/pageParser';
+import { generateUniqueId } from '../common/helper/commonHelper';
 
 export const Dashboard = () => {
   const [currentUrl, setUrl] = useState('');
   const [timeoutId, setIntervalId] = useState<NodeJS.Timer | undefined>(undefined);
+  const [selectedValue, setSelectedValue] = useState('business');
+
+  const handleSelectChange = (value:string) => {
+    setSelectedValue(value);
+    chrome.storage.local.set({ waivioObjectType: value }, () => {});
+  };
 
   useEffect(() => {
     async function getUrl() {
@@ -26,7 +40,9 @@ export const Dashboard = () => {
         setUrl(url);
       }
     }
-
+    chrome.storage.local.get('waivioObjectType', (el) => {
+      setSelectedValue(el?.waivioObjectType ?? 'business');
+    });
     getUrl();
   }, []);
 
@@ -79,14 +95,35 @@ export const Dashboard = () => {
     }
 
     if (currentUrl.includes('openstreetmap.org')) {
-      return (openstreetmapButtonConfig
-        .map((button) => <DashboardButton
-                  text={button.text}
-                  onClick={button.onClick}
-                  id={button.id}
-                  key={button.id}
-              />)
-      );
+      const uploadWaivio = <DashboardButton
+          text={BUTTON_TEXT.UPLOAD_TO_WAIVIO}
+          onClick={async (event:Event): Promise<void> => (
+            sendMessageToContentScript(
+              event,
+              PARSE_COMMANDS.IMPORT_WAIVIO_OPENSTREETMAP,
+              selectedValue,
+            ))}
+          id={generateUniqueId()}
+      />;
+
+      const parseJson = <DashboardButton
+          text={BUTTON_TEXT.CREATE_JSON}
+          onClick={async (event:Event): Promise<void> => (
+            sendMessageToContentScript(
+              event,
+              PARSE_COMMANDS.TO_JSON,
+              SOURCE_TYPES.OPENSTREETMAP,
+            ))}
+          id={generateUniqueId()}
+      />;
+
+      const select = <DashboardSelect
+          options={SELECT_MAP_VALUES}
+          onSelectChange={handleSelectChange}
+          initialValue={selectedValue}
+      />;
+
+      return [uploadWaivio, parseJson, select];
     }
     return (
                 <h2>No actions available</h2>

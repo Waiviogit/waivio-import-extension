@@ -4,13 +4,13 @@ import { EXTERNAL_URL } from '../constants';
 import { getUser } from '../helpers/downloadWaivioHelper';
 import Cookie = chrome.cookies.Cookie;
 
-const uploadBusinessToWaivio = async ():Promise<void> => {
+const uploadBusinessToWaivio = async (type?: string):Promise<void> => {
   const business = await formBusinessObject();
   if (!business) return;
 
   const exportName = randomNameGenerator(8);
 
-  const objectType = 'business';
+  const objectType = type || 'business';
 
   const backgroundResponse = await chrome.runtime.sendMessage({ action: 'getCookies', payload: '.waivio.com' });
   if (!backgroundResponse.cookies || !backgroundResponse.cookies.length) return;
