@@ -6,7 +6,9 @@ type openstreetmapTagType = {
  'addr:postcode'?: string
  'addr:street'?: string
  'addr:housenumber'?: string
+ 'addr:unit'?: string
  'addr:city'?: string
+ 'addr:province'?: string
   opening_hours?: string
   website?: string
   'contact:facebook'?: string
@@ -50,6 +52,9 @@ type linkFieldsType = {
 type businessImportType = fieldsFromWikidataType & {
   name: string
   address: string
+  city?: string
+  province?: string
+  postalCode?: string
   workingHours?: string
   websites?: string[]
   socialLinks?: linkFieldsType
@@ -149,7 +154,7 @@ const formBusinessObject = async (): Promise<businessImportType|undefined> => {
   }
   const { tags } = element;
 
-  const address = `${tags['addr:postcode'] || ''} ${tags['addr:street'] || ''} ${tags['addr:housenumber'] || ''} ${tags['addr:city'] || ''}`.trim();
+  const address = `${tags['addr:unit'] ? `${tags['addr:unit']}-` : ''}${tags['addr:housenumber'] || ''} ${tags['addr:street'] || ''}`.trim();
 
   const socialLinks = {
     ...(tags['contact:facebook'] && { linkFacebook: tags['contact:facebook'] }),
@@ -163,6 +168,9 @@ const formBusinessObject = async (): Promise<businessImportType|undefined> => {
   const objectData = {
     name: tags?.name,
     address,
+    ...(tags['addr:city'] && { city: tags['addr:city'] }),
+    ...(tags['addr:province'] && { province: tags['addr:province'] }),
+    ...(tags['addr:postcode'] && { postalCode: tags['addr:postcode'] }),
     ...(element.lat && element.lon && { latitude: element.lat, longitude: element.lon }),
     ...(tags.opening_hours && { workingHours: tags.opening_hours }),
     ...(tags.website && { websites: [tags.website] }),

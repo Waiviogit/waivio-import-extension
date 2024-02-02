@@ -23,9 +23,12 @@ const uploadBusinessToWaivio = async (type?: string):Promise<void> => {
 
   const accessToken = accessTokenCookie?.value || '';
 
-  const { result: hiveUser, error: userError } = await getUser(accessToken);
+  const auth = cookies.find((c) => c.name === 'auth');
+  const authString = auth?.value?.replace(/%22/g, '"').replace(/%2C/g, ',');
+
+  const { result: hiveUser, error: userError } = await getUser(accessToken, authString);
   if (userError) {
-    alert(userError.message);
+    alert('Please sign in to Waivio in a separate tab');
     return;
   }
   // eslint-disable-next-line no-underscore-dangle

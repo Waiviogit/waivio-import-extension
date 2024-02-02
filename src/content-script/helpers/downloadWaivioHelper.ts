@@ -9,18 +9,31 @@ type userType = {
 }
 type getUserType = {
   result?: userType
-  error?: Error
+  error?: unknown
 }
 
-export const getUser = (token: string): Promise<getUserType> => fetch(EXTERNAL_URL.HIVE_SIGNER_ME, {
-  headers: {
-    Authorization: token,
-  },
-  method: 'POST',
-})
-  .then((res) => res.json())
-  .then((result) => ({ result }))
-  .catch((error) => ({ error }));
+export const getUser = async (token: string, authString?:string): Promise<getUserType> => {
+  try {
+    if (authString) {
+      const parsedData = JSON.parse(authString);
+
+      return { result: { _id: parsedData?.username } };
+    }
+
+    const res = await fetch(EXTERNAL_URL.HIVE_SIGNER_ME, {
+      headers: {
+        Authorization: token,
+      },
+      method: 'POST',
+    });
+
+    const result = await res.json();
+
+    return { result };
+  } catch (error) {
+    return { error };
+  }
+};
 
 export const downloadToWaivio = async (source: string): Promise<void> => {
   const { product: exportObj, error } = getProduct(source);
@@ -42,10 +55,12 @@ export const downloadToWaivio = async (source: string): Promise<void> => {
   }
 
   const accessToken = accessTokenCookie?.value || '';
+  const auth = cookies.find((c) => c.name === 'auth');
+  const authString = auth?.value?.replace(/%22/g, '"').replace(/%2C/g, ',');
 
-  const { result: hiveUser, error: userError } = await getUser(accessToken);
+  const { result: hiveUser, error: userError } = await getUser(accessToken, authString);
   if (userError) {
-    alert(userError.message);
+    alert('Please sign in to Waivio in a separate tab');
     return;
   }
   // eslint-disable-next-line no-underscore-dangle
