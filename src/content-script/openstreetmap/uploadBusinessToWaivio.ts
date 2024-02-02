@@ -47,6 +47,7 @@ const uploadBusinessToWaivio = async (type?: string):Promise<void> => {
 
   const headers = new Headers();
   headers.append('access-token', accessToken);
+  headers.append('hive-auth', auth ? 'true' : 'false');
 
   fetch(EXTERNAL_URL.WAIVIO_IMPORT, {
     method: 'POST',
