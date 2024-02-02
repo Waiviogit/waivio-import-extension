@@ -4,6 +4,7 @@ import MD5 from '../helpers/md5Helper';
 type openstreetmapTagType = {
   name: string
  'addr:postcode'?: string
+  'addr:country'?: string
  'addr:street'?: string
  'addr:housenumber'?: string
  'addr:unit'?: string
@@ -171,6 +172,7 @@ const formBusinessObject = async (): Promise<businessImportType|undefined> => {
     ...(tags['addr:city'] && { city: tags['addr:city'] }),
     ...(tags['addr:province'] && { province: tags['addr:province'] }),
     ...(tags['addr:postcode'] && { postalCode: tags['addr:postcode'] }),
+    ...(tags['addr:country'] && { country: tags['addr:country'] }),
     ...(element.lat && element.lon && { latitude: element.lat, longitude: element.lon }),
     ...(tags.opening_hours && { workingHours: tags.opening_hours }),
     ...(tags.website && { websites: [tags.website] }),
