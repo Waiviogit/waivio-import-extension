@@ -18,7 +18,7 @@ const uploadBusinessToWaivio = async (type?: string):Promise<void> => {
 
   const accessTokenCookie = cookies.find((c) => c.name === 'access_token');
   if (!accessTokenCookie) {
-    alert('The information about the user was not found. Please login to Waivio.');
+    alert('Please sign in to Waivio in a separate tab.');
     return;
   }
 
@@ -29,7 +29,7 @@ const uploadBusinessToWaivio = async (type?: string):Promise<void> => {
 
   const { result: hiveUser, error: userError } = await getUser(accessToken, authString);
   if (userError) {
-    alert('Please sign in to Waivio in a separate tab');
+    alert('Please sign in to Waivio in a separate tab.');
     return;
   }
   // eslint-disable-next-line no-underscore-dangle
