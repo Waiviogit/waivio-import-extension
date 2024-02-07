@@ -52,6 +52,7 @@ export const downloadToWaivio = async (source: string): Promise<void> => {
   const accessTokenCookie = cookies.find((c) => c.name === 'access_token');
   if (!accessTokenCookie) {
     alert('The information about the user was not found. Please login to Waivio.');
+    return;
   }
 
   const accessToken = accessTokenCookie?.value || '';
