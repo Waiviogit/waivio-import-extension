@@ -14,6 +14,7 @@ import { SELECT_MAP_VALUES } from '../common/constants/components';
 import { BUTTON_TEXT, PARSE_COMMANDS, SOURCE_TYPES } from '../common/constants';
 import { sendMessageToContentScript } from '../services/pageParser';
 import { generateUniqueId } from '../common/helper/commonHelper';
+import { DashboardInputKey } from './DashboardInputKey';
 
 export const Dashboard = () => {
   const [currentUrl, setUrl] = useState('');
@@ -40,9 +41,11 @@ export const Dashboard = () => {
         setUrl(url);
       }
     }
+    // for select on businesses
     chrome.storage.local.get('waivioObjectType', (el) => {
       setSelectedValue(el?.waivioObjectType ?? 'business');
     });
+    chrome.storage.local.set({ googleApiKey: 'sdfsdfsdf' }, () => {});
     getUrl();
   }, []);
 
@@ -95,6 +98,12 @@ export const Dashboard = () => {
     }
 
     if (currentUrl.includes('openstreetmap.org')) {
+      const select = <DashboardSelect
+          options={SELECT_MAP_VALUES}
+          onSelectChange={handleSelectChange}
+          initialValue={selectedValue}
+      />;
+
       const uploadWaivio = <DashboardButton
           text={BUTTON_TEXT.UPLOAD_TO_WAIVIO}
           onClick={async (event:Event): Promise<void> => (
@@ -117,13 +126,18 @@ export const Dashboard = () => {
           id={generateUniqueId()}
       />;
 
+      return [select, uploadWaivio, parseJson];
+    }
+    if (currentUrl.includes('google.com/maps')) {
       const select = <DashboardSelect
           options={SELECT_MAP_VALUES}
           onSelectChange={handleSelectChange}
           initialValue={selectedValue}
       />;
 
-      return [uploadWaivio, parseJson, select];
+      const input = <DashboardInputKey/>;
+
+      return [select];
     }
     return (
                 <h2>No actions available</h2>
