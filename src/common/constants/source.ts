@@ -3,4 +3,5 @@ export const SOURCE_TYPES = {
   SEPHORA: 'sephora',
   WALMART: 'walmart',
   OPENSTREETMAP: 'openstreetmap',
+  GOOGLE_MAP: 'google_map',
 };

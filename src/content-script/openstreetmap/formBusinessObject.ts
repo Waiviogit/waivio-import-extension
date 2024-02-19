@@ -50,7 +50,7 @@ type linkFieldsType = {
   linkGitHub?: string
 };
 
-type businessImportType = fieldsFromWikidataType & {
+export type businessImportType = fieldsFromWikidataType & {
   name: string
   address: string
   city?: string

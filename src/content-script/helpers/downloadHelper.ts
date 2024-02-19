@@ -8,6 +8,7 @@ import {
 import { randomNameGenerator } from './commonHelper';
 import { SOURCE_TYPES } from '../../common/constants';
 import formBusinessObject from '../openstreetmap/formBusinessObject';
+import formBusinessObjectFromGoogle from '../googleMaps/formBusinessObjectFromGoogle';
 
 export const stingToClipboard = (text: string) :void => {
   const tempInput = document.createElement('textarea');
@@ -22,6 +23,7 @@ export const stingToClipboard = (text: string) :void => {
 };
 
 const regularFileDownload = (uriComponent : string, fileName: string, format: string) => {
+  if (!uriComponent) return;
   const dataStr = `data:text/json;charset=utf-8,${encodeURIComponent(uriComponent)}`;
   const downloadAnchorNode = document.createElement('a');
   downloadAnchorNode.setAttribute('href', dataStr);
@@ -31,29 +33,38 @@ const regularFileDownload = (uriComponent : string, fileName: string, format: st
   downloadAnchorNode.remove();
 };
 
-export const downloadObjectAsJson = (source: string): void => {
+export const downloadObjectAsJson = async (source: string): Promise<void> => {
   const exportName = randomNameGenerator(8);
 
-  if (![SOURCE_TYPES.OPENSTREETMAP].includes(source)) {
-    const { product: exportObj, error } = getProduct(source);
-    if (!exportObj || error) return;
-    const jsonFormat = formatToJsonObject(exportObj);
+  if (SOURCE_TYPES.OPENSTREETMAP === source) {
+    const object = await formBusinessObject();
     regularFileDownload(
-      JSON.stringify(jsonFormat),
+      JSON.stringify(object),
+      exportName,
+      'json',
+    );
+
+    return;
+  }
+
+  if (SOURCE_TYPES.GOOGLE_MAP === source) {
+    const object = await formBusinessObjectFromGoogle();
+    regularFileDownload(
+      JSON.stringify(object),
       exportName,
       'json',
     );
     return;
   }
 
-
-  formBusinessObject()
-    .then((result) => regularFileDownload(
-      JSON.stringify(result),
-      exportName,
-      'json',
-    ))
-    .catch((e) => alert('error downloading json'));
+  const { product: exportObj, error } = getProduct(source);
+  if (!exportObj || error) return;
+  const jsonFormat = formatToJsonObject(exportObj);
+  regularFileDownload(
+    JSON.stringify(jsonFormat),
+    exportName,
+    'json',
+  );
 };
 
 export const copyToClipboard = (source: string): void => {

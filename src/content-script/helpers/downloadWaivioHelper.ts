@@ -1,3 +1,4 @@
+import axios from 'axios';
 import { formatToJsonObject, getProduct } from '../getProduct';
 import Cookie = chrome.cookies.Cookie;
 import { EXTERNAL_URL } from '../constants';
@@ -106,4 +107,27 @@ export const downloadToWaivio = async (source: string): Promise<void> => {
     .catch((error) => {
       alert(error.message);
     });
+};
+
+export const loadImageBase64 = async (file:Blob, size?: string) => {
+  try {
+    const bodyFormData = new FormData();
+
+    bodyFormData.append('file', file);
+    if (size) {
+      bodyFormData.append('size', size);
+    }
+    const resp = await axios.post(
+      EXTERNAL_URL.WAIVIO_IMAGE,
+      bodyFormData,
+      {
+        timeout: 15000,
+      },
+    );
+    const result = resp?.data?.image;
+    if (!result) return { error: new Error('Internal server error') };
+    return { result };
+  } catch (error) {
+    return { error };
+  }
 };

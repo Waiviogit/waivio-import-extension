@@ -45,7 +45,6 @@ export const Dashboard = () => {
     chrome.storage.local.get('waivioObjectType', (el) => {
       setSelectedValue(el?.waivioObjectType ?? 'business');
     });
-    chrome.storage.local.set({ googleApiKey: 'sdfsdfsdf' }, () => {});
     getUrl();
   }, []);
 
@@ -137,7 +136,18 @@ export const Dashboard = () => {
 
       const input = <DashboardInputKey/>;
 
-      return [select];
+      const parseJson = <DashboardButton
+          text={BUTTON_TEXT.CREATE_JSON}
+          onClick={async (event:Event): Promise<void> => (
+            sendMessageToContentScript(
+              event,
+              PARSE_COMMANDS.TO_JSON,
+              SOURCE_TYPES.GOOGLE_MAP,
+            ))}
+          id={generateUniqueId()}
+      />;
+
+      return [input, select, parseJson];
     }
     return (
                 <h2>No actions available</h2>

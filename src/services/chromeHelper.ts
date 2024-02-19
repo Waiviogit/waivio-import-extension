@@ -1,5 +1,6 @@
 import Tab = chrome.tabs.Tab;
 import { EXTENSION_COMMANDS } from '../common/constants';
+import { getGooglePlace } from './createGoogleObject';
 
 type messageType = {
   action: string,
@@ -19,6 +20,7 @@ type extensionMessageType = {
   id: string
   buttonText: string
   source?: string | undefined
+  payload?: string | undefined
 }
 
 const enableButton = (id:string, buttonText:string): void => {
@@ -30,14 +32,19 @@ const enableButton = (id:string, buttonText:string): void => {
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   const data = message as extensionMessageType;
-  switch (data.action) {
-    case EXTENSION_COMMANDS.ENABLE:
-      enableButton(
-        data.id,
-        data.buttonText,
-      );
-      break;
-    default: break;
+
+  if (data.action === EXTENSION_COMMANDS.ENABLE) {
+    enableButton(
+      data.id,
+      data.buttonText,
+    );
+    return true;
+  }
+
+  if (data.action === EXTENSION_COMMANDS.CREATE_GOOGLE_OBJECT) {
+    getGooglePlace(message.payload).then((res) => sendResponse(res));
+
+    return true; // Indicates that sendResponse will be called asynchronously
   }
 });
 
@@ -58,4 +65,9 @@ export const sendMessageToTab = async ({
   } catch (error) {
     console.error(error);
   }
+};
+
+export const getStorageKey = async (key = 'googleApiKey'): Promise<string> => {
+  const object = await chrome.storage.local.get('googleApiKey');
+  return object[key];
 };
