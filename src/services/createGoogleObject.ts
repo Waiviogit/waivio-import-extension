@@ -173,7 +173,7 @@ export const getGooglePlace = async (textQuery: string) => {
     ...(country && { country: country.longText }),
     ...(business.location
         && { latitude: business.location.latitude, longitude: business.location.longitude }),
-    ...(business.regularOpeningHours && { workingHours: business.regularOpeningHours.weekdayDescriptions.join(',') }),
+    ...(business.regularOpeningHours && { workingHours: business.regularOpeningHours.weekdayDescriptions.join(',\n') }),
     ...(business.websiteUri && { websites: [business.websiteUri] }),
     ...(business.internationalPhoneNumber && { phone: business.internationalPhoneNumber }),
     companyIds: [{ companyIdType: 'googleMaps', companyId: business.id }],
