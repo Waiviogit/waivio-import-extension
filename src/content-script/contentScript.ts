@@ -1,18 +1,20 @@
 import {
   downloadObjectAsJson, downloadXLSX, copyToClipboard, downloadASIN,
 } from './helpers/downloadHelper';
-import { downloadToWaivio } from './helpers/downloadWaivioHelper';
+import { downloadProductToWaivio } from './helpers/downloadWaivioHelper';
 import { urlValidation } from './validation';
 import { EXTENSION_COMMANDS, PARSE_COMMANDS } from '../common/constants';
 import { createDraft } from './helpers/draftHelper';
 import uploadBusinessToWaivio from './openstreetmap/uploadBusinessToWaivio';
+import uploadGooglePlaceToWaivio from './googleMaps/uploadGooglePlaceToWaivio';
 
 const downloadFileScript = {
   [PARSE_COMMANDS.TO_JSON]: downloadObjectAsJson,
   [PARSE_COMMANDS.TO_CSV]: downloadXLSX,
   [PARSE_COMMANDS.TO_CLIPBOARD]: copyToClipboard,
-  [PARSE_COMMANDS.IMPORT_WAIVIO]: downloadToWaivio,
+  [PARSE_COMMANDS.IMPORT_WAIVIO]: downloadProductToWaivio,
   [PARSE_COMMANDS.IMPORT_WAIVIO_OPENSTREETMAP]: uploadBusinessToWaivio,
+  [PARSE_COMMANDS.IMPORT_WAIVIO_GOOGLE]: uploadGooglePlaceToWaivio,
   [PARSE_COMMANDS.SCAN_ASINS]: downloadASIN,
   [PARSE_COMMANDS.CREATE_DRAFT]: createDraft,
   default: () => {},

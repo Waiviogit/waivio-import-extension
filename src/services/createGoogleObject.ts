@@ -190,6 +190,7 @@ export const getGooglePlace = async (textQuery: string) => {
   }
 
   for (const photo of details.photos) {
+    if (objectData.imageURLs.length >= 5) break;
     const { result: photoString, error: photoError } = await placesPhotoRequest({
       photoReference: photo.photo_reference,
       maxwidth: photo.width,

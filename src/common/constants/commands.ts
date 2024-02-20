@@ -5,6 +5,7 @@ export const PARSE_COMMANDS = {
   SCAN_ASINS: 'scan_asins',
   IMPORT_WAIVIO: 'import_waivio',
   IMPORT_WAIVIO_OPENSTREETMAP: 'import_waivio_openstreetmap',
+  IMPORT_WAIVIO_GOOGLE: 'import_waivio_google',
   CREATE_DRAFT: 'create_draft',
 };
 

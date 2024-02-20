@@ -72,8 +72,4 @@ export const StyledDashboardButton = styled.button`
     line-height: 16px;
     animation: ${pulseAnimation} 1s linear infinite;
   }
-    
-    &:first-child{
-        margin-bottom: 30px;
-    }
 `;

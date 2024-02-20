@@ -36,15 +36,17 @@ export const getUser = async (token: string, authString?:string): Promise<getUse
   }
 };
 
-export const downloadToWaivio = async (source: string): Promise<void> => {
-  const { product: exportObj, error } = getProduct(source);
-  if (!exportObj || error) return;
-  const exportName = randomNameGenerator(8);
+interface downloadToWaivioInterface {
+  object: any
+  objectType: string
+  language?: string
+  addDatafinityData?: boolean
+}
 
-  const objectType = exportObj.departments
-    .some((el) => ['Kindle Store', 'Books', 'Audible Books & Originals'].includes(el))
-    ? 'book'
-    : 'product';
+export const downloadToWaivio = async ({
+  object, objectType, addDatafinityData, language,
+}:downloadToWaivioInterface): Promise<void> => {
+  const exportName = randomNameGenerator(8);
 
   const backgroundResponse = await chrome.runtime.sendMessage({ action: 'getCookies', payload: '.waivio.com' });
   if (!backgroundResponse.cookies || !backgroundResponse.cookies.length) return;
@@ -68,13 +70,7 @@ export const downloadToWaivio = async (source: string): Promise<void> => {
   // eslint-disable-next-line no-underscore-dangle
   const user = hiveUser?._id ?? '';
 
-  const jsonFormat = formatToJsonObject(exportObj);
-
-  const language = detectLanguage(
-    `${jsonFormat.categories.join('')}${(jsonFormat?.descriptions ?? []).join('')}`,
-  );
-
-  const jsonData = JSON.stringify(jsonFormat);
+  const jsonData = JSON.stringify(object);
 
   const formData = new FormData();
   const jsonBlob = new Blob([jsonData], { type: 'application/json' });
@@ -84,8 +80,13 @@ export const downloadToWaivio = async (source: string): Promise<void> => {
   formData.append('objectType', objectType);
   formData.append('useGPT', 'true');
   formData.append('forceImport', 'true');
-  formData.append('addDatafinityData', 'true');
-  formData.append('locale', language);
+
+  if (addDatafinityData) {
+    formData.append('addDatafinityData', 'true');
+  }
+  if (language) {
+    formData.append('locale', language);
+  }
 
   const headers = new Headers();
   headers.append('access-token', accessToken);
@@ -107,6 +108,29 @@ export const downloadToWaivio = async (source: string): Promise<void> => {
     .catch((error) => {
       alert(error.message);
     });
+};
+
+export const downloadProductToWaivio = async (source: string): Promise<void> => {
+  const { product: exportObj, error } = getProduct(source);
+  if (!exportObj || error) return;
+
+  const jsonFormat = formatToJsonObject(exportObj);
+
+  const language = detectLanguage(
+    `${jsonFormat.categories.join('')}${(jsonFormat?.descriptions ?? []).join('')}`,
+  );
+
+  const objectType = exportObj.departments
+    .some((el) => ['Kindle Store', 'Books', 'Audible Books & Originals'].includes(el))
+    ? 'book'
+    : 'product';
+
+  await downloadToWaivio({
+    object: jsonFormat,
+    objectType,
+    language,
+    addDatafinityData: true,
+  });
 };
 
 export const loadImageBase64 = async (file:Blob, size?: string) => {

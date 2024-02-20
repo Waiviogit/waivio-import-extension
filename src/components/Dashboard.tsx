@@ -136,6 +136,17 @@ export const Dashboard = () => {
 
       const input = <DashboardInputKey/>;
 
+      const uploadWaivio = <DashboardButton
+          text={BUTTON_TEXT.UPLOAD_TO_WAIVIO}
+          onClick={async (event:Event): Promise<void> => (
+            sendMessageToContentScript(
+              event,
+              PARSE_COMMANDS.IMPORT_WAIVIO_GOOGLE,
+              selectedValue,
+            ))}
+          id={generateUniqueId()}
+      />;
+
       const parseJson = <DashboardButton
           text={BUTTON_TEXT.CREATE_JSON}
           onClick={async (event:Event): Promise<void> => (
@@ -147,7 +158,9 @@ export const Dashboard = () => {
           id={generateUniqueId()}
       />;
 
-      return [input, select, parseJson];
+      const divider = <div style={{ height: '20px' }}></div>;
+
+      return [input, divider, select, uploadWaivio, parseJson];
     }
     return (
                 <h2>No actions available</h2>
