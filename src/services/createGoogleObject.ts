@@ -86,7 +86,7 @@ export const placesRequest = async ({
           'Content-Type': 'application/json',
           'X-Goog-Api-Key': apiKey,
           // pick fields
-          'X-Goog-FieldMask': '*',
+          'X-Goog-FieldMask': 'places.id,places.internationalPhoneNumber,places.formattedAddress,places.location,places.rating,places.websiteUri,places.regularOpeningHours,places.displayName,places.editorialSummary',
         },
       },
 
@@ -105,10 +105,8 @@ export const placesDetailsRequest = async (
   { placeId, apiKey }:placesRequestDetailsInterface,
 ): Promise<placesRequestDetailsType> => {
   try {
-    console.log(placeId);
-    console.log(apiKey);
     const response = await axios.get(
-      `https://maps.googleapis.com/maps/api/place/details/json?placeid=${placeId}&key=${apiKey}`,
+      `https://maps.googleapis.com/maps/api/place/details/json?placeid=${placeId}&key=${apiKey}&fields=photos`,
     );
 
     return { result: response?.data?.result };
@@ -160,6 +158,12 @@ export const getGooglePlace = async (textQuery: string) => {
     ...(business.regularOpeningHours && { workingHours: business.regularOpeningHours.weekdayDescriptions.join(',\n') }),
     ...(business.websiteUri && { websites: [business.websiteUri] }),
     ...(business.internationalPhoneNumber && { phone: business.internationalPhoneNumber }),
+    ...(business.rating && {
+      features: [{
+        key: 'Overall Rating',
+        value: [business.rating],
+      }],
+    }),
     companyIds: [{ companyIdType: 'googleMaps', companyId: business.id }],
     primaryImageURLs: [] as string[],
     imageURLs: []as string[],
