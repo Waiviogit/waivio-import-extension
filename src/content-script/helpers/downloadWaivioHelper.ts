@@ -13,8 +13,15 @@ type getUserType = {
   error?: unknown
 }
 
-export const getUser = async (token: string, authString?:string): Promise<getUserType> => {
+export const getUser = async (
+  token: string,
+  authString?:string,
+  guestName?: string,
+): Promise<getUserType> => {
   try {
+    if (guestName) {
+      return { result: { _id: guestName } };
+    }
     if (authString) {
       const parsedData = JSON.parse(authString);
 
@@ -60,9 +67,13 @@ export const downloadToWaivio = async ({
 
   const accessToken = accessTokenCookie?.value || '';
   const auth = cookies.find((c) => c.name === 'auth');
+  const guestName = cookies.find((c) => c.name === 'guestName')?.value;
   const authString = auth?.value?.replace(/%22/g, '"').replace(/%2C/g, ',');
 
-  const { result: hiveUser, error: userError } = await getUser(accessToken, authString);
+  const {
+    result: hiveUser,
+    error: userError,
+  } = await getUser(accessToken, authString, guestName);
   if (userError) {
     alert('Please sign in to Waivio in a separate tab.');
     return;
@@ -91,6 +102,7 @@ export const downloadToWaivio = async ({
   const headers = new Headers();
   headers.append('access-token', accessToken);
   headers.append('hive-auth', auth ? 'true' : 'false');
+  headers.append('waivio-auth', guestName ? 'true' : 'false');
 
   fetch(EXTERNAL_URL.WAIVIO_IMPORT, {
     method: 'POST',
