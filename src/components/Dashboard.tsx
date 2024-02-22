@@ -147,6 +147,16 @@ export const Dashboard = () => {
           id={generateUniqueId()}
       />;
 
+      const instruction = <div style={{ marginBottom: '5px' }}>
+        <a
+            href="https://www.waivio.com/object/jiw-google-maps-integration-set-up-an-api-key/page"
+            style={{ color: '#f87007' }}
+            target="_blank"
+        >
+          (instruction)
+        </a>
+      </div>;
+
       const parseJson = <DashboardButton
           text={BUTTON_TEXT.CREATE_JSON}
           onClick={async (event:Event): Promise<void> => (
@@ -160,7 +170,7 @@ export const Dashboard = () => {
 
       const divider = <div style={{ height: '20px' }}></div>;
 
-      return [input, divider, select, uploadWaivio, parseJson];
+      return [instruction, input, divider, select, uploadWaivio, parseJson];
     }
     return (
                 <h2>No actions available</h2>

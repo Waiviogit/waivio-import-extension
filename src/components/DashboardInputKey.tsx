@@ -45,6 +45,7 @@ export const DashboardInputKey = () => {
                     value={inputValue}
                     onChange={handleInputChange}
                     disabled={!isInputEnabled}
+                    placeholder={'Paste API key'}
                 />
             </StyledDashboardButtonContainer>
 
