@@ -153,7 +153,7 @@ export const Dashboard = () => {
             style={{ color: '#f87007' }}
             target="_blank"
         >
-          (instruction)
+          Where to find your API key
         </a>
       </div>;
 
