@@ -45,6 +45,7 @@ type searchResultType = {
     regularOpeningHours: regularOpeningHoursType
     displayName: textType // {text: string}
     editorialSummary: textType // {text: string} //for description
+    photos: string[] // {text: string} //for description
 }
 type photosDetailsType = {
     photo_reference: string
@@ -86,7 +87,7 @@ export const placesRequest = async ({
           'Content-Type': 'application/json',
           'X-Goog-Api-Key': apiKey,
           // pick fields
-          'X-Goog-FieldMask': 'places.id,places.internationalPhoneNumber,places.formattedAddress,places.location,places.rating,places.websiteUri,places.regularOpeningHours,places.displayName,places.editorialSummary',
+          'X-Goog-FieldMask': 'places.id,places.internationalPhoneNumber,places.formattedAddress,places.location,places.rating,places.websiteUri,places.regularOpeningHours,places.displayName,places.editorialSummary,places.photos',
         },
       },
 
@@ -147,7 +148,12 @@ export const getGooglePlace = async (textQuery: string) => {
   if (!result?.length) {
     return { error: { message: 'placesRequest Not Found' } };
   }
-  const [business] = result;
+
+  let business = result?.find((r) => r.photos && r.photos.length);
+  if (!business) {
+    // eslint-disable-next-line prefer-destructuring
+    business = result[0];
+  }
 
   const objectData = {
     name: business.displayName.text,
@@ -177,7 +183,9 @@ export const getGooglePlace = async (textQuery: string) => {
     return { result: objectData, error: detailsError };
   }
 
-  for (const photo of details.photos) {
+  const detailsPhotos = details?.photos ?? [];
+
+  for (const photo of detailsPhotos) {
     if (objectData.imageURLs.length >= 5) break;
     const { result: photoString, error: photoError } = await placesPhotoRequest({
       photoReference: photo.photo_reference,
