@@ -11,13 +11,24 @@ const getPlaceInfo = () => {
   };
 };
 
+const getLatLngFromGoogleMapsUrl = (url: string) => {
+  const match = url.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/);
+  if (match) {
+    return {
+      latitude: parseFloat(match[1]),
+      longitude: parseFloat(match[2]),
+    };
+  }
+  return null;
+};
+
 const formBusinessObjectFromGoogle = async () : Promise<businessImportType|undefined> => {
   const { name, address } = getPlaceInfo();
 
-  const textQuery = `${name} ${address}`;
+  const map = getLatLngFromGoogleMapsUrl(document.URL);
 
   const response = await chrome.runtime.sendMessage({
-    action: EXTENSION_COMMANDS.CREATE_GOOGLE_OBJECT, payload: textQuery,
+    action: EXTENSION_COMMANDS.CREATE_GOOGLE_OBJECT, payload: { name, address, map },
   });
   if (response?.error) {
     alert(response?.error?.message);

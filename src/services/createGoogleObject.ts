@@ -2,9 +2,14 @@ import axios from 'axios';
 import { loadImageBase64 } from '../content-script/helpers/downloadWaivioHelper';
 import { getStorageKey } from './chromeHelper';
 
+type locationType = {
+    latitude: number,
+    longitude: number
+}
 interface placesRequestInterface {
     textQuery: string
     apiKey: string
+    map?: locationType | null
 }
 
 interface placesRequestDetailsInterface {
@@ -16,11 +21,6 @@ interface placesPhotoRequestInterface {
     photoReference: string
     apiKey: string
     maxwidth: number
-}
-
-type locationType = {
-    latitude: number,
-    longitude: number
 }
 
 type regularOpeningHoursType = {
@@ -72,7 +72,7 @@ type placesPhotoRequestType = {
 }
 
 export const placesRequest = async ({
-  textQuery, apiKey,
+  textQuery, apiKey, map,
 }: placesRequestInterface): Promise<placesRequestType> => {
   try {
     const response = await axios.post(
@@ -80,6 +80,15 @@ export const placesRequest = async ({
       {
         textQuery,
         languageCode: 'en',
+        ...(map
+            && {
+              locationBias: {
+                circle: {
+                  center: map,
+                  radius: 500.0,
+                },
+              },
+            }),
       },
       {
         // search for locale
@@ -132,7 +141,14 @@ export const placesPhotoRequest = async ({
   }
 };
 
-export const getGooglePlace = async (textQuery: string) => {
+interface getGooglePlaceInterface {
+    name: string
+    address: string
+    map : {latitude: number, longitude: number} | null
+}
+
+export const getGooglePlace = async ({ name, address, map }: getGooglePlaceInterface) => {
+  const textQuery = `${name} ${address}`;
   const apiKey = await getStorageKey();
 
   if (!apiKey) {
@@ -141,12 +157,20 @@ export const getGooglePlace = async (textQuery: string) => {
     };
   }
 
-  const { result, error } = await placesRequest({ textQuery, apiKey });
+  let { result, error } = await placesRequest({ textQuery, apiKey });
   if (error) {
     return { error };
   }
+
   if (!result?.length) {
-    return { error: { message: 'placesRequest Not Found' } };
+    ({ result, error } = await placesRequest({
+      textQuery: name,
+      apiKey,
+      map,
+    }));
+    if (!result?.length || error) {
+      return { error: { message: 'placesRequest Not Found' } };
+    }
   }
 
   let business = result?.find((r) => r.photos && r.photos.length);
