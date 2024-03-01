@@ -50,6 +50,39 @@ interface downloadToWaivioInterface {
   addDatafinityData?: boolean
 }
 
+type validateUserImportType = {
+  valid: boolean
+  message: string
+}
+
+export const validateWaivioImport = async (): Promise<validateUserImportType> => {
+  const backgroundResponse = await chrome.runtime.sendMessage({ action: 'getCookies', payload: '.waivio.com' });
+  if (!backgroundResponse.cookies || !backgroundResponse.cookies.length) return { valid: false, message: 'Please sign in to Waivio in a separate tab.' };
+  const cookies = backgroundResponse.cookies as Cookie[];
+
+  const accessTokenCookie = cookies.find((c) => c.name === 'access_token');
+  if (!accessTokenCookie) {
+    return { valid: false, message: 'Please sign in to Waivio in a separate tab.' };
+  }
+
+  const accessToken = accessTokenCookie?.value || '';
+  const auth = cookies.find((c) => c.name === 'auth');
+  const guestName = cookies.find((c) => c.name === 'guestName')?.value;
+  const authString = auth?.value?.replace(/%22/g, '"').replace(/%2C/g, ',');
+
+  const {
+    result: hiveUser,
+    error: userError,
+  } = await getUser(accessToken, authString, guestName);
+
+  // eslint-disable-next-line no-underscore-dangle
+  if (!hiveUser?._id || userError) {
+    return { valid: false, message: 'Please sign in to Waivio in a separate tab.' };
+  }
+
+  return { valid: true, message: 'ok' };
+};
+
 export const downloadToWaivio = async ({
   object, objectType, addDatafinityData, language,
 }:downloadToWaivioInterface): Promise<void> => {
