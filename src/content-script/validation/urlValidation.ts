@@ -1,4 +1,5 @@
 import { PARSE_COMMANDS, SOURCE_TYPES } from '../../common/constants';
+import { isValidGoogleMapsUrl } from '../../common/helper/googleHelper';
 
 const aboutFormatText = 'The URL must be in the format:';
 const constructAmazonURL = (url: string): string => {
@@ -87,16 +88,6 @@ const validatePageForOpenstreetmap = (url: string):boolean => {
   return result;
 };
 
-const validatePageForGoogleMaps = (url: string):boolean => {
-  const regex = /^https?:\/\/(?:www\.)?google\.com\/maps\//;
-
-  const result = regex.test(url);
-  if (!result) {
-    alert('The URL must be https://google.com/maps/ ....');
-  }
-  return result;
-};
-
 export const urlValidation = (url: string, message: string, source: string):boolean => {
   const validationType = {
     [PARSE_COMMANDS.TO_JSON]: validatePage,
@@ -106,7 +97,7 @@ export const urlValidation = (url: string, message: string, source: string):bool
     [PARSE_COMMANDS.IMPORT_WAIVIO]: validatePage,
     [PARSE_COMMANDS.CREATE_DRAFT]: validatePageForYoutube,
     [PARSE_COMMANDS.IMPORT_WAIVIO_OPENSTREETMAP]: validatePageForOpenstreetmap,
-    [PARSE_COMMANDS.IMPORT_WAIVIO_GOOGLE]: validatePageForGoogleMaps,
+    [PARSE_COMMANDS.IMPORT_WAIVIO_GOOGLE]: isValidGoogleMapsUrl,
   };
   const type = message as keyof typeof PARSE_COMMANDS;
 

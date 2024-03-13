@@ -31,6 +31,12 @@ type textType = {
     text: string
 }
 
+type ReviewType = {
+    text: {
+        text: string
+    }
+}
+
 type searchResultType = {
     id: string
     internationalPhoneNumber:string
@@ -46,6 +52,7 @@ type searchResultType = {
     displayName: textType // {text: string}
     editorialSummary: textType // {text: string} //for description
     photos: string[] // {text: string} //for description
+    reviews: ReviewType[]
 }
 type photosDetailsType = {
     photo_reference: string
@@ -96,7 +103,7 @@ export const placesRequest = async ({
           'Content-Type': 'application/json',
           'X-Goog-Api-Key': apiKey,
           // pick fields
-          'X-Goog-FieldMask': 'places.id,places.internationalPhoneNumber,places.formattedAddress,places.location,places.rating,places.websiteUri,places.regularOpeningHours,places.displayName,places.editorialSummary,places.photos',
+          'X-Goog-FieldMask': 'places.id,places.internationalPhoneNumber,places.formattedAddress,places.location,places.rating,places.websiteUri,places.regularOpeningHours,places.displayName,places.editorialSummary,places.photos,places.reviews',
         },
       },
 
@@ -197,6 +204,7 @@ export const getGooglePlace = async ({ name, address, map }: getGooglePlaceInter
     companyIds: [{ companyIdType: 'googleMaps', companyId: business.id }],
     primaryImageURLs: [] as string[],
     imageURLs: []as string[],
+    ...(business.reviews?.length && { reviews: business.reviews.map((el) => el.text.text) }),
   };
 
   const { result: details, error: detailsError } = await placesDetailsRequest({

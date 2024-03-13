@@ -15,6 +15,7 @@ import { BUTTON_TEXT, PARSE_COMMANDS, SOURCE_TYPES } from '../common/constants';
 import { sendMessageToContentScript } from '../services/pageParser';
 import { generateUniqueId } from '../common/helper/commonHelper';
 import { DashboardInputKey } from './DashboardInputKey';
+import { isValidGoogleMapsUrl } from '../common/helper/googleHelper';
 
 export const Dashboard = () => {
   const [currentUrl, setUrl] = useState('');
@@ -127,7 +128,7 @@ export const Dashboard = () => {
 
       return [select, uploadWaivio, parseJson];
     }
-    if (currentUrl.includes('google.com/maps')) {
+    if (isValidGoogleMapsUrl(currentUrl)) {
       const select = <DashboardSelect
           options={SELECT_MAP_VALUES}
           onSelectChange={handleSelectChange}
