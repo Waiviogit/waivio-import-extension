@@ -73,7 +73,7 @@ export const getPossibleIdsWalmart = ():productIdType[] => {
   for (const nodes of elements) {
     for (const [i, node] of nodes.entries()) {
       const stringNoDashes = node.replace('-', '');
-      console.log(stringNoDashes);
+
       if (PRODUCT_ID_TYPES.some((id) => stringNoDashes.toLowerCase().includes(id))) {
         if (stringNoDashes.includes(':')) {
           const values = stringNoDashes.split(':');

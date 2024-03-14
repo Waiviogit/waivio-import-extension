@@ -180,7 +180,6 @@ const getProductFromWalmart = (): getProductReturnedType => {
   const productId1 = getProductIdWalmart();
 
   const allPossibleIds = getPossibleIdsWalmart();
-  console.log(allPossibleIds);
 
   const object: parsedObjectType = {
     name: productTitleWalmart(),

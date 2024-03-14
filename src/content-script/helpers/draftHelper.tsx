@@ -203,7 +203,7 @@ export const createDraft = async (): Promise<void> => {
   rootElement.id = 'react-chrome-modal';
   document.body.appendChild(rootElement);
   const rootModal = ReactDOM.createRoot(rootElement);
-  console.log(linkToVideo);
+
   const query = createQuery({
     subs, author, linkToChannel,
   });
