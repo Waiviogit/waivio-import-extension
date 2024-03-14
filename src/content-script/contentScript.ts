@@ -27,7 +27,12 @@ const IMPORT_WAIVIO_COMMANDS = [
 ];
 
 chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
-  if (!message.action || typeof message.action !== 'string') return;
+  if (!message.action || typeof message.action !== 'string') {
+    await chrome.runtime.sendMessage({
+      action: EXTENSION_COMMANDS.ENABLE, id: message.buttonId, buttonText: message.buttonText,
+    });
+    return;
+  }
 
   if (IMPORT_WAIVIO_COMMANDS.includes(message.action)) {
     const { valid, message: errorMessage } = await validateWaivioImport();
@@ -41,7 +46,13 @@ chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
   }
 
   const downLoadType = message.action as keyof typeof downloadFileScript;
-  if (!urlValidation(message.payload, message.action, message.source)) return;
+
+  if (!urlValidation(message.payload, message.action, message.source)) {
+    await chrome.runtime.sendMessage({
+      action: EXTENSION_COMMANDS.ENABLE, id: message.buttonId, buttonText: message.buttonText,
+    });
+    return;
+  }
 
   await (downloadFileScript[downLoadType]
       || downloadFileScript.default)(message.source);

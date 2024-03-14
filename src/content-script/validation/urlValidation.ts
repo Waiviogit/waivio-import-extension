@@ -45,6 +45,11 @@ const validatePage = (url: string, source: string):boolean => {
     [SOURCE_TYPES.OPENSTREETMAP]: /(^https?:\/\/(?:www\.)?openstreetmap\.org\/node\/[0-9]|^https?:\/\/(?:www\.)?openstreetmap\.org\/way\/[0-9])/,
     [SOURCE_TYPES.GOOGLE_MAP]: /^https?:\/\/(?:www\.)?google\.com\/maps\//,
   };
+
+  if (source === SOURCE_TYPES.GOOGLE_MAP) {
+    return isValidGoogleMapsUrl(url);
+  }
+
   const errorMessageBySource = {
     [SOURCE_TYPES.AMAZON]: notValidPageAmazonAction,
     default: ():void => {},
