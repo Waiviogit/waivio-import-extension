@@ -204,7 +204,8 @@ export const getGooglePlace = async ({ name, address, map }: getGooglePlaceInter
     companyIds: [{ companyIdType: 'googleMaps', companyId: business.id }],
     primaryImageURLs: [] as string[],
     imageURLs: []as string[],
-    ...(business.reviews?.length && { reviews: business.reviews.map((el) => el.text.text) }),
+    ...(business.reviews?.length
+        && { reviews: business.reviews.map((el) => el?.text?.text).filter((el) => !!el) }),
   };
 
   const { result: details, error: detailsError } = await placesDetailsRequest({
