@@ -12,15 +12,10 @@ interface placesRequestInterface {
     map?: locationType | null
 }
 
-interface placesRequestDetailsInterface {
-    placeId: string
+interface placesPhotoRequestInterfaceV2 {
+    placesUrl: string
     apiKey: string
-}
-
-interface placesPhotoRequestInterface {
-    photoReference: string
-    apiKey: string
-    maxwidth: number
+    maxWidthPx: number
 }
 
 type regularOpeningHoursType = {
@@ -37,6 +32,14 @@ type ReviewType = {
     }
 }
 
+type searchPhotoType = {
+    name: string
+    widthPx?: number
+    heightPx?: number
+    maxWidthPx?: number
+    maxHeightPx?: number
+}
+
 type searchResultType = {
     id: string
     internationalPhoneNumber:string
@@ -51,7 +54,7 @@ type searchResultType = {
     regularOpeningHours: regularOpeningHoursType
     displayName: textType // {text: string}
     editorialSummary: textType // {text: string} //for description
-    photos: string[] // {text: string} //for description
+    photos: searchPhotoType[] // {text: string} //for description
     reviews: ReviewType[]
 }
 type photosDetailsType = {
@@ -65,11 +68,6 @@ type searchResultDetailsType = {
 
 type placesRequestType = {
     result: searchResultType[]
-    error?: unknown
-}
-
-type placesRequestDetailsType = {
-    result: searchResultDetailsType
     error?: unknown
 }
 
@@ -118,26 +116,12 @@ export const placesRequest = async ({
   }
 };
 
-export const placesDetailsRequest = async (
-  { placeId, apiKey }:placesRequestDetailsInterface,
-): Promise<placesRequestDetailsType> => {
-  try {
-    const response = await axios.get(
-      `https://maps.googleapis.com/maps/api/place/details/json?placeid=${placeId}&key=${apiKey}&fields=photos`,
-    );
-
-    return { result: response?.data?.result };
-  } catch (error) {
-    return { error, result: { photos: [] } };
-  }
-};
-
-export const placesPhotoRequest = async ({
-  photoReference, apiKey, maxwidth,
-}: placesPhotoRequestInterface): Promise<placesPhotoRequestType> => {
+const placesPhotoRequestV2 = async ({
+  apiKey, maxWidthPx, placesUrl,
+}: placesPhotoRequestInterfaceV2): Promise<placesPhotoRequestType> => {
   try {
     const response = await fetch(
-      `https://maps.googleapis.com/maps/api/place/photo?maxwidth=${maxwidth}&photo_reference=${photoReference}&key=${apiKey}`,
+      `https://places.googleapis.com/v1/${placesUrl}/media?maxWidthPx=${maxWidthPx}&key=${apiKey}`,
     );
 
     const result = await response.blob();
@@ -208,21 +192,13 @@ export const getGooglePlace = async ({ name, address, map }: getGooglePlaceInter
         && { reviews: business.reviews.map((el) => el?.text?.text).filter((el) => !!el) }),
   };
 
-  const { result: details, error: detailsError } = await placesDetailsRequest({
-    placeId: business.id,
-    apiKey,
-  });
-  if (detailsError) {
-    return { result: objectData, error: detailsError };
-  }
-
-  const detailsPhotos = details?.photos ?? [];
+  const detailsPhotos = business?.photos ?? [];
 
   for (const photo of detailsPhotos) {
     if (objectData.imageURLs.length >= 5) break;
-    const { result: photoString, error: photoError } = await placesPhotoRequest({
-      photoReference: photo.photo_reference,
-      maxwidth: photo.width,
+    const { result: photoString, error: photoError } = await placesPhotoRequestV2({
+      placesUrl: photo.name,
+      maxWidthPx: photo.widthPx || photo.maxWidthPx || 2000,
       apiKey,
     });
     if (photoError || !photoString) {
