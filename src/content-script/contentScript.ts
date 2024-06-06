@@ -7,8 +7,9 @@ import { EXTENSION_COMMANDS, PARSE_COMMANDS } from '../common/constants';
 import { createDraft } from './helpers/draftHelper';
 import uploadBusinessToWaivio from './openstreetmap/uploadBusinessToWaivio';
 import uploadGooglePlaceToWaivio from './googleMaps/uploadGooglePlaceToWaivio';
+import { getId } from './helpers/idHelper';
 
-const downloadFileScript = {
+const actionScript = {
   [PARSE_COMMANDS.TO_JSON]: downloadObjectAsJson,
   [PARSE_COMMANDS.TO_CSV]: downloadXLSX,
   [PARSE_COMMANDS.TO_CLIPBOARD]: copyToClipboard,
@@ -17,6 +18,7 @@ const downloadFileScript = {
   [PARSE_COMMANDS.IMPORT_WAIVIO_GOOGLE]: uploadGooglePlaceToWaivio,
   [PARSE_COMMANDS.SCAN_ASINS]: downloadASIN,
   [PARSE_COMMANDS.CREATE_DRAFT]: createDraft,
+  [PARSE_COMMANDS.GET_ID]: getId,
   default: () => {},
 };
 
@@ -45,7 +47,7 @@ chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
     }
   }
 
-  const downLoadType = message.action as keyof typeof downloadFileScript;
+  const downLoadType = message.action as keyof typeof actionScript;
 
   if (!urlValidation(message.payload, message.action, message.source)) {
     await chrome.runtime.sendMessage({
@@ -54,8 +56,8 @@ chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
     return;
   }
 
-  await (downloadFileScript[downLoadType]
-      || downloadFileScript.default)(message.source);
+  await (actionScript[downLoadType]
+      || actionScript.default)(message.source);
 
   await chrome.runtime.sendMessage({
     action: EXTENSION_COMMANDS.ENABLE, id: message.buttonId, buttonText: message.buttonText,

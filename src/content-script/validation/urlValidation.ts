@@ -103,6 +103,7 @@ export const urlValidation = (url: string, message: string, source: string):bool
     [PARSE_COMMANDS.CREATE_DRAFT]: validatePageForYoutube,
     [PARSE_COMMANDS.IMPORT_WAIVIO_OPENSTREETMAP]: validatePageForOpenstreetmap,
     [PARSE_COMMANDS.IMPORT_WAIVIO_GOOGLE]: isValidGoogleMapsUrl,
+    [PARSE_COMMANDS.GET_ID]: isValidGoogleMapsUrl,
   };
   const type = message as keyof typeof PARSE_COMMANDS;
 

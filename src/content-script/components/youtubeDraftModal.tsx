@@ -4,8 +4,9 @@ import { copyContent } from '../helpers/commonHelper';
 
 interface youtubeModalProps {
     text: string
+    title?: string
 }
-const YoutubeDraftModal = ({ text }: youtubeModalProps) => {
+const YoutubeDraftModal = ({ text, title = 'Post draft' }: youtubeModalProps) => {
   const [isModalOpen, setIsModalOpen] = useState(true);
 
   const handleOk = async () => {
@@ -33,7 +34,7 @@ const YoutubeDraftModal = ({ text }: youtubeModalProps) => {
             >
                 <Modal
                     bodyStyle={{ overflowY: 'auto', maxHeight: 'calc(100vh - 200px)' }}
-                    title="Post draft"
+                    title={title}
                     open={isModalOpen}
                     onOk={handleOk}
                     onCancel={handleCancel}

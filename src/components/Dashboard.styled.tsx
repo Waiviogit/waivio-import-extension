@@ -6,5 +6,5 @@ export const StyledDashboard = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  height: 300px;
+  height: 350px;
 `;

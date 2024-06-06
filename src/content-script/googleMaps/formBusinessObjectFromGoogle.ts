@@ -22,7 +22,19 @@ const getLatLngFromGoogleMapsUrl = (url: string) => {
   return null;
 };
 
-const formBusinessObjectFromGoogle = async () : Promise<businessImportType|undefined> => {
+export const getGoogleId = async () : Promise<string> => {
+  const { name, address } = getPlaceInfo();
+
+  const map = getLatLngFromGoogleMapsUrl(document.URL);
+
+  const response = await chrome.runtime.sendMessage({
+    action: EXTENSION_COMMANDS.GET_GOOGLE_OBJECT_ID, payload: { name, address, map },
+  });
+
+  return response;
+};
+
+export const formBusinessObjectFromGoogle = async () : Promise<businessImportType|undefined> => {
   const { name, address } = getPlaceInfo();
 
   const map = getLatLngFromGoogleMapsUrl(document.URL);
@@ -37,5 +49,3 @@ const formBusinessObjectFromGoogle = async () : Promise<businessImportType|undef
 
   return response.result as businessImportType;
 };
-
-export default formBusinessObjectFromGoogle;

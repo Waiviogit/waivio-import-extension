@@ -71,6 +71,11 @@ type placesRequestType = {
     error?: unknown
 }
 
+type placesIdRequestType = {
+    result: Pick<searchResultType, 'id'>[]
+    error?: unknown
+}
+
 type placesPhotoRequestType = {
     result?: Blob
     error?: unknown
@@ -116,6 +121,46 @@ export const placesRequest = async ({
   }
 };
 
+export const placesIdRequest = async ({
+  textQuery, apiKey, map,
+}: placesRequestInterface): Promise<placesIdRequestType> => {
+  try {
+    const response = await axios.post(
+      'https://places.googleapis.com/v1/places:searchText',
+      {
+        textQuery,
+        languageCode: 'en',
+        ...(map
+                    && {
+                      locationBias: {
+                        circle: {
+                          center: map,
+                          radius: 500.0,
+                        },
+                      },
+                    }),
+      },
+      {
+        // search for locale
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Goog-Api-Key': apiKey,
+          // pick fields
+          'X-Goog-FieldMask': 'places.id',
+        },
+      },
+
+    );
+
+    return { result: response?.data?.places ?? [] };
+  } catch (error) {
+    return {
+      error,
+      result: [],
+    };
+  }
+};
+
 const placesPhotoRequestV2 = async ({
   apiKey, maxWidthPx, placesUrl,
 }: placesPhotoRequestInterfaceV2): Promise<placesPhotoRequestType> => {
@@ -137,6 +182,22 @@ interface getGooglePlaceInterface {
     address: string
     map : {latitude: number, longitude: number} | null
 }
+
+export const getGooglePlaceId = async (
+  { name, address, map }: getGooglePlaceInterface,
+) : Promise<string> => {
+  const textQuery = `${name} ${address}`;
+  const apiKey = await getStorageKey();
+
+  const { result, error } = await placesIdRequest({
+    textQuery,
+    apiKey,
+    map,
+  });
+  if (error) return '';
+
+  return result[0].id;
+};
 
 export const getGooglePlace = async ({ name, address, map }: getGooglePlaceInterface) => {
   const textQuery = `${name} ${address}`;

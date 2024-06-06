@@ -8,7 +8,7 @@ import {
 import { randomNameGenerator } from './commonHelper';
 import { SOURCE_TYPES } from '../../common/constants';
 import formBusinessObject from '../openstreetmap/formBusinessObject';
-import formBusinessObjectFromGoogle from '../googleMaps/formBusinessObjectFromGoogle';
+import { formBusinessObjectFromGoogle } from '../googleMaps/formBusinessObjectFromGoogle';
 
 export const stingToClipboard = (text: string) :void => {
   const tempInput = document.createElement('textarea');

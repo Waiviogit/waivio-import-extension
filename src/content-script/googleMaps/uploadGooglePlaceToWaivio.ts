@@ -1,6 +1,6 @@
 import { downloadToWaivio } from '../helpers/downloadWaivioHelper';
 
-import formBusinessObjectFromGoogle from './formBusinessObjectFromGoogle';
+import { formBusinessObjectFromGoogle } from './formBusinessObjectFromGoogle';
 
 const uploadGooglePlaceToWaivio = async (type?: string):Promise<void> => {
   const business = await formBusinessObjectFromGoogle();

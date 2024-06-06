@@ -169,9 +169,20 @@ export const Dashboard = () => {
           id={generateUniqueId()}
       />;
 
+      const getId = <DashboardButton
+          text={BUTTON_TEXT.GET_GOOGLE_ID}
+          onClick={async (event:Event): Promise<void> => (
+            sendMessageToContentScript(
+              event,
+              PARSE_COMMANDS.GET_ID,
+              SOURCE_TYPES.GOOGLE_MAP,
+            ))}
+          id={generateUniqueId()}
+      />;
+
       const divider = <div style={{ height: '20px' }}></div>;
 
-      return [instruction, input, divider, select, uploadWaivio, parseJson];
+      return [instruction, input, divider, select, uploadWaivio, parseJson, getId];
     }
     return (
                 <h2>No actions available</h2>

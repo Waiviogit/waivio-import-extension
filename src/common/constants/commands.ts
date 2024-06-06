@@ -7,9 +7,11 @@ export const PARSE_COMMANDS = {
   IMPORT_WAIVIO_OPENSTREETMAP: 'import_waivio_openstreetmap',
   IMPORT_WAIVIO_GOOGLE: 'import_waivio_google',
   CREATE_DRAFT: 'create_draft',
+  GET_ID: 'get_id',
 };
 
 export const EXTENSION_COMMANDS = {
   ENABLE: 'ENABLE',
   CREATE_GOOGLE_OBJECT: 'CREATE_GOOGLE_OBJECT',
+  GET_GOOGLE_OBJECT_ID: 'GET_GOOGLE_OBJECT_ID',
 };

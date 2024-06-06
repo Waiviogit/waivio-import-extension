@@ -1,6 +1,6 @@
 import Tab = chrome.tabs.Tab;
 import { EXTENSION_COMMANDS } from '../common/constants';
-import { getGooglePlace } from './createGoogleObject';
+import { getGooglePlace, getGooglePlaceId } from './createGoogleObject';
 
 type messageType = {
   action: string,
@@ -43,6 +43,12 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
   if (data.action === EXTENSION_COMMANDS.CREATE_GOOGLE_OBJECT) {
     getGooglePlace(message.payload).then((res) => sendResponse(res));
+
+    return true; // Indicates that sendResponse will be called asynchronously
+  }
+
+  if (data.action === EXTENSION_COMMANDS.GET_GOOGLE_OBJECT_ID) {
+    getGooglePlaceId(message.payload).then((res) => sendResponse(res));
 
     return true; // Indicates that sendResponse will be called asynchronously
   }
