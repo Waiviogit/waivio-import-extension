@@ -106,7 +106,7 @@ export const placesRequest = async ({
           'Content-Type': 'application/json',
           'X-Goog-Api-Key': apiKey,
           // pick fields
-          'X-Goog-FieldMask': 'places.id,places.internationalPhoneNumber,places.formattedAddress,places.location,places.rating,places.websiteUri,places.regularOpeningHours,places.displayName,places.editorialSummary,places.photos,places.reviews',
+          'X-Goog-FieldMask': 'places.id,places.internationalPhoneNumber,places.formattedAddress,places.location,places.rating,places.websiteUri,places.regularOpeningHours,places.displayName,places.editorialSummary,places.photos,places.reviews,places.types',
         },
       },
 
@@ -190,7 +190,7 @@ export const getGooglePlaceId = async (
   const apiKey = await getStorageKey();
 
   const { result, error } = await placesIdRequest({
-    textQuery,
+    textQuery: name,
     apiKey,
     map,
   });
@@ -209,27 +209,17 @@ export const getGooglePlace = async ({ name, address, map }: getGooglePlaceInter
     };
   }
 
-  let { result, error } = await placesRequest({ textQuery, apiKey });
-  if (error) {
-    return { error };
+  const { result, error } = await placesRequest({
+    textQuery: name,
+    apiKey,
+    map,
+  });
+  if (!result?.length || error) {
+    return { error: { message: 'placesRequest Not Found' } };
   }
 
-  if (!result?.length) {
-    ({ result, error } = await placesRequest({
-      textQuery: name,
-      apiKey,
-      map,
-    }));
-    if (!result?.length || error) {
-      return { error: { message: 'placesRequest Not Found' } };
-    }
-  }
-
-  let business = result?.find((r) => r.photos && r.photos.length);
-  if (!business) {
-    // eslint-disable-next-line prefer-destructuring
-    business = result[0];
-  }
+  // eslint-disable-next-line prefer-destructuring
+  const business = result[0];
 
   const objectData = {
     name: business.displayName.text,
@@ -276,5 +266,5 @@ export const getGooglePlace = async ({ name, address, map }: getGooglePlaceInter
     objectData.imageURLs.push(waivioUploaded);
   }
 
-  return { result: objectData };
+  return { result: objectData, rawData: business };
 };

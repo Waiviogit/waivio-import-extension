@@ -1,10 +1,15 @@
+export const SUPPORTED_OBJECT_TYPES = {
+  RESTAURANT: 'restaurant',
+  BUSINESS: 'business',
+};
+
 export const SELECT_MAP_VALUES = [
   {
-    value: 'business',
+    value: SUPPORTED_OBJECT_TYPES.BUSINESS,
     label: 'Business',
   },
   {
-    value: 'restaurant',
+    value: SUPPORTED_OBJECT_TYPES.RESTAURANT,
     label: 'Restaurant',
   },
 ];
