@@ -57,7 +57,7 @@ type validateUserImportType = {
 
 export const validateWaivioImport = async (): Promise<validateUserImportType> => {
   const backgroundResponse = await chrome.runtime.sendMessage({ action: 'getCookies', payload: '.waivio.com' });
-  if (!backgroundResponse.cookies || !backgroundResponse.cookies.length) return { valid: false, message: 'Please sign in to Waivio in a separate tab.' };
+  if (!backgroundResponse?.cookies || !backgroundResponse.cookies.length) return { valid: false, message: 'Please sign in to Waivio in a separate tab.' };
   const cookies = backgroundResponse.cookies as Cookie[];
 
   const accessTokenCookie = cookies.find((c) => c.name === 'access_token');
