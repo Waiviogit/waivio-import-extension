@@ -5,5 +5,5 @@ export const BUTTON_TEXT = {
   SCAN_FOR_ASINS: 'Scan for ASINs',
   UPLOAD_TO_WAIVIO: 'Upload to Waivio',
   CREATE_POST_DRAFT: 'Create post draft',
-  GET_GOOGLE_ID: 'Get Google id',
+  GET_GOOGLE_ID: 'Show Google ID',
 };

@@ -19,12 +19,12 @@ export const getId = async (source: string):Promise<void> => {
       {
         title: 'Company ID type:',
         textToCopy: 'googleMaps',
-        buttonName: 'copy',
+        buttonName: 'Copy',
       },
       {
         title: 'Company ID:',
         textToCopy: id,
-        buttonName: 'copy',
+        buttonName: 'Copy',
       },
     ];
 

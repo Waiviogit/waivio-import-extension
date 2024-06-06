@@ -15,7 +15,7 @@ const CopyContentModal = ({ fields, modalTitle }: copyContentModalProps) => {
   const [isModalOpen, setIsModalOpen] = useState(true);
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text).then(() => {
-      alert('Copied to clipboard');
+      alert('Text copied to clipboard!');
     }).catch((err) => {
       console.error('Could not copy text: ', err);
     });
@@ -54,9 +54,9 @@ const CopyContentModal = ({ fields, modalTitle }: copyContentModalProps) => {
                 >
                     {
                         fields.map((el) => (
-                            <div style={{ marginBottom: '20px' }}>
+                            <div style={{ marginBottom: '20px', marginTop: '20px' }}>
                                 <div>
-                                    <h2>{el.title}</h2>
+                                    <h2 style={{ fontWeight: '600' }}>{el.title}</h2>
                                 </div>
 
                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -66,7 +66,7 @@ const CopyContentModal = ({ fields, modalTitle }: copyContentModalProps) => {
 
                                     <div>
                                         <Button
-                                            onClick={() => copyToClipboard(el.textToCopy)}>
+                                            onClick={() => copyToClipboard(el.textToCopy)} style={{ backgroundColor: 'rgb(248, 112, 7)', color: 'white' }}>
                                             {el.buttonName}
                                         </Button>
                                     </div>
