@@ -12,6 +12,17 @@ interface placesRequestInterface {
     map?: locationType | null
 }
 
+interface placesRequestDetailsInterface {
+    placeId: string
+    apiKey: string
+}
+
+interface placesPhotoRequestInterface {
+    photoReference: string
+    apiKey: string
+    maxwidth: number
+}
+
 interface placesPhotoRequestInterfaceV2 {
     placesUrl: string
     apiKey: string
@@ -78,6 +89,11 @@ type placesIdRequestType = {
 
 type placesPhotoRequestType = {
     result?: Blob
+    error?: unknown
+}
+
+type placesRequestDetailsType = {
+    result: searchResultDetailsType
     error?: unknown
 }
 
@@ -158,6 +174,36 @@ export const placesIdRequest = async ({
       error,
       result: [],
     };
+  }
+};
+
+export const placesDetailsRequest = async (
+  { placeId, apiKey }:placesRequestDetailsInterface,
+): Promise<placesRequestDetailsType> => {
+  try {
+    const response = await axios.get(
+      `https://maps.googleapis.com/maps/api/place/details/json?placeid=${placeId}&key=${apiKey}&fields=photos`,
+    );
+
+    return { result: response?.data?.result };
+  } catch (error) {
+    return { error, result: { photos: [] } };
+  }
+};
+
+export const placesPhotoRequest = async ({
+  photoReference, apiKey, maxwidth,
+}: placesPhotoRequestInterface): Promise<placesPhotoRequestType> => {
+  try {
+    const response = await fetch(
+      `https://maps.googleapis.com/maps/api/place/photo?maxwidth=${maxwidth}&photo_reference=${photoReference}&key=${apiKey}`,
+    );
+
+    const result = await response.blob();
+
+    return { result };
+  } catch (error) {
+    return { error };
   }
 };
 
@@ -243,13 +289,22 @@ export const getGooglePlace = async ({ name, address, map }: getGooglePlaceInter
         && { reviews: business.reviews.map((el) => el?.text?.text).filter((el) => !!el) }),
   };
 
-  const detailsPhotos = business?.photos ?? [];
+  const { result: details, error: detailsError } = await placesDetailsRequest({
+    placeId: business.id,
+    apiKey,
+  });
+  if (detailsError) {
+    return { result: objectData, error: detailsError, rawData: business };
+  }
+
+  const detailsPhotos = details?.photos ?? [];
 
   for (const photo of detailsPhotos) {
     if (objectData.imageURLs.length >= 5) break;
-    const { result: photoString, error: photoError } = await placesPhotoRequestV2({
-      placesUrl: photo.name,
-      maxWidthPx: photo.widthPx || photo.maxWidthPx || 2000,
+
+    const { result: photoString, error: photoError } = await placesPhotoRequest({
+      photoReference: photo.photo_reference,
+      maxwidth: photo.width,
       apiKey,
     });
     if (photoError || !photoString) {
