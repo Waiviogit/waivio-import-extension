@@ -249,7 +249,7 @@ export const getGooglePlace = async ({ name, address, map }: getGooglePlaceInter
     if (objectData.imageURLs.length >= 5) break;
     const { result: photoString, error: photoError } = await placesPhotoRequestV2({
       placesUrl: photo.name,
-      maxWidthPx: photo.widthPx || photo.maxWidthPx || 2000,
+      maxWidthPx: 1600,
       apiKey,
     });
     if (photoError || !photoString) {
