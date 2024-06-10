@@ -6,4 +6,5 @@ export const BUTTON_TEXT = {
   UPLOAD_TO_WAIVIO: 'Upload to Waivio',
   CREATE_POST_DRAFT: 'Create post draft',
   GET_GOOGLE_ID: 'Show Google ID',
+  GET_OSM_ID: 'Show OSM ID',
 };

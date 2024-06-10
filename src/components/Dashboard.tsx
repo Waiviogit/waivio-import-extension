@@ -126,7 +126,18 @@ export const Dashboard = () => {
           id={generateUniqueId()}
       />;
 
-      return [select, uploadWaivio, parseJson];
+      const getId = <DashboardButton
+          text={BUTTON_TEXT.GET_OSM_ID}
+          onClick={async (event:Event): Promise<void> => (
+            sendMessageToContentScript(
+              event,
+              PARSE_COMMANDS.GET_ID,
+              SOURCE_TYPES.OPENSTREETMAP,
+            ))}
+          id={generateUniqueId()}
+      />;
+
+      return [select, uploadWaivio, parseJson, getId];
     }
     if (isValidGoogleMapsUrl(currentUrl)) {
       const select = <DashboardSelect

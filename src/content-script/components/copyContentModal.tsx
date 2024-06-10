@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { ConfigProvider, Modal, Button } from 'antd';
 
-type fieldToCopyType = {
+export type fieldToCopyType = {
     title: string
     textToCopy: string
     buttonName: string

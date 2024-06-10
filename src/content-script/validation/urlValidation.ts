@@ -93,6 +93,17 @@ const validatePageForOpenstreetmap = (url: string):boolean => {
   return result;
 };
 
+const validateGetId = (url: string, source: string) :boolean => {
+  const actionBySource = {
+
+    [SOURCE_TYPES.OPENSTREETMAP]: validatePageForOpenstreetmap,
+    [SOURCE_TYPES.GOOGLE_MAP]: isValidGoogleMapsUrl,
+    default: () => false,
+  };
+
+  return (actionBySource[source] || actionBySource.default)(url);
+};
+
 export const urlValidation = (url: string, message: string, source: string):boolean => {
   const validationType = {
     [PARSE_COMMANDS.TO_JSON]: validatePage,
@@ -103,7 +114,7 @@ export const urlValidation = (url: string, message: string, source: string):bool
     [PARSE_COMMANDS.CREATE_DRAFT]: validatePageForYoutube,
     [PARSE_COMMANDS.IMPORT_WAIVIO_OPENSTREETMAP]: validatePageForOpenstreetmap,
     [PARSE_COMMANDS.IMPORT_WAIVIO_GOOGLE]: isValidGoogleMapsUrl,
-    [PARSE_COMMANDS.GET_ID]: isValidGoogleMapsUrl,
+    [PARSE_COMMANDS.GET_ID]: validateGetId,
   };
   const type = message as keyof typeof PARSE_COMMANDS;
 
