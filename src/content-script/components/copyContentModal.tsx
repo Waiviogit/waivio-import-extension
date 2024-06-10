@@ -56,7 +56,7 @@ const CopyContentModal = ({ fields, modalTitle }: copyContentModalProps) => {
                         fields.map((el) => (
                             <div style={{ marginBottom: '20px', marginTop: '20px' }}>
                                 <div>
-                                    <h2 style={{ fontWeight: '600' }}>{el.title}</h2>
+                                    <p style={{ fontWeight: '600' }}>{el.title}</p>
                                 </div>
 
                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>

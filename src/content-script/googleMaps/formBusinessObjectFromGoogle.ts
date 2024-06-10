@@ -106,7 +106,7 @@ export const formBusinessObjectFromGoogle = async (type?:string) : Promise<busin
       types: response?.rawData?.types ?? [],
     });
     if (!check.match) {
-      const prompt = `The system identifies this object as a ${check.matchType}, but it is currently set as a ${check.inputType}. If you still wish to proceed with downloading it as a ${check.matchType}, please click Ok`;
+      const prompt = `The system identifies this object as a ${check.matchType}, but it is currently set as a ${check.inputType}. If you still wish to proceed with downloading it as a ${check.inputType}, please click Ok`;
       if (!window.confirm(prompt)) return;
     }
   }
