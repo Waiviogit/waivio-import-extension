@@ -7,7 +7,7 @@ import { EXTENSION_COMMANDS, PARSE_COMMANDS } from '../common/constants';
 import { createDraft } from './helpers/draftHelper';
 import uploadBusinessToWaivio from './openstreetmap/uploadBusinessToWaivio';
 import uploadGooglePlaceToWaivio from './googleMaps/uploadGooglePlaceToWaivio';
-import { getId } from './helpers/idHelper';
+import { checkWaivioObjects, getId } from './helpers/idHelper';
 
 const actionScript = {
   [PARSE_COMMANDS.TO_JSON]: downloadObjectAsJson,
@@ -33,6 +33,11 @@ chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
     await chrome.runtime.sendMessage({
       action: EXTENSION_COMMANDS.ENABLE, id: message.buttonId, buttonText: message.buttonText,
     });
+    return;
+  }
+
+  if (message.action === PARSE_COMMANDS.ALERT_OBJECT_MODAL) {
+    await checkWaivioObjects(message.payload);
     return;
   }
 

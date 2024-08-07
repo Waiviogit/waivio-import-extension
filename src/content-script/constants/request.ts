@@ -4,4 +4,5 @@ export const EXTERNAL_URL = {
   WAIVIO_IMPORT_NOT_PUBLISHED: 'https://www.waivio.com/import-objects-service/asins-not-published',
   WAIVIO_IMPORT_GPT_QUERY: 'https://www.waivio.com/import-objects-service/gpt-query',
   WAIVIO_IMAGE: 'https://www.waivio.com/api/image',
+  WAIVIO_PERMLINK_BY_ID: 'https://www.waivio.com/api/wobjects/id-type',
 };

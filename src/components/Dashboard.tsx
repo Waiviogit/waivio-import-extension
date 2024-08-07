@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { StyledDashboard } from './Dashboard.styled';
 import { DashboardButton } from './DasboardButton';
 import manifest from '../../extension/manifest.json';
@@ -12,7 +12,7 @@ import { getCurrentTab } from '../services/chromeHelper';
 import { DashboardSelect } from './DashboardSelect';
 import { SELECT_MAP_VALUES } from '../common/constants/components';
 import { BUTTON_TEXT, PARSE_COMMANDS, SOURCE_TYPES } from '../common/constants';
-import { sendMessageToContentScript } from '../services/pageParser';
+import { sendMessageToContentScript, sendMessageToContentScriptNoEvent } from '../services/pageParser';
 import { generateUniqueId } from '../common/helper/commonHelper';
 import { DashboardInputKey } from './DashboardInputKey';
 import { isValidGoogleMapsUrl } from '../common/helper/googleHelper';
@@ -39,6 +39,12 @@ export const Dashboard = () => {
         setIntervalId(id);
       } else {
         const url = tab?.url ?? '';
+
+        await sendMessageToContentScriptNoEvent(
+          PARSE_COMMANDS.ALERT_OBJECT_MODAL,
+          url,
+        );
+
         setUrl(url);
       }
     }

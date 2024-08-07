@@ -11,7 +11,7 @@ export const sendMessageToContentScript = async (
   if (!id || !url) return;
 
   const target = event.target as HTMLButtonElement;
-  const buttonText = target.innerText;
+  const buttonText = target?.innerText;
   target.disabled = true;
   target.innerText = '';
 
@@ -23,6 +23,24 @@ export const sendMessageToContentScript = async (
       buttonId: target.id,
       buttonText,
       source,
+    },
+  });
+};
+
+export const sendMessageToContentScriptNoEvent = async (
+  action: string,
+  payload: string,
+): Promise<void> => {
+  const tab = await getCurrentTab();
+  const id = tab?.id;
+  const url = tab?.url;
+  if (!id || !url) return;
+
+  await sendMessageToTab({
+    id,
+    message: {
+      action,
+      payload,
     },
   });
 };

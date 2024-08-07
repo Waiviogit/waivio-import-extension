@@ -8,6 +8,7 @@ export const PARSE_COMMANDS = {
   IMPORT_WAIVIO_GOOGLE: 'import_waivio_google',
   CREATE_DRAFT: 'create_draft',
   GET_ID: 'get_id',
+  ALERT_OBJECT_MODAL: 'alert_object_modal',
 };
 
 export const EXTENSION_COMMANDS = {

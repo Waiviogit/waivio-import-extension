@@ -1,5 +1,10 @@
+import axios from 'axios';
 import { PARSE_COMMANDS, SOURCE_TYPES } from '../../common/constants';
 import { isValidGoogleMapsUrl } from '../../common/helper/googleHelper';
+import { replaceInvisible } from '../helpers/commonHelper';
+import { EXTERNAL_URL } from '../constants';
+import { getGoogleId } from '../googleMaps/formBusinessObjectFromGoogle';
+import { getOSMId } from '../helpers/idHelper';
 
 const aboutFormatText = 'The URL must be in the format:';
 const constructAmazonURL = (url: string): string => {
@@ -37,15 +42,89 @@ const notValidPageAmazonAction = (url: string):void => {
   }
 };
 
-const validatePage = (url: string, source: string):boolean => {
-  const regexBySource = {
-    [SOURCE_TYPES.AMAZON]: /(^https:\/\/www\.amazon[^\/]+\/dp\/[A-Z0-9]{10}(?!\/)|^https:\/\/www\.amazon[^\/]+\/gp\/product\/[A-Z0-9]{10})/,
-    [SOURCE_TYPES.SEPHORA]: /^https:\/\/www\.sephora[^\/]+\//,
-    [SOURCE_TYPES.WALMART]: /^https:\/\/www\.walmart[^\/]+\//,
-    [SOURCE_TYPES.OPENSTREETMAP]: /(^https?:\/\/(?:www\.)?openstreetmap\.org\/node\/[0-9]|^https?:\/\/(?:www\.)?openstreetmap\.org\/way\/[0-9])/,
-    [SOURCE_TYPES.GOOGLE_MAP]: /^https?:\/\/(?:www\.)?google\.com\/maps\//,
-  };
+export const regexBySource = {
+  [SOURCE_TYPES.AMAZON]: /(^https:\/\/www\.amazon[^\/]+\/dp\/[A-Z0-9]{10}(?!\/)|^https:\/\/www\.amazon[^\/]+\/gp\/product\/[A-Z0-9]{10})/,
+  [SOURCE_TYPES.SEPHORA]: /^https:\/\/www\.sephora[^\/]+\//,
+  [SOURCE_TYPES.WALMART]: /^https:\/\/www\.walmart[^\/]+\//,
+  [SOURCE_TYPES.OPENSTREETMAP]: /(^https?:\/\/(?:www\.)?openstreetmap\.org\/node\/[0-9]|^https?:\/\/(?:www\.)?openstreetmap\.org\/way\/[0-9])/,
+  [SOURCE_TYPES.GOOGLE_MAP]: /^https?:\/\/(?:www\.)?google\.com\/maps\//,
+};
 
+const getProductIdAmazon = (url:string): string => {
+  let match = url.match(/\/dp\/([A-Z0-9]+)/);
+  if (!match) match = url.match(/\/product\/([A-Z0-9]+)/);
+
+  return match ? replaceInvisible(match[1]) : '';
+};
+
+const getProductIdSephora = (url:string):string => {
+  const product = url.match(/P\d+/);
+  const sku = url.match(/\?skuId=\d+/);
+  if (!product) return '';
+  if (!sku) return '';
+  return `${product[0]}${sku[0]}`;
+};
+
+const getProductIdWalmart = (url:string): string => {
+  const match = url.match(/\/ip\/([^\/]+)\/(.\d+)/);
+  if (!match) return '';
+  if (!match[2]) return '';
+  return match[2];
+};
+
+const getIdByType = {
+  [SOURCE_TYPES.AMAZON]: getProductIdAmazon,
+  [SOURCE_TYPES.SEPHORA]: getProductIdSephora,
+  [SOURCE_TYPES.WALMART]: getProductIdWalmart,
+  [SOURCE_TYPES.OPENSTREETMAP]: getOSMId,
+  [SOURCE_TYPES.GOOGLE_MAP]: getGoogleId,
+};
+
+const idTypeBySource = {
+  [SOURCE_TYPES.AMAZON]: 'asins',
+  [SOURCE_TYPES.SEPHORA]: 'sephora.com',
+  [SOURCE_TYPES.WALMART]: 'walmart',
+  [SOURCE_TYPES.OPENSTREETMAP]: 'openstrmaps',
+  [SOURCE_TYPES.GOOGLE_MAP]: 'googleMaps',
+};
+
+const getLinkById = async (id: string, idType: string): Promise<string> => {
+  try {
+    const resp = await axios.post(
+      EXTERNAL_URL.WAIVIO_PERMLINK_BY_ID,
+      {
+        id,
+        idType,
+      },
+      {
+        timeout: 15000,
+      },
+    );
+
+    return resp?.data?.result || '';
+  } catch (error) {
+    return '';
+  }
+};
+
+export const getObjectLinkOnWaivio = async (url: string): Promise<string> => {
+  for (const type in regexBySource) {
+    let match = regexBySource[type].test(url);
+    if (type === SOURCE_TYPES.GOOGLE_MAP) {
+      match = isValidGoogleMapsUrl(url);
+    }
+    if (match) {
+      const id = await getIdByType[type](url) || '';
+
+      const idType = idTypeBySource[type] || '';
+      if (!id || !idType) return '';
+      return getLinkById(id, idType);
+    }
+  }
+  return '';
+};
+
+const validatePage = (url: string, source: string):boolean => {
   if (source === SOURCE_TYPES.GOOGLE_MAP) {
     return isValidGoogleMapsUrl(url);
   }

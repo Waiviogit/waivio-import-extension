@@ -5,8 +5,8 @@ import { getGooglePlace, getGooglePlaceId } from './createGoogleObject';
 type messageType = {
   action: string,
   payload: string
-  buttonId: string
-  buttonText: string
+  buttonId?: string
+  buttonText?: string
   source?: string | undefined
 }
 
