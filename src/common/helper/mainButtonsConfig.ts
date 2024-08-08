@@ -65,6 +65,17 @@ export const mainButtonsConfig = [
     ),
     id: generateUniqueId(),
   },
+  {
+    text: BUTTON_TEXT.CREATE_LINK_ALL,
+    onClick: async (event:Event): Promise<void> => (
+      sendMessageToContentScript(
+        event,
+        PARSE_COMMANDS.CREATE_LINK,
+        SOURCE_TYPES.LINK_ALL,
+      )
+    ),
+    id: generateUniqueId(),
+  },
 ];
 
 export const sephoraButtonsConfig = [
@@ -115,6 +126,17 @@ export const sephoraButtonsConfig = [
       sendMessageToContentScript(
         event,
         PARSE_COMMANDS.CREATE_LINK,
+      )
+    ),
+    id: generateUniqueId(),
+  },
+  {
+    text: BUTTON_TEXT.CREATE_LINK_ALL,
+    onClick: async (event:Event): Promise<void> => (
+      sendMessageToContentScript(
+        event,
+        PARSE_COMMANDS.CREATE_LINK,
+        SOURCE_TYPES.LINK_ALL,
       )
     ),
     id: generateUniqueId(),
@@ -173,6 +195,17 @@ export const walmartButtonsConfig = [
     ),
     id: generateUniqueId(),
   },
+  {
+    text: BUTTON_TEXT.CREATE_LINK_ALL,
+    onClick: async (event:Event): Promise<void> => (
+      sendMessageToContentScript(
+        event,
+        PARSE_COMMANDS.CREATE_LINK,
+        SOURCE_TYPES.LINK_ALL,
+      )
+    ),
+    id: generateUniqueId(),
+  },
 ];
 
 export const youtubeButtonConfig = [
@@ -188,6 +221,17 @@ export const youtubeButtonConfig = [
       sendMessageToContentScript(
         event,
         PARSE_COMMANDS.CREATE_LINK,
+      )
+    ),
+    id: generateUniqueId(),
+  },
+  {
+    text: BUTTON_TEXT.CREATE_LINK_ALL,
+    onClick: async (event:Event): Promise<void> => (
+      sendMessageToContentScript(
+        event,
+        PARSE_COMMANDS.CREATE_LINK,
+        SOURCE_TYPES.LINK_ALL,
       )
     ),
     id: generateUniqueId(),

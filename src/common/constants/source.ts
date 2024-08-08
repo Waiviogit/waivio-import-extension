@@ -4,4 +4,5 @@ export const SOURCE_TYPES = {
   WALMART: 'walmart',
   OPENSTREETMAP: 'openstreetmap',
   GOOGLE_MAP: 'google_map',
+  LINK_ALL: 'link_all',
 };

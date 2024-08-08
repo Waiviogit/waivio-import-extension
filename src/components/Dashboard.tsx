@@ -155,7 +155,25 @@ export const Dashboard = () => {
           id={generateUniqueId()}
       />;
 
-      return [select, uploadWaivio, parseJson, getId, createObjectLinkButton];
+      const createObjectLinkAllButton = <DashboardButton
+          text={BUTTON_TEXT.CREATE_LINK_ALL}
+          onClick={async (event:Event): Promise<void> => (
+            sendMessageToContentScript(
+              event,
+              PARSE_COMMANDS.CREATE_LINK,
+              SOURCE_TYPES.LINK_ALL,
+            ))}
+          id={generateUniqueId()}
+      />;
+
+      return [
+        select,
+        uploadWaivio,
+        parseJson,
+        getId,
+        createObjectLinkButton,
+        createObjectLinkAllButton,
+      ];
     }
     if (isValidGoogleMapsUrl(currentUrl)) {
       const select = <DashboardSelect
@@ -220,7 +238,28 @@ export const Dashboard = () => {
           id={generateUniqueId()}
       />;
 
-      return [instruction, input, divider, select, uploadWaivio, parseJson, getId, createObjectLinkButton];
+      const createObjectLinkAllButton = <DashboardButton
+          text={BUTTON_TEXT.CREATE_LINK_ALL}
+          onClick={async (event:Event): Promise<void> => (
+            sendMessageToContentScript(
+              event,
+              PARSE_COMMANDS.CREATE_LINK,
+              SOURCE_TYPES.LINK_ALL,
+            ))}
+          id={generateUniqueId()}
+      />;
+
+      return [
+        instruction,
+        input,
+        divider,
+        select,
+        uploadWaivio,
+        parseJson,
+        getId,
+        createObjectLinkButton,
+        createObjectLinkAllButton,
+      ];
     }
 
     if (validUrlRegEx.test(currentUrl)) {
@@ -234,11 +273,22 @@ export const Dashboard = () => {
           id={generateUniqueId()}
       />;
 
-      return [createObjectLinkButton];
+      const createObjectLinkAllButton = <DashboardButton
+          text={BUTTON_TEXT.CREATE_LINK_ALL}
+          onClick={async (event:Event): Promise<void> => (
+            sendMessageToContentScript(
+              event,
+              PARSE_COMMANDS.CREATE_LINK,
+              SOURCE_TYPES.LINK_ALL,
+            ))}
+          id={generateUniqueId()}
+      />;
+
+      return [createObjectLinkButton, createObjectLinkAllButton];
     }
 
     return (
-                <h2>No actions available {currentUrl}</h2>
+                <h2>No actions available</h2>
     );
   };
 

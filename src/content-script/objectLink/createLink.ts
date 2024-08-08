@@ -69,11 +69,9 @@ const makeBlobFromHtmlPage = async ():Promise<Blob |null> => {
   });
 };
 
-export const createLink = async () => {
-  /// host
-
+export const createLink = async (source?: string) => {
   const name = extractHostname(document.URL);
-  const fieldUrl = document.URL;
+  const fieldUrl = source ? `${document.URL}*` : document.URL;
   const fieldTitle = extractTitleFromDocument();
 
   const primaryImageURLs = [];
