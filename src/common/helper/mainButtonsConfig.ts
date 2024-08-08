@@ -55,6 +55,16 @@ export const mainButtonsConfig = [
     ),
     id: generateUniqueId(),
   },
+  {
+    text: BUTTON_TEXT.CREATE_LINK,
+    onClick: async (event:Event): Promise<void> => (
+      sendMessageToContentScript(
+        event,
+        PARSE_COMMANDS.CREATE_LINK,
+      )
+    ),
+    id: generateUniqueId(),
+  },
 ];
 
 export const sephoraButtonsConfig = [
@@ -95,6 +105,16 @@ export const sephoraButtonsConfig = [
         event,
         PARSE_COMMANDS.IMPORT_WAIVIO,
         SOURCE_TYPES.SEPHORA,
+      )
+    ),
+    id: generateUniqueId(),
+  },
+  {
+    text: BUTTON_TEXT.CREATE_LINK,
+    onClick: async (event:Event): Promise<void> => (
+      sendMessageToContentScript(
+        event,
+        PARSE_COMMANDS.CREATE_LINK,
       )
     ),
     id: generateUniqueId(),
@@ -143,6 +163,16 @@ export const walmartButtonsConfig = [
     ),
     id: generateUniqueId(),
   },
+  {
+    text: BUTTON_TEXT.CREATE_LINK,
+    onClick: async (event:Event): Promise<void> => (
+      sendMessageToContentScript(
+        event,
+        PARSE_COMMANDS.CREATE_LINK,
+      )
+    ),
+    id: generateUniqueId(),
+  },
 ];
 
 export const youtubeButtonConfig = [
@@ -152,23 +182,14 @@ export const youtubeButtonConfig = [
       sendMessageToContentScript(event, PARSE_COMMANDS.CREATE_DRAFT)),
     id: generateUniqueId(),
   },
-];
-
-export const openstreetmapButtonConfig = [
   {
-    text: BUTTON_TEXT.UPLOAD_TO_WAIVIO,
-    onClick: async (event:Event): Promise<void> => (
-      sendMessageToContentScript(event, PARSE_COMMANDS.IMPORT_WAIVIO_OPENSTREETMAP)),
-    id: generateUniqueId(),
-  },
-  {
-    text: BUTTON_TEXT.CREATE_JSON,
+    text: BUTTON_TEXT.CREATE_LINK,
     onClick: async (event:Event): Promise<void> => (
       sendMessageToContentScript(
         event,
-        PARSE_COMMANDS.TO_JSON,
-        SOURCE_TYPES.OPENSTREETMAP,
-      )),
+        PARSE_COMMANDS.CREATE_LINK,
+      )
+    ),
     id: generateUniqueId(),
   },
 ];

@@ -194,8 +194,9 @@ export const urlValidation = (url: string, message: string, source: string):bool
     [PARSE_COMMANDS.IMPORT_WAIVIO_OPENSTREETMAP]: validatePageForOpenstreetmap,
     [PARSE_COMMANDS.IMPORT_WAIVIO_GOOGLE]: isValidGoogleMapsUrl,
     [PARSE_COMMANDS.GET_ID]: validateGetId,
+    default: () => true,
   };
   const type = message as keyof typeof PARSE_COMMANDS;
 
-  return validationType[type](url, source);
+  return (validationType[type] || validationType.default)(url, source);
 };

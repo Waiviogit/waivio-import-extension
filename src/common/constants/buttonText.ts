@@ -7,4 +7,5 @@ export const BUTTON_TEXT = {
   CREATE_POST_DRAFT: 'Create post draft',
   GET_GOOGLE_ID: 'Show Google ID',
   GET_OSM_ID: 'Show OSM ID',
+  CREATE_LINK: 'Create Link object',
 };

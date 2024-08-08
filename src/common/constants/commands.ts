@@ -9,6 +9,7 @@ export const PARSE_COMMANDS = {
   CREATE_DRAFT: 'create_draft',
   GET_ID: 'get_id',
   ALERT_OBJECT_MODAL: 'alert_object_modal',
+  CREATE_LINK: 'create_link',
 };
 
 export const EXTENSION_COMMANDS = {

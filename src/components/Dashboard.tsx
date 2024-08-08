@@ -17,6 +17,8 @@ import { generateUniqueId } from '../common/helper/commonHelper';
 import { DashboardInputKey } from './DashboardInputKey';
 import { isValidGoogleMapsUrl } from '../common/helper/googleHelper';
 
+const validUrlRegEx = /^(?!http:\/\/localhost)(https?:\/\/(?:www\.)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,})(\/.*)?$/;
+
 export const Dashboard = () => {
   const [currentUrl, setUrl] = useState('');
   const [timeoutId, setIntervalId] = useState<NodeJS.Timer | undefined>(undefined);
@@ -143,7 +145,17 @@ export const Dashboard = () => {
           id={generateUniqueId()}
       />;
 
-      return [select, uploadWaivio, parseJson, getId];
+      const createObjectLinkButton = <DashboardButton
+          text={BUTTON_TEXT.CREATE_LINK}
+          onClick={async (event:Event): Promise<void> => (
+            sendMessageToContentScript(
+              event,
+              PARSE_COMMANDS.CREATE_LINK,
+            ))}
+          id={generateUniqueId()}
+      />;
+
+      return [select, uploadWaivio, parseJson, getId, createObjectLinkButton];
     }
     if (isValidGoogleMapsUrl(currentUrl)) {
       const select = <DashboardSelect
@@ -198,11 +210,35 @@ export const Dashboard = () => {
       />;
 
       const divider = <div style={{ height: '20px' }}></div>;
+      const createObjectLinkButton = <DashboardButton
+          text={BUTTON_TEXT.CREATE_LINK}
+          onClick={async (event:Event): Promise<void> => (
+            sendMessageToContentScript(
+              event,
+              PARSE_COMMANDS.CREATE_LINK,
+            ))}
+          id={generateUniqueId()}
+      />;
 
-      return [instruction, input, divider, select, uploadWaivio, parseJson, getId];
+      return [instruction, input, divider, select, uploadWaivio, parseJson, getId, createObjectLinkButton];
     }
+
+    if (validUrlRegEx.test(currentUrl)) {
+      const createObjectLinkButton = <DashboardButton
+          text={BUTTON_TEXT.CREATE_LINK}
+          onClick={async (event:Event): Promise<void> => (
+            sendMessageToContentScript(
+              event,
+              PARSE_COMMANDS.CREATE_LINK,
+            ))}
+          id={generateUniqueId()}
+      />;
+
+      return [createObjectLinkButton];
+    }
+
     return (
-                <h2>No actions available</h2>
+                <h2>No actions available {currentUrl}</h2>
     );
   };
 

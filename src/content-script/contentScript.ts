@@ -8,6 +8,7 @@ import { createDraft } from './helpers/draftHelper';
 import uploadBusinessToWaivio from './openstreetmap/uploadBusinessToWaivio';
 import uploadGooglePlaceToWaivio from './googleMaps/uploadGooglePlaceToWaivio';
 import { checkWaivioObjects, getId } from './helpers/idHelper';
+import { createLink } from './objectLink/createLink';
 
 const actionScript = {
   [PARSE_COMMANDS.TO_JSON]: downloadObjectAsJson,
@@ -19,6 +20,7 @@ const actionScript = {
   [PARSE_COMMANDS.SCAN_ASINS]: downloadASIN,
   [PARSE_COMMANDS.CREATE_DRAFT]: createDraft,
   [PARSE_COMMANDS.GET_ID]: getId,
+  [PARSE_COMMANDS.CREATE_LINK]: createLink,
   default: () => {},
 };
 
@@ -26,6 +28,7 @@ const IMPORT_WAIVIO_COMMANDS = [
   PARSE_COMMANDS.IMPORT_WAIVIO,
   PARSE_COMMANDS.IMPORT_WAIVIO_OPENSTREETMAP,
   PARSE_COMMANDS.IMPORT_WAIVIO_GOOGLE,
+  PARSE_COMMANDS.CREATE_LINK,
 ];
 
 chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
