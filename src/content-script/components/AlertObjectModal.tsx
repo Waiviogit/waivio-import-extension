@@ -44,7 +44,7 @@ const AlertObjectModal = ({ url }: alertObjectProps) => {
                 >
                     <div>
                         <p style={{ fontWeight: 'bold', marginTop: '15px' }}>
-                        The object already exists on Waivio. Here is the link:
+                            The object already exists on Waivio. Here is the link:
                         </p>
                     </div>
 
