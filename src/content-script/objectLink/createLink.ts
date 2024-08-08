@@ -1,5 +1,5 @@
 import html2canvas from 'html2canvas';
-import { downloadToWaivio, loadImageBase64 } from '../helpers/downloadWaivioHelper';
+import { downloadToWaivio, getLinkByBody, loadImageBase64 } from '../helpers/downloadWaivioHelper';
 
 const extractHostname = (url: string): string => {
   // Remove protocol and get the hostname part
@@ -74,6 +74,12 @@ export const createLink = async (source?: string) => {
   const fieldUrl = source ? `${document.URL}*` : document.URL;
   const fieldTitle = extractTitleFromDocument();
 
+  const link = await getLinkByBody(fieldUrl, 'link');
+  if (link) {
+    const proceed = window.confirm(`This object already exists on Waivio https://www.waivio.com/object/${link} do you want to proceed?`);
+    if (!proceed) return;
+  }
+
   const primaryImageURLs = [];
 
   const imageBlob = await makeBlobFromHtmlPage();
@@ -90,6 +96,4 @@ export const createLink = async (source?: string) => {
   };
 
   await downloadToWaivio({ object, objectType: 'link' });
-
-  console.log(object);
 };

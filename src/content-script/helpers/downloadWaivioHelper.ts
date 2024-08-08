@@ -83,6 +83,25 @@ export const validateWaivioImport = async (): Promise<validateUserImportType> =>
   return { valid: true, message: 'ok' };
 };
 
+export const getLinkByBody = async (body: string, objectType?: string): Promise<string> => {
+  try {
+    const resp = await axios.post(
+      EXTERNAL_URL.WAIVIO_PERMLINK_BY_FIELD_BODY,
+      {
+        body,
+        objectType,
+      },
+      {
+        timeout: 15000,
+      },
+    );
+
+    return resp?.data?.result || '';
+  } catch (error) {
+    return '';
+  }
+};
+
 export const downloadToWaivio = async ({
   object, objectType, addDatafinityData, language,
 }:downloadToWaivioInterface): Promise<void> => {
