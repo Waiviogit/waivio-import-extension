@@ -5,4 +5,5 @@ export const SOURCE_TYPES = {
   OPENSTREETMAP: 'openstreetmap',
   GOOGLE_MAP: 'google_map',
   LINK_ALL: 'link_all',
+  RECIPE_DRAFT: 'recipe_draft',
 };

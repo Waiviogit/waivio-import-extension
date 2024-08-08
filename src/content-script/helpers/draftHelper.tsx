@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { EXTERNAL_URL } from '../constants';
 import YoutubeDraftModal from '../components/youtubeDraftModal';
+import { SOURCE_TYPES } from '../../common/constants';
 
 type authorLinkType = {
     author: string
@@ -26,6 +27,7 @@ interface createQueryInterface {
     subs: string
     author: string
     linkToChannel: string
+    source?:string
 }
 
 interface formatAnswerInterface {
@@ -149,7 +151,7 @@ const cutSubs = (subs: string): string => {
 };
 
 const createQuery = ({
-  subs, author, linkToChannel,
+  subs, author, linkToChannel, source,
 }: createQueryInterface): string => {
   const query = `act as professional journalist:
   rewrite in third person in 3 paragraphs (make it sound like a human), create title,
@@ -157,7 +159,28 @@ const createQuery = ({
   add hashtags (composed of one word lowercase) at the very end, including #chatgpt,
   if following text would be in other language than english - rewrite it into english, here is the text: ${subs}
   `;
-  return query;
+
+  const recipeQuery = `act as professional chef:
+  create a recipe from YouTube subtitles. Focus on the recipe itself and follow these steps:
+  - Create a title for the recipe.
+  - Write a short introduction.
+  - Provide a list of ingredients.
+  - Write detailed instructions on how to cook the recipe.
+  - If it's relevant to the context of the recipe, add  Prep Time: How long it takes to prepare the ingredients; Cook Time: How long it takes to cook or bake.
+    Total Time: Combined prep and cook times; Equipment; Cooking Tips; Servings;
+  - Attribute the recipe to the author ${author} and their YouTube channel ${linkToChannel}.
+  - Add hashtags (composed of one word in lowercase) at the very end, including #chatgpt.
+
+  If the following text is in a language other than English, translate it into English: ${subs}. If you think it is not a cooking video, respond: "I can't find a recipe in this video, try another one."
+  `;
+
+  const querySet = {
+    [SOURCE_TYPES.RECIPE_DRAFT]: recipeQuery,
+    default: query,
+  };
+  if (source) return querySet[source] || querySet.default;
+
+  return querySet.default;
 };
 
 const formatGptAnswer = ({
@@ -172,7 +195,7 @@ const formatGptAnswer = ({
   return `${formatted}\n${linkToAuthorAndChannel}`;
 };
 
-export const createDraft = async (): Promise<void> => {
+export const createDraft = async (source?:string): Promise<void> => {
   const videoTitle = getTitle();
   const { author, linkToChannel } = getAuthorAndLink();
   const linkToVideo = document.URL;
@@ -199,13 +222,8 @@ export const createDraft = async (): Promise<void> => {
 
   const subs = cutSubs(result);
 
-  const rootElement = document.createElement('div');
-  rootElement.id = 'react-chrome-modal';
-  document.body.appendChild(rootElement);
-  const rootModal = ReactDOM.createRoot(rootElement);
-
   const query = createQuery({
-    subs, author, linkToChannel,
+    subs, author, linkToChannel, source,
   });
   const { result: postDraft, error } = await getGptAnswer(query);
   if (!postDraft) {
@@ -217,6 +235,11 @@ export const createDraft = async (): Promise<void> => {
   const formatted = formatGptAnswer({
     answer: postDraft, linkToVideo, author, linkToChannel,
   });
+
+  const rootElement = document.createElement('div');
+  rootElement.id = 'react-chrome-modal';
+  document.body.appendChild(rootElement);
+  const rootModal = ReactDOM.createRoot(rootElement);
 
   rootModal.render(
       // @ts-ignore
