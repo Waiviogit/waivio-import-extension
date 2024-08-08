@@ -23,6 +23,11 @@ const extractTitleFromDocument = (): string => {
   const titleElement = document.querySelector('title');
   return titleElement ? titleElement.textContent || '' : '';
 };
+const extractDescriptionFromDocument = () :string => {
+  const el = document.querySelector<HTMLMetaElement>('meta[name=description]');
+  if (!el) return '';
+  return el.content;
+};
 
 const takeScreenshot = () => {
   const body = document.querySelector('body');
@@ -73,6 +78,7 @@ export const createLink = async (source?: string) => {
   const name = extractHostname(document.URL);
   const fieldUrl = source ? `${document.URL}*` : document.URL;
   const fieldTitle = extractTitleFromDocument();
+  const fieldDescription = extractDescriptionFromDocument();
 
   const link = await getLinkByBody(fieldUrl, 'link');
   if (link) {
@@ -92,6 +98,7 @@ export const createLink = async (source?: string) => {
     name,
     fieldUrl,
     fieldTitle,
+    fieldDescription,
     primaryImageURLs,
   };
 
