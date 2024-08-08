@@ -41,6 +41,7 @@ const AlertObjectModal = ({ url }: alertObjectProps) => {
                     // cancelText="Cancel"
                     footer={null}
                     style={{ textAlign: 'center' }}
+                    zIndex={9999999}
                 >
                     <div>
                         <p style={{ fontWeight: 'bold', marginTop: '15px' }}>
