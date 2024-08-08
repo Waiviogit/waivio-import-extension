@@ -32,6 +32,7 @@ const AlertObjectModal = ({ url }: alertObjectProps) => {
                 }}
             >
                 <Modal
+                    width={'450px'}
                     bodyStyle={{ overflowY: 'auto', maxHeight: 'calc(100vh - 200px)' }}
                     open={isModalOpen}
                     // onOk={handleOk}
@@ -39,17 +40,18 @@ const AlertObjectModal = ({ url }: alertObjectProps) => {
                     // okText="Copy"
                     // cancelText="Cancel"
                     footer={null}
+                    style={{ textAlign: 'center' }}
                 >
                     <div>
-                        <p>
-                            Object already exist on Waivio
+                        <p style={{ fontWeight: 'bold', marginTop: '15px' }}>
+                        The object already exists on Waivio. Here is the link:
                         </p>
                     </div>
 
                     <div>
                         <Button
                             onClick={() => goTo(url)}
-                            style={{ backgroundColor: 'rgb(248, 112, 7)', color: 'white' }}>
+                            style={{ backgroundColor: 'rgb(248, 112, 7)', color: 'white', marginTop: '10px' }}>
                             {'Go to object'}
                         </Button>
                     </div>
