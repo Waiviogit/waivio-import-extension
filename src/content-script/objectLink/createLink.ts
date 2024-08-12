@@ -1,30 +1,21 @@
 import html2canvas from 'html2canvas';
 import { downloadToWaivio, getLinkByBody, loadImageBase64 } from '../helpers/downloadWaivioHelper';
 
-const extractHostname = (url: string): string => {
-  // Remove protocol and get the hostname part
-  let hostname;
-  // Find & remove protocol (http, https, ftp, etc.) and get the hostname
-  if (url.indexOf('//') > -1) {
-    hostname = url.split('/')[2];
-  } else {
-    hostname = url.split('/')[0];
-  }
-
-  // Find & remove port number
-  hostname = hostname.split(':')[0];
-  // Find & remove "?"
-  hostname = hostname.split('?')[0];
-
-  return hostname;
-};
+const extractName = (url: string): string => url.replace(/^(https?:\/\/)?(www\.)?/, '');
 
 const extractTitleFromDocument = (): string => {
   const titleElement = document.querySelector('title');
   return titleElement ? titleElement.textContent || '' : '';
 };
+
 const extractDescriptionFromDocument = () :string => {
   const el = document.querySelector<HTMLMetaElement>('meta[name=description]');
+  if (!el) return '';
+  return el.content;
+};
+
+const extractAvatarFromDocument = ():string => {
+  const el = document.querySelector<HTMLMetaElement>('meta[property="og:image"]');
   if (!el) return '';
   return el.content;
 };
@@ -75,7 +66,8 @@ const makeBlobFromHtmlPage = async ():Promise<Blob |null> => {
 };
 
 export const createLink = async (source?: string) => {
-  const name = extractHostname(document.URL);
+  const name = extractName(document.URL);
+
   const fieldUrl = source ? `${document.URL}*` : document.URL;
   const fieldTitle = extractTitleFromDocument();
   const fieldDescription = extractDescriptionFromDocument();
@@ -87,11 +79,15 @@ export const createLink = async (source?: string) => {
   }
 
   const primaryImageURLs = [];
+  const imageURLs = [];
+
+  const avatar = extractAvatarFromDocument();
+  if (avatar) primaryImageURLs.push(avatar);
 
   const imageBlob = await makeBlobFromHtmlPage();
   if (imageBlob) {
     const { result } = await loadImageBase64(imageBlob);
-    if (result) primaryImageURLs.push(result);
+    if (result) imageURLs.push(result);
   }
 
   const object = {
@@ -100,6 +96,7 @@ export const createLink = async (source?: string) => {
     fieldTitle,
     fieldDescription,
     primaryImageURLs,
+    imageURLs,
   };
 
   await downloadToWaivio({ object, objectType: 'link' });
