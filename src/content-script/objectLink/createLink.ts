@@ -1,7 +1,9 @@
 import html2canvas from 'html2canvas';
 import { downloadToWaivio, getLinkByBody, loadImageBase64 } from '../helpers/downloadWaivioHelper';
 
-const extractName = (url: string): string => url.replace(/^(https?:\/\/)?(www\.)?/, '');
+const extractName = (url: string): string => url
+  .replace(/^(https?:\/\/)?(www\.)?/, '')
+  .replace(/\/$/, '');
 
 const extractTitleFromDocument = (): string => {
   const titleElement = document.querySelector('title');
