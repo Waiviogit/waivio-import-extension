@@ -153,7 +153,7 @@ const validatePageForAsin = (url: string):boolean => {
 };
 
 const validatePageForYoutube = (url: string):boolean => {
-  const regex = /^https?:\/\/(?:www\.)?youtube\.com\/watch\?v=/;
+  const regex = /^https?:\/\/(?:www\.)?youtube\.com\/watch\?v=|^https?:\/\/(?:www\.)?youtube\.com\/shorts/;
 
   const result = regex.test(url);
   if (!result) {

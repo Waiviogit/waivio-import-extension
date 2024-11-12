@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import getVideoCaptions from 'youtube-captions';
 import { EXTERNAL_URL } from '../constants';
 import YoutubeDraftModal from '../components/youtubeDraftModal';
 import { SOURCE_TYPES } from '../../common/constants';
@@ -55,7 +56,7 @@ const getAuthorAndLink = (): authorLinkType => {
 };
 
 const extractVideoId = (url: string): string => {
-  const regex = /watch\?v=([^&]+)/;
+  const regex = /(?:watch\?v=|\/shorts\/)([^&/]+)/;
   const match = url.match(regex);
   if (match && match[1]) {
     return match[1];
@@ -195,6 +196,15 @@ const formatGptAnswer = ({
   return `${formatted}\n${linkToAuthorAndChannel}`;
 };
 
+const getSubsById = async (videoId :string): Promise<string> => {
+  try {
+    const captions = await getVideoCaptions(videoId, { plainText: true });
+    return captions as string;
+  } catch (error) {
+    return '';
+  }
+};
+
 export const createDraft = async (source?:string): Promise<void> => {
   const videoTitle = getTitle();
   const { author, linkToChannel } = getAuthorAndLink();
@@ -214,7 +224,7 @@ export const createDraft = async (source?:string): Promise<void> => {
     return;
   }
 
-  const { result } = await getSubsByUrl(url);
+  const result = await getSubsById(videoId);
   if (!result) {
     alert('Fetch subs error, try to reload page and try again');
     return;
