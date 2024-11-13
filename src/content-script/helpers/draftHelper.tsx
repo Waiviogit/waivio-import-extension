@@ -1,23 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import getVideoCaptions from 'youtube-captions';
+import getVideoCaptions, { captionType } from './captionHelper';
 import { EXTERNAL_URL } from '../constants';
 import YoutubeDraftModal from '../components/youtubeDraftModal';
 import { SOURCE_TYPES } from '../../common/constants';
-
-type authorLinkType = {
-    author: string
-    linkToChannel: string
-}
-
-type captionTrackType = {
-    baseUrl: string
-    isTranslatable: boolean
-    kind: string
-    languageCode: string
-    vssId: string
-    name: { simpleText: string }
-}
 
 type responseType = {
     result?: string
@@ -44,17 +30,6 @@ const convertHashtagsToLowerCase = (inputString: string): string => {
   return convertedString;
 };
 
-const getTitle = () => document.querySelector<HTMLElement>('h1.style-scope.ytd-watch-metadata')?.innerText ?? '';
-
-const getAuthorAndLink = (): authorLinkType => {
-  const linkToChannel = document.querySelector<HTMLLinkElement>('#text-container a');
-
-  return {
-    author: (linkToChannel?.innerText ?? '').trim(),
-    linkToChannel: linkToChannel?.href ?? '',
-  };
-};
-
 const extractVideoId = (url: string): string => {
   const regex = /(?:watch\?v=|\/shorts\/)([^&/]+)/;
   const match = url.match(regex);
@@ -62,59 +37,6 @@ const extractVideoId = (url: string): string => {
     return match[1];
   }
   return '';
-};
-
-const getCaptionTracksAlternative = (): captionTrackType[] => {
-  const videoId = extractVideoId(document.URL);
-  const scriptInnerTexts = Array.from(document.querySelectorAll('script')).map((el) => el.innerText);
-  const regex = new RegExp(`"baseUrl":"https://www.youtube.com/api/timedtext\\?v=${videoId}.*?"isTranslatable":true.*?}`);
-
-  const script = scriptInnerTexts.find((el) => regex.test(el));
-
-  const regex2 = /"captionTracks":(.*?)]/;
-
-  const found = regex2.exec(script || '');
-  if (!found) return [];
-
-  const [, match] = found;
-
-  try {
-    const captionTracks = JSON.parse(`${match}]`);
-    return captionTracks;
-  } catch (error) {
-    return [];
-  }
-};
-
-const getCaptionTracks = (): captionTrackType[] => {
-  const regex = /({"captionTracks":.*isTranslatable":(true|false)}])/;
-  const scriptInnerTexts = Array.from(document.querySelectorAll('script')).map((el) => el.innerText);
-  const script = scriptInnerTexts.find((el) => regex.test(el));
-  const found = regex.exec(script || '');
-  if (!found) return getCaptionTracksAlternative();
-  const [match] = found;
-
-  try {
-    const { captionTracks } = JSON.parse(`${match}}`);
-    return captionTracks;
-  } catch (error) {
-    return getCaptionTracksAlternative();
-  }
-};
-
-const getSubsByUrl = async (url: string): Promise<responseType> => {
-  try {
-    const response = await fetch(url);
-    const transcript = await response.text();
-    const parser = new DOMParser();
-    const xmlDoc = parser.parseFromString(transcript, 'text/xml');
-    const textTags = xmlDoc.getElementsByTagName('text');
-    const result = Array.from(textTags).map((textTag) => textTag.textContent).join('');
-    return { result };
-  } catch (error) {
-    console.error(error);
-    return { error };
-  }
 };
 
 const getGptAnswer = async (query: string): Promise<responseType> => {
@@ -137,12 +59,6 @@ const getGptAnswer = async (query: string): Promise<responseType> => {
     console.error(error);
     return { error };
   }
-};
-
-const getSubsUrl = (captions: captionTrackType[]): string => {
-  const caption = captions.find((el) => el.languageCode === 'en' || el.languageCode === 'en-US');
-  if (!caption) return captions[0].baseUrl;
-  return caption.baseUrl;
 };
 
 const cutSubs = (subs: string): string => {
@@ -196,41 +112,30 @@ const formatGptAnswer = ({
   return `${formatted}\n${linkToAuthorAndChannel}`;
 };
 
-const getSubsById = async (videoId :string): Promise<string> => {
+const getSubsById = async (videoId :string): Promise<captionType> => {
   try {
     const captions = await getVideoCaptions(videoId, { plainText: true });
-    return captions as string;
+    return captions;
   } catch (error) {
-    return '';
+    return {
+      captions: '',
+      author: '',
+      linkToChannel: '',
+    };
   }
 };
 
 export const createDraft = async (source?:string): Promise<void> => {
-  const videoTitle = getTitle();
-  const { author, linkToChannel } = getAuthorAndLink();
   const linkToVideo = document.URL;
   const videoId = extractVideoId(linkToVideo);
-  const captions = getCaptionTracks();
 
-  if (!captions.length) {
-    alert('No captions were found, try to reload page and try again');
-    return;
-  }
-  const url = getSubsUrl(captions);
-  if (!url.includes(videoId)) {
-    if (window.confirm('We can\'t find subtitles for this video, please click ok to refresh the page')) {
-      window.open(linkToVideo, '_self');
-    }
-    return;
-  }
-
-  const result = await getSubsById(videoId);
-  if (!result) {
+  const { captions, author, linkToChannel } = await getSubsById(videoId);
+  if (!captions) {
     alert('Fetch subs error, try to reload page and try again');
     return;
   }
 
-  const subs = cutSubs(result);
+  const subs = cutSubs(captions);
 
   const query = createQuery({
     subs, author, linkToChannel, source,

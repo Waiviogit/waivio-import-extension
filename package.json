@@ -24,8 +24,7 @@
     "styled-components": "^5.3.10",
     "typescript": "^4.9.5",
     "web-vitals": "^2.1.4",
-    "xlsx": "^0.18.5",
-    "youtube-captions": "^1.0.2"
+    "xlsx": "^0.18.5"
   },
   "scripts": {
     "start": "webpack serve --config webpack.dev.js",
