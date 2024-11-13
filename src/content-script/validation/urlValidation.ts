@@ -191,6 +191,7 @@ export const urlValidation = (url: string, message: string, source: string):bool
     [PARSE_COMMANDS.SCAN_ASINS]: validatePageForAsin,
     [PARSE_COMMANDS.IMPORT_WAIVIO]: validatePage,
     [PARSE_COMMANDS.CREATE_DRAFT]: validatePageForYoutube,
+    [PARSE_COMMANDS.CREATE_POST]: () => true,
     [PARSE_COMMANDS.IMPORT_WAIVIO_OPENSTREETMAP]: validatePageForOpenstreetmap,
     [PARSE_COMMANDS.IMPORT_WAIVIO_GOOGLE]: isValidGoogleMapsUrl,
     [PARSE_COMMANDS.GET_ID]: validateGetId,

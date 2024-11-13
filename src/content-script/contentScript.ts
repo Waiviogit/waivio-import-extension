@@ -9,6 +9,7 @@ import uploadBusinessToWaivio from './openstreetmap/uploadBusinessToWaivio';
 import uploadGooglePlaceToWaivio from './googleMaps/uploadGooglePlaceToWaivio';
 import { checkWaivioObjects, getId } from './helpers/idHelper';
 import { createLink } from './objectLink/createLink';
+import { createPost } from './helpers/postHelper';
 
 const actionScript = {
   [PARSE_COMMANDS.TO_JSON]: downloadObjectAsJson,
@@ -19,6 +20,7 @@ const actionScript = {
   [PARSE_COMMANDS.IMPORT_WAIVIO_GOOGLE]: uploadGooglePlaceToWaivio,
   [PARSE_COMMANDS.SCAN_ASINS]: downloadASIN,
   [PARSE_COMMANDS.CREATE_DRAFT]: createDraft,
+  [PARSE_COMMANDS.CREATE_POST]: createPost,
   [PARSE_COMMANDS.GET_ID]: getId,
   [PARSE_COMMANDS.CREATE_LINK]: createLink,
   default: () => {},

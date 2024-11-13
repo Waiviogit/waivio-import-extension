@@ -226,6 +226,16 @@ export const youtubeButtonConfig = [
     id: generateUniqueId(),
   },
   {
+    text: BUTTON_TEXT.CREATE_POST,
+    onClick: async (event:Event): Promise<void> => (
+      sendMessageToContentScript(
+        event,
+        PARSE_COMMANDS.CREATE_POST,
+        SOURCE_TYPES.YOUTUBE,
+      )),
+    id: generateUniqueId(),
+  },
+  {
     text: BUTTON_TEXT.CREATE_LINK,
     onClick: async (event:Event): Promise<void> => (
       sendMessageToContentScript(
