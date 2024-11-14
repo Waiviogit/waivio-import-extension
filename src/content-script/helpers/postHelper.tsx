@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client';
 import CreatePostModal from '../components/createPostModal';
 import { SOURCE_TYPES } from '../../common/constants';
 import { extractVideoId, fetchVideoContent, getTitleAndBody } from './youtubeHelper';
+import { getWaivioUserInfo } from './userHelper';
 
 type parsedPostType = {
   title: string
@@ -61,12 +62,16 @@ export const createPost = async (source?:string): Promise<void> => {
   const tags = ['waivio'];
   if (tagsFromBody.length) tags.push(...tagsFromBody);
 
-  const author = 'flowmaster';
+  const userInfo = await getWaivioUserInfo();
+  if (!userInfo) return;
+  const {
+    userName, guestName, auth, accessToken,
+  } = userInfo;
 
   rootModal.render(
         // @ts-ignore
         <CreatePostModal
-            author={author}
+            author={userName}
             title={title}
             body={body}
             tags={tags}
