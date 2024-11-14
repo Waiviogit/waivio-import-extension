@@ -1,8 +1,24 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import CreatePostModal from '../components/createPostModal';
+import { SOURCE_TYPES } from '../../common/constants';
+
+type parsedPostType = {
+  title: string
+  body: string
+  tags: string[]
+}
+const youtubeInfoHandler = async (): Promise<parsedPostType> => {
+
+};
+
+const postInfoHandler = {
+  [SOURCE_TYPES.YOUTUBE]: youtubeInfoHandler,
+};
 
 export const createPost = async (source?:string): Promise<void> => {
+  if (!source) return;
+
   const rootElement = document.createElement('div');
   rootElement.id = 'react-chrome-modal';
   document.body.appendChild(rootElement);
@@ -14,12 +30,16 @@ export const createPost = async (source?:string): Promise<void> => {
   const author = 'flowmaster';
   const title = 'My super title';
 
+  const tags = ['waiv'];
+
   rootModal.render(
         // @ts-ignore
         <CreatePostModal
             author={author}
             title={title}
-            body={body}>
+            body={body}
+            tags={tags}
+        >
         </CreatePostModal>,
   );
 };
