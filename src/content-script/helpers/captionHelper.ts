@@ -57,10 +57,11 @@ const getChanelURL = (content: string): authorLinkType => {
 
     const parsed = JSON.parse(stringifiedJson);
     const result = parsed?.[0]?.item;
-    console.log(JSON.stringify(result));
+    const linkToChannel = (result?.['@id'] ?? '').replace(/^http:\/\//, 'https://');
+
     return {
       author: result?.name ?? '',
-      linkToChannel: result?.['@id'] ?? '',
+      linkToChannel,
     };
   } catch (error) {
     return {
