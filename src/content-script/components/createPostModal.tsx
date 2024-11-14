@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import {
-  ConfigProvider, Modal, Input,
+  ConfigProvider, Modal, Input, Space
 } from 'antd';
 
 interface CreatePostProps {
