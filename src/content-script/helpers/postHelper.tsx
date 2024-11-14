@@ -2,14 +2,41 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import CreatePostModal from '../components/createPostModal';
 import { SOURCE_TYPES } from '../../common/constants';
+import { extractVideoId, fetchVideoContent, getTitleAndBody } from './youtubeHelper';
 
 type parsedPostType = {
   title: string
   body: string
-  tags: string[]
 }
-const youtubeInfoHandler = async (): Promise<parsedPostType> => {
 
+const extractHashtags = (text: string) : string[] => {
+  const regex = /#(\w+)/g;
+  const hashtags = [];
+  let match;
+
+  // eslint-disable-next-line no-cond-assign
+  while ((match = regex.exec(text)) !== null) {
+    hashtags.push(match[1]);
+  }
+
+  return hashtags;
+};
+
+const youtubeInfoHandler = async (): Promise<parsedPostType|null> => {
+  try {
+    const id = extractVideoId(document.URL);
+    const content = await fetchVideoContent(id);
+
+    const { title, body } = getTitleAndBody(content);
+
+    return {
+      title, body: `${document.URL}\n${body}`,
+    };
+  } catch (error) {
+    // @ts-ignore
+    alert(error?.message);
+    return null;
+  }
 };
 
 const postInfoHandler = {
@@ -19,18 +46,22 @@ const postInfoHandler = {
 export const createPost = async (source?:string): Promise<void> => {
   if (!source) return;
 
+  const handler = postInfoHandler[source as keyof typeof postInfoHandler];
+
+  const response = await handler();
+  if (!response) return;
+  const { body, title } = response;
+
   const rootElement = document.createElement('div');
   rootElement.id = 'react-chrome-modal';
   document.body.appendChild(rootElement);
   const rootModal = ReactDOM.createRoot(rootElement);
 
-  const body = 'Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source. Lorem Ipsum comes from sections 1.10.32 and 1.10.33 of "de Finibus Bonorum et Malorum" (The Extremes of Good and Evil) by Cicero, written in 45 BC. This book is a treatise on the theory of ethics, very popular during the Renaissance. The first line of Lorem Ipsum, "Lorem ipsum dolor sit amet..", comes from a line in section 1.10.32.\n'
-      + '\n'
-      + 'The standard chunk of Lorem Ipsum used since the 1500s is reproduced below for those interested. Sections 1.10.32 and 1.10.33 from "de Finibus Bonorum et Malorum" by Cicero are also reproduced in their exact original form, accompanied by English versions from the 1914 translation by H. Rackham.';
-  const author = 'flowmaster';
-  const title = 'My super title';
+  const tagsFromBody = extractHashtags(body);
+  const tags = ['waivio'];
+  if (tagsFromBody.length) tags.push(...tagsFromBody);
 
-  const tags = ['waiv'];
+  const author = 'flowmaster';
 
   rootModal.render(
         // @ts-ignore

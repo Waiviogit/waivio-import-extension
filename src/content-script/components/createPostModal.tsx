@@ -1,21 +1,23 @@
 import React, { useState } from 'react';
 import {
-  ConfigProvider, Modal, Input, Space
+  ConfigProvider, Modal, Input, Space,
 } from 'antd';
+import WaivioTags from './WaivioTags';
 
 interface CreatePostProps {
     author: string;
     body: string;
     title?: string;
-    tags?: string[];
+    tags: string[];
 }
 
 const CreatePostModal = ({
-  author, body: initialBody, title: initialTitle = 'Post draft', tags = ['waiv'],
+  author, body: initialBody, title: initialTitle = 'Post draft', tags,
 }: CreatePostProps) => {
   const [isModalOpen, setIsModalOpen] = useState(true);
   const [title, setTitle] = useState(initialTitle);
   const [body, setBody] = useState(initialBody);
+  const [postTags, setTags] = useState<string[]>([]);
 
   const handleSubmit = async () => {
     const nested = document.getElementById('react-chrome-modal');
@@ -24,6 +26,7 @@ const CreatePostModal = ({
     // Add logic here to handle submission of title and body
     console.log('Submitted Title:', title);
     console.log('Submitted Body:', body);
+    console.log('tags', postTags);
 
     document.body.removeChild(nested);
   };
@@ -66,6 +69,7 @@ const CreatePostModal = ({
                         placeholder="Enter post content"
                         style={{ height: '500px', marginTop: '10px' }}
                     />
+                    <WaivioTags setParentTags={setTags} initialTags={tags}/>
                 </Modal>
             </ConfigProvider>
         </>
