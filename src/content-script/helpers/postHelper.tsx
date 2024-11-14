@@ -4,6 +4,7 @@ import CreatePostModal from '../components/createPostModal';
 import { SOURCE_TYPES } from '../../common/constants';
 import { extractVideoId, fetchVideoContent, getTitleAndBody } from './youtubeHelper';
 import { getWaivioUserInfo } from './userHelper';
+import { fetchTiktok, getTikTokDesc } from './tikTokHelper';
 
 type parsedPostType = {
   title: string
@@ -40,8 +41,25 @@ const youtubeInfoHandler = async (): Promise<parsedPostType|null> => {
   }
 };
 
+const tikTokInfoHandler = async (): Promise<parsedPostType|null> => {
+  try {
+    const url = document.URL;
+    const content = await fetchTiktok(url);
+    const decr = getTikTokDesc(content);
+
+    return {
+      title: decr, body: `${url}\n${decr}`,
+    };
+  } catch (error) {
+    // @ts-ignore
+    alert(error?.message);
+    return null;
+  }
+};
+
 const postInfoHandler = {
   [SOURCE_TYPES.YOUTUBE]: youtubeInfoHandler,
+  [SOURCE_TYPES.TIKTOK]: tikTokInfoHandler,
 };
 
 export const createPost = async (source?:string): Promise<void> => {

@@ -5,6 +5,7 @@ import manifest from '../../extension/manifest.json';
 import {
   mainButtonsConfig,
   sephoraButtonsConfig,
+  tikTokConfig,
   walmartButtonsConfig,
   youtubeButtonConfig,
 } from '../common/helper';
@@ -73,7 +74,19 @@ export const Dashboard = () => {
                     key={button.id}
                 />)
       );
-    } if (currentUrl.includes('amazon')) {
+    }
+    if (currentUrl.includes('tiktok')) {
+      return (
+        tikTokConfig
+          .map((button) => <DashboardButton
+                  text={button.text}
+                  onClick={button.onClick}
+                  id={button.id}
+                  key={button.id}
+              />)
+      );
+    }
+    if (currentUrl.includes('amazon')) {
       return (
         mainButtonsConfig
           .map((button) => <DashboardButton

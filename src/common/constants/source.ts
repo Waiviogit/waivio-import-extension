@@ -7,4 +7,5 @@ export const SOURCE_TYPES = {
   LINK_ALL: 'link_all',
   RECIPE_DRAFT: 'recipe_draft',
   YOUTUBE: 'youtube',
+  TIKTOK: 'tiktok',
 };

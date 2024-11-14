@@ -257,3 +257,16 @@ export const youtubeButtonConfig = [
     id: generateUniqueId(),
   },
 ];
+
+export const tikTokConfig = [
+  {
+    text: BUTTON_TEXT.CREATE_POST,
+    onClick: async (event:Event): Promise<void> => (
+      sendMessageToContentScript(
+        event,
+        PARSE_COMMANDS.CREATE_POST,
+        SOURCE_TYPES.TIKTOK,
+      )),
+    id: generateUniqueId(),
+  },
+];
