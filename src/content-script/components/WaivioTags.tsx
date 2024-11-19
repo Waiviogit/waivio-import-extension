@@ -75,9 +75,10 @@ const WaivioTags = ({ setParentTags, initialTags }: waivioTagsProps) => {
   };
 
   const tagPlusStyle: React.CSSProperties = {
-    height: 22,
+    height: 20,
     background: token.colorBgContainer,
     borderStyle: 'dashed',
+    cursor: 'pointer',
   };
 
   return (
@@ -139,7 +140,7 @@ const WaivioTags = ({ setParentTags, initialTags }: waivioTagsProps) => {
                 />
             ) : (
                 <Tag style={tagPlusStyle} icon={<PlusOutlined />} onClick={showInput}>
-                    New Tag
+                    New tag
                 </Tag>
             )}
         </Flex>
