@@ -1,18 +1,20 @@
 import React, { useState } from 'react';
 import {
-  ConfigProvider, Modal, Input, Space,
+  ConfigProvider, Modal, Input,
 } from 'antd';
 import WaivioTags from './WaivioTags';
+import { postImportWaivio } from '../helpers/downloadWaivioHelper';
 
 interface CreatePostProps {
     author: string;
     body: string;
     title?: string;
+    host: string;
     tags: string[];
 }
 
 const CreatePostModal = ({
-  author, body: initialBody, title: initialTitle = 'Post draft', tags,
+  author, body: initialBody, title: initialTitle = 'Post draft', tags, host,
 }: CreatePostProps) => {
   const [isModalOpen, setIsModalOpen] = useState(true);
   const [title, setTitle] = useState(initialTitle);
@@ -23,11 +25,10 @@ const CreatePostModal = ({
     const nested = document.getElementById('react-chrome-modal');
     if (!nested) return;
 
-    // Add logic here to handle submission of title and body
-    console.log('Submitted Title:', title);
-    console.log('Submitted Body:', body);
-    console.log('tags', postTags);
-
+    await postImportWaivio({
+      title, body, host, tags: postTags,
+    });
+    setIsModalOpen(false);
     document.body.removeChild(nested);
   };
 
@@ -57,6 +58,7 @@ const CreatePostModal = ({
                     okButtonProps={{ disabled: !title || !body }}
                 >
                     <Input value={author} disabled={true} style={{ marginTop: '30px' }} />
+                    <Input value={host} disabled={true} style={{ marginTop: '10px' }} />
                     <Input
                         value={title}
                         onChange={(e) => setTitle(e.target.value)}

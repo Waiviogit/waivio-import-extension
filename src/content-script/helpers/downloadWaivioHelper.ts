@@ -200,3 +200,63 @@ export const loadImageBase64 = async (file:Blob, size?: string) => {
     return { error };
   }
 };
+
+export const getPostImportHost = async (user: string): Promise<string> => {
+  try {
+    const resp = await axios.get(
+      EXTERNAL_URL.WAIVIO_POST_IMPORT_HOST,
+      {
+        timeout: 15000,
+        params: {
+          user,
+        },
+      },
+    );
+
+    return resp?.data?.host || '';
+  } catch (error) {
+    return '';
+  }
+};
+
+ interface postImportWaivioInterface {
+  title: string
+  body: string
+  host: string
+  tags: string[]
+}
+
+export const postImportWaivio = async ({
+  title, body, tags, host,
+}: postImportWaivioInterface): Promise<void> => {
+  const userInfo = await getWaivioUserInfo();
+  if (!userInfo) return;
+  const {
+    userName, guestName, auth, accessToken,
+  } = userInfo;
+
+  try {
+    await axios.post(
+      EXTERNAL_URL.WAIVIO_POST_IMPORT,
+      {
+        user: userName,
+        host,
+        posts: [{
+          title, body, tags,
+        }],
+
+      },
+      {
+        headers: {
+          'access-token': accessToken,
+          'hive-auth': auth ? 'true' : 'false',
+          'waivio-auth': guestName ? 'true' : 'false',
+        },
+      },
+    );
+    alert('Post added to the posting queue');
+  } catch (error) {
+    // @ts-ignore
+    alert(error?.message);
+  }
+};

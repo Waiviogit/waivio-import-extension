@@ -5,6 +5,7 @@ import { SOURCE_TYPES } from '../../common/constants';
 import { extractVideoId, fetchVideoContent, getTitleAndBody } from './youtubeHelper';
 import { getWaivioUserInfo } from './userHelper';
 import { fetchTiktok, getTikTokDesc } from './tikTokHelper';
+import { getPostImportHost } from './downloadWaivioHelper';
 
 type parsedPostType = {
   title: string
@@ -83,8 +84,10 @@ export const createPost = async (source?:string): Promise<void> => {
   const userInfo = await getWaivioUserInfo();
   if (!userInfo) return;
   const {
-    userName, guestName, auth, accessToken,
+    userName,
   } = userInfo;
+
+  const host = await getPostImportHost(userName) || 'www.waivio.com';
 
   rootModal.render(
         // @ts-ignore
@@ -93,6 +96,7 @@ export const createPost = async (source?:string): Promise<void> => {
             title={title}
             body={body}
             tags={tags}
+            host={host}
         >
         </CreatePostModal>,
   );
