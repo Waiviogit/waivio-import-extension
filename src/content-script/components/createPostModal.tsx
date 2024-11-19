@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import {
-  ConfigProvider, Modal, Input,
+  ConfigProvider, Modal, Input, Popover,
 } from 'antd';
 import WaivioTags from './WaivioTags';
 import { postImportWaivio } from '../helpers/downloadWaivioHelper';
@@ -57,8 +57,24 @@ const CreatePostModal = ({
                     cancelText="Cancel"
                     okButtonProps={{ disabled: !title || !body }}
                 >
-                    <Input value={author} disabled={true} style={{ marginTop: '30px' }} />
-                    <Input value={host} disabled={true} style={{ marginTop: '10px' }} />
+                    <Popover
+                        content={'Author of the post. Change by signing in waivio with another account'}
+                    >
+                        <Input
+                            style={{ marginTop: '30px' }}
+                            value={author}
+                            disabled={true}
+                        />
+                    </Popover>
+                    <Popover
+                        content={'Domain to be associated with all published posts, establishing it as their canonical source. Can be changed on waivio'}
+                    >
+                        <Input
+                            value={host}
+                            disabled={true}
+                            style={{ marginTop: '10px' }}
+                        />
+                    </Popover>
                     <Input
                         value={title}
                         onChange={(e) => setTitle(e.target.value)}
@@ -69,9 +85,12 @@ const CreatePostModal = ({
                         value={body}
                         onChange={(e) => setBody(e.target.value)}
                         placeholder="Enter post content"
-                        style={{ height: '500px', marginTop: '10px' }}
+                        style={{ height: '500px', marginTop: '10px', marginBottom: '10px' }}
                     />
-                    <WaivioTags setParentTags={setTags} initialTags={tags}/>
+                    <WaivioTags
+                        setParentTags={setTags}
+                        initialTags={tags}
+                    />
                 </Modal>
             </ConfigProvider>
         </>
