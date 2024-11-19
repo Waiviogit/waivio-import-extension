@@ -42,6 +42,11 @@ type authorLinkType = {
     linkToChannel: string
 }
 
+type titleBodyType = {
+  title: string
+  body: string
+}
+
 export type captionType = {
   captions:string
   author: string
@@ -69,6 +74,29 @@ const getChanelURL = (content: string): authorLinkType => {
       linkToChannel: '',
     };
   }
+};
+
+export const extractVideoId = (url: string): string => {
+  const regex = /(?:watch\?v=|\/shorts\/)([^&/]+)/;
+  const match = url.match(regex);
+  if (match && match[1]) {
+    return match[1];
+  }
+  return '';
+};
+
+export const getTitleAndBody = (content:string): titleBodyType => {
+  const index = content.indexOf('"title":{');
+  const firstSlice = content.slice(index);
+
+  const cutTo = firstSlice.indexOf(',"lengthSeconds"');
+  const stringifiedJson = firstSlice.slice(0, cutTo);
+
+  const parsed = JSON.parse(`{${stringifiedJson}}`);
+  return {
+    title: parsed?.title?.simpleText ?? '',
+    body: parsed?.description?.simpleText ?? '',
+  };
 };
 
 /**
@@ -110,7 +138,7 @@ async function getVideoCaptions(
   };
 }
 
-async function fetchVideoContent(videoId: string, lang?: string): Promise<string> {
+export async function fetchVideoContent(videoId: string, lang?: string): Promise<string> {
   const response = await fetch(`https://www.youtube.com/watch?v=${videoId}`, {
     headers: {
       ...(lang && { 'Accept-Language': lang }),

@@ -4,6 +4,7 @@ import Cookie = chrome.cookies.Cookie;
 import { EXTERNAL_URL } from '../constants';
 import { randomNameGenerator } from './commonHelper';
 import { detectLanguage } from './detectLanguageHelper';
+import { getWaivioUserInfo } from './userHelper';
 
 type userType = {
   _id: string
@@ -107,38 +108,18 @@ export const downloadToWaivio = async ({
 }:downloadToWaivioInterface): Promise<void> => {
   const exportName = randomNameGenerator(8);
 
-  const backgroundResponse = await chrome.runtime.sendMessage({ action: 'getCookies', payload: '.waivio.com' });
-  if (!backgroundResponse.cookies || !backgroundResponse.cookies.length) return;
-  const cookies = backgroundResponse.cookies as Cookie[];
-
-  const accessTokenCookie = cookies.find((c) => c.name === 'access_token');
-  if (!accessTokenCookie) {
-    alert('Please sign in to Waivio in a separate tab.');
-    return;
-  }
-
-  const accessToken = accessTokenCookie?.value || '';
-  const auth = cookies.find((c) => c.name === 'auth');
-  const guestName = cookies.find((c) => c.name === 'guestName')?.value;
-  const authString = auth?.value?.replace(/%22/g, '"').replace(/%2C/g, ',');
-
+  const userInfo = await getWaivioUserInfo();
+  if (!userInfo) return;
   const {
-    result: hiveUser,
-    error: userError,
-  } = await getUser(accessToken, authString, guestName);
-  if (userError) {
-    alert('Please sign in to Waivio in a separate tab.');
-    return;
-  }
-  // eslint-disable-next-line no-underscore-dangle
-  const user = hiveUser?._id ?? '';
+    userName, guestName, auth, accessToken,
+  } = userInfo;
 
   const jsonData = JSON.stringify(object);
 
   const formData = new FormData();
   const jsonBlob = new Blob([jsonData], { type: 'application/json' });
   formData.append('file', jsonBlob, `${exportName}.json`);
-  formData.append('user', user);
+  formData.append('user', userName);
   formData.append('authority', 'administrative');
   formData.append('objectType', objectType);
   formData.append('useGPT', 'true');
@@ -167,7 +148,7 @@ export const downloadToWaivio = async ({
         alert(result.message);
         return;
       }
-      alert(`Import successfully started by ${user}!`);
+      alert(`Import successfully started by ${userName}!`);
     })
     .catch((error) => {
       alert(error.message);
@@ -217,5 +198,65 @@ export const loadImageBase64 = async (file:Blob, size?: string) => {
     return { result };
   } catch (error) {
     return { error };
+  }
+};
+
+export const getPostImportHost = async (user: string): Promise<string> => {
+  try {
+    const resp = await axios.get(
+      EXTERNAL_URL.WAIVIO_POST_IMPORT_HOST,
+      {
+        timeout: 15000,
+        params: {
+          user,
+        },
+      },
+    );
+
+    return resp?.data?.host || '';
+  } catch (error) {
+    return '';
+  }
+};
+
+ interface postImportWaivioInterface {
+  title: string
+  body: string
+  host: string
+  tags: string[]
+}
+
+export const postImportWaivio = async ({
+  title, body, tags, host,
+}: postImportWaivioInterface): Promise<void> => {
+  const userInfo = await getWaivioUserInfo();
+  if (!userInfo) return;
+  const {
+    userName, guestName, auth, accessToken,
+  } = userInfo;
+
+  try {
+    await axios.post(
+      EXTERNAL_URL.WAIVIO_POST_IMPORT,
+      {
+        user: userName,
+        host,
+        posts: [{
+          title, body, tags,
+        }],
+
+      },
+      {
+        headers: {
+          'access-token': accessToken,
+          'hive-auth': auth ? 'true' : 'false',
+          'waivio-auth': guestName ? 'true' : 'false',
+        },
+      },
+    );
+    alert('Post added to the posting queue');
+  } catch (error) {
+    // @ts-ignore
+    alert(error?.message);
   }
 };

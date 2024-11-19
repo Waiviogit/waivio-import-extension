@@ -6,4 +6,6 @@ export const EXTERNAL_URL = {
   WAIVIO_IMAGE: 'https://www.waivio.com/api/image',
   WAIVIO_PERMLINK_BY_ID: 'https://www.waivio.com/api/wobjects/id-type',
   WAIVIO_PERMLINK_BY_FIELD_BODY: 'https://www.waivio.com/api/wobjects/field-body',
+  WAIVIO_POST_IMPORT_HOST: 'https://www.waivio.com/import-objects-service/post-import/host',
+  WAIVIO_POST_IMPORT: 'https://www.waivio.com/import-objects-service/post-import',
 };

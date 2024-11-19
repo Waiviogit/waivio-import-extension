@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import getVideoCaptions, { captionType } from './captionHelper';
+import getVideoCaptions, { captionType, extractVideoId } from './youtubeHelper';
 import { EXTERNAL_URL } from '../constants';
 import YoutubeDraftModal from '../components/youtubeDraftModal';
 import { SOURCE_TYPES } from '../../common/constants';
@@ -28,15 +28,6 @@ const convertHashtagsToLowerCase = (inputString: string): string => {
   const regex = /#\w+/g;
   const convertedString = inputString.replace(regex, (match) => match.toLowerCase());
   return convertedString;
-};
-
-const extractVideoId = (url: string): string => {
-  const regex = /(?:watch\?v=|\/shorts\/)([^&/]+)/;
-  const match = url.match(regex);
-  if (match && match[1]) {
-    return match[1];
-  }
-  return '';
 };
 
 const getGptAnswer = async (query: string): Promise<responseType> => {

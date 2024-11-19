@@ -10,4 +10,5 @@ export const BUTTON_TEXT = {
   GET_OSM_ID: 'Show OSM ID',
   CREATE_LINK: 'Create exact link',
   CREATE_LINK_ALL: 'Create * link',
+  CREATE_POST: 'Create post',
 };
