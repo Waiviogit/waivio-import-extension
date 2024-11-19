@@ -56,6 +56,7 @@ const CreatePostModal = ({
                     okText="Publish"
                     cancelText="Cancel"
                     okButtonProps={{ disabled: !title || !body }}
+                    zIndex={9999999}
                 >
                     <Popover
                         content={'Author of the post. Change by signing in to Waivio with different account.'}
