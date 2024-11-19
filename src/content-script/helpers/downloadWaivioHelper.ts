@@ -254,7 +254,7 @@ export const postImportWaivio = async ({
         },
       },
     );
-    alert('Post added to the posting queue');
+    alert('The post has been added to the queue and will be published soon.');
   } catch (error) {
     // @ts-ignore
     alert(error?.message);

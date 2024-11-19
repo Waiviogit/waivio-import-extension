@@ -58,7 +58,7 @@ const CreatePostModal = ({
                     okButtonProps={{ disabled: !title || !body }}
                 >
                     <Popover
-                        content={'Author of the post. Change by signing in waivio with another account'}
+                        content={'Author of the post. Change by signing in to Waivio with different account.'}
                     >
                         <Input
                             style={{ marginTop: '30px' }}
@@ -67,7 +67,7 @@ const CreatePostModal = ({
                         />
                     </Popover>
                     <Popover
-                        content={'Domain to be associated with all published posts, establishing it as their canonical source. Can be changed on waivio'}
+                        content={'Domain associated with a post, establishing it as its canonical source. Can be changed on Waivio.'}
                     >
                         <Input
                             value={host}
@@ -85,7 +85,7 @@ const CreatePostModal = ({
                         value={body}
                         onChange={(e) => setBody(e.target.value)}
                         placeholder="Enter post content"
-                        style={{ height: '500px', marginTop: '10px', marginBottom: '10px' }}
+                        style={{ height: '400px', marginTop: '10px', marginBottom: '10px' }}
                     />
                     <WaivioTags
                         setParentTags={setTags}
