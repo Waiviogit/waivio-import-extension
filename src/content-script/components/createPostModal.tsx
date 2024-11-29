@@ -13,6 +13,8 @@ interface CreatePostProps {
     tags: string[];
 }
 
+const MAX_TITLE_LENGTH = 255;
+
 const CreatePostModal = ({
   author, body: initialBody, title: initialTitle = 'Post draft', tags, host,
 }: CreatePostProps) => {
@@ -39,6 +41,8 @@ const CreatePostModal = ({
     document.body.removeChild(nested);
   };
 
+  const submitDisabled = !title || !body || title?.length > MAX_TITLE_LENGTH;
+
   return (
         <>
             <ConfigProvider
@@ -55,7 +59,7 @@ const CreatePostModal = ({
                     onCancel={handleCancel}
                     okText="Publish"
                     cancelText="Cancel"
-                    okButtonProps={{ disabled: !title || !body }}
+                    okButtonProps={{ disabled: submitDisabled }}
                     zIndex={9999999}
                 >
                     <Popover
@@ -78,6 +82,8 @@ const CreatePostModal = ({
                     </Popover>
                     <Input
                         value={title}
+                        showCount
+                        maxLength={MAX_TITLE_LENGTH}
                         onChange={(e) => setTitle(e.target.value)}
                         placeholder="Enter title"
                         style={{ marginTop: '10px' }}
