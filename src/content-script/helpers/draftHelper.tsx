@@ -112,6 +112,8 @@ const getSubsById = async (videoId :string): Promise<captionType> => {
       captions: '',
       author: '',
       linkToChannel: '',
+      body: '',
+      title: '',
     };
   }
 };
@@ -120,13 +122,15 @@ export const createDraft = async (source?:string): Promise<void> => {
   const linkToVideo = document.URL;
   const videoId = extractVideoId(linkToVideo);
 
-  const { captions, author, linkToChannel } = await getSubsById(videoId);
+  const {
+    captions, author, linkToChannel, body,
+  } = await getSubsById(videoId);
   if (!captions) {
     alert('Fetch subs error, try to reload page and try again');
     return;
   }
 
-  const subs = cutSubs(captions);
+  const subs = cutSubs(`${body} ${captions}`);
 
   const query = createQuery({
     subs, author, linkToChannel, source,

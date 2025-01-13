@@ -51,6 +51,8 @@ export type captionType = {
   captions:string
   author: string
   linkToChannel: string
+  title: string
+  body: string
 }
 
 const getChanelURL = (content: string): authorLinkType => {
@@ -115,6 +117,7 @@ async function getVideoCaptions(
   const videoPageContent = await fetchVideoContent(id, options?.lang);
 
   const authorWithLink = getChanelURL(videoPageContent);
+  const titleAndBody = getTitleAndBody(videoPageContent);
 
   // eslint-disable-next-line no-use-before-define
   const captionsData = extractCaptionsFromContent(videoPageContent);
@@ -135,6 +138,7 @@ async function getVideoCaptions(
   return {
     captions,
     ...authorWithLink,
+    ...titleAndBody,
   };
 }
 
