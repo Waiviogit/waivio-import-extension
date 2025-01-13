@@ -2,8 +2,11 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import getVideoCaptions, { captionType, extractVideoId } from './youtubeHelper';
 import { EXTERNAL_URL } from '../constants';
-import YoutubeDraftModal from '../components/youtubeDraftModal';
 import { SOURCE_TYPES } from '../../common/constants';
+import { getWaivioUserInfo } from './userHelper';
+import { getPostImportHost } from './downloadWaivioHelper';
+import CreatePostModal from '../components/createPostModal';
+import { extractHashtags } from './postHelper';
 
 type responseType = {
     result?: string
@@ -123,7 +126,7 @@ export const createDraft = async (source?:string): Promise<void> => {
   const videoId = extractVideoId(linkToVideo);
 
   const {
-    captions, author, linkToChannel, body,
+    captions, author, linkToChannel, body, title,
   } = await getSubsById(videoId);
   if (!captions) {
     alert('Fetch subs error, try to reload page and try again');
@@ -142,7 +145,7 @@ export const createDraft = async (source?:string): Promise<void> => {
     return;
   }
 
-  const formatted = formatGptAnswer({
+  const draftBody = formatGptAnswer({
     answer: postDraft, linkToVideo, author, linkToChannel,
   });
 
@@ -151,9 +154,27 @@ export const createDraft = async (source?:string): Promise<void> => {
   document.body.appendChild(rootElement);
   const rootModal = ReactDOM.createRoot(rootElement);
 
+  const tagsFromBody = extractHashtags(draftBody);
+  const tags = ['waivio'];
+  if (tagsFromBody.length) tags.push(...tagsFromBody);
+
+  const userInfo = await getWaivioUserInfo();
+  if (!userInfo) return;
+  const {
+    userName,
+  } = userInfo;
+
+  const host = await getPostImportHost(userName) || 'www.waivio.com';
+
   rootModal.render(
       // @ts-ignore
-      <YoutubeDraftModal text={formatted}>
-      </YoutubeDraftModal>,
+      <CreatePostModal
+          author={userName}
+          title={title}
+          body={draftBody}
+          tags={tags}
+          host={host}
+      >
+      </CreatePostModal>,
   );
 };

@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import {
-  ConfigProvider, Modal, Input, Popover,
+  ConfigProvider, Modal, Input, Popover, Button,
 } from 'antd';
 import WaivioTags from './WaivioTags';
 import { postImportWaivio } from '../helpers/downloadWaivioHelper';
+import { copyContent } from '../helpers/commonHelper';
 
 interface CreatePostProps {
     author: string;
@@ -41,6 +42,10 @@ const CreatePostModal = ({
     document.body.removeChild(nested);
   };
 
+  const handleCopy = async () => {
+    await copyContent(body);
+  };
+
   const submitDisabled = !title || !body || title?.length > MAX_TITLE_LENGTH;
 
   return (
@@ -61,6 +66,17 @@ const CreatePostModal = ({
                     cancelText="Cancel"
                     okButtonProps={{ disabled: submitDisabled }}
                     zIndex={9999999}
+                    footer={(_, { OkBtn, CancelBtn }) => (
+                        <>
+                            <Button
+                                onClick={handleCopy}
+                            >
+                                Copy
+                            </Button>
+                            <CancelBtn />
+                            <OkBtn />
+                        </>
+                    )}
                 >
                     <Popover
                         content={'Author of the post. Change by signing in to Waivio with different account.'}

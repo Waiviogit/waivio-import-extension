@@ -12,7 +12,7 @@ type parsedPostType = {
   body: string
 }
 
-const extractHashtags = (text: string) : string[] => {
+export const extractHashtags = (text: string) : string[] => {
   const regex = /#(\w+)/g;
   const hashtags = [];
   let match;
