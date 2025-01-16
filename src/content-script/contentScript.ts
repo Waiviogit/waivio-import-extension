@@ -10,6 +10,7 @@ import uploadGooglePlaceToWaivio from './googleMaps/uploadGooglePlaceToWaivio';
 import { checkWaivioObjects, getId } from './helpers/idHelper';
 import { createLink } from './objectLink/createLink';
 import { createPost } from './helpers/postHelper';
+import socketClient from '../services/socketClient';
 
 const actionScript = {
   [PARSE_COMMANDS.TO_JSON]: downloadObjectAsJson,
@@ -39,6 +40,17 @@ chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
       action: EXTENSION_COMMANDS.ENABLE, id: message.buttonId, buttonText: message.buttonText,
     });
     return;
+  }
+  if (message.action === 'test') {
+    console.log('start');
+    const resultSocket = await socketClient.sendMessage({
+      id: 'test_trx',
+      method: 'subscribeTransactionId',
+      params: ['extension-name', 'test_trx'],
+    });
+    const success = resultSocket?.data?.success;
+    console.log(resultSocket);
+    alert(`success ${success}`);
   }
 
   if (message.action === PARSE_COMMANDS.ALERT_OBJECT_MODAL) {
