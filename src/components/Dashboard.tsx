@@ -297,16 +297,7 @@ export const Dashboard = () => {
           id={generateUniqueId()}
       />;
 
-      return [createObjectLinkButton, createObjectLinkAllButton, <DashboardButton
-          text={'test'}
-          id={generateUniqueId()}
-          onClick={async (event:Event): Promise<void> => (
-            sendMessageToContentScript(
-              event,
-              'test',
-              SOURCE_TYPES.LINK_ALL,
-            ))}
-      />];
+      return [createObjectLinkButton, createObjectLinkAllButton];
     }
 
     return (

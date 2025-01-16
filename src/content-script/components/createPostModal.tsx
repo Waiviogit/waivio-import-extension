@@ -5,6 +5,8 @@ import {
 import WaivioTags from './WaivioTags';
 import { postImportWaivio } from '../helpers/downloadWaivioHelper';
 import { copyContent } from '../helpers/commonHelper';
+import { SOURCE_TYPES } from '../../common/constants';
+import { createObjectForPost } from '../helpers/objectHelper';
 
 interface CreatePostProps {
     author: string;
@@ -12,14 +14,17 @@ interface CreatePostProps {
     title?: string;
     host: string;
     tags: string[];
+    source?: string
 }
 
 const MAX_TITLE_LENGTH = 255;
 
 const CreatePostModal = ({
-  author, body: initialBody, title: initialTitle = 'Post draft', tags, host,
+  author, body: initialBody, title: initialTitle = 'Post draft', tags, host, source,
 }: CreatePostProps) => {
   const [isModalOpen, setIsModalOpen] = useState(true);
+  const [isRecipeLoading, setIsRecipeLoading] = useState(false);
+  const [isRecipeDisabled, setIsRecipeDisabled] = useState(false);
   const [title, setTitle] = useState(initialTitle);
   const [body, setBody] = useState(initialBody);
   const [postTags, setTags] = useState<string[]>([]);
@@ -46,6 +51,16 @@ const CreatePostModal = ({
     await copyContent(body);
   };
 
+  const handleCreateObject = async () => {
+    setIsRecipeLoading(true);
+    setIsRecipeDisabled(true);
+    const objectForPost = await createObjectForPost(body);
+    if (objectForPost) {
+      setBody(`${body}\n[${objectForPost.name}](https://${host}/object/${objectForPost.permlink})`);
+    }
+    setIsRecipeLoading(false);
+  };
+
   const submitDisabled = !title || !body || title?.length > MAX_TITLE_LENGTH;
 
   return (
@@ -68,6 +83,13 @@ const CreatePostModal = ({
                     zIndex={9999999}
                     footer={(_, { OkBtn, CancelBtn }) => (
                         <>
+                            {source === SOURCE_TYPES.RECIPE_DRAFT && <Button
+                                onClick={handleCreateObject}
+                                loading={isRecipeLoading}
+                                disabled={isRecipeDisabled}
+                            >
+                                Create object
+                            </Button>}
                             <Button
                                 onClick={handleCopy}
                             >

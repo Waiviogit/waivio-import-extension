@@ -75,7 +75,7 @@ const createQuery = ({
   create a recipe from YouTube subtitles. Focus on the recipe itself and follow these steps:
   - Create a title for the recipe.
   - Write a short introduction.
-  - Provide a list of ingredients.
+  - Provide a list of ingredients, each ingredient start with new line and corresponding emoji e.g. 🥚 2 eggs\n🫒 1 teaspoon olive oil.
   - Write detailed instructions on how to cook the recipe.
   - If it's relevant to the context of the recipe, add  Prep Time: How long it takes to prepare the ingredients; Cook Time: How long it takes to cook or bake.
     Total Time: Combined prep and cook times; Equipment; Cooking Tips; Servings;
@@ -174,6 +174,7 @@ export const createDraft = async (source?:string): Promise<void> => {
           body={draftBody}
           tags={tags}
           host={host}
+          source={source}
       >
       </CreatePostModal>,
   );

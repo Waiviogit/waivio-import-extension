@@ -8,4 +8,8 @@ export const EXTERNAL_URL = {
   WAIVIO_PERMLINK_BY_FIELD_BODY: 'https://www.waivio.com/api/wobjects/field-body',
   WAIVIO_POST_IMPORT_HOST: 'https://www.waivio.com/import-objects-service/post-import/host',
   WAIVIO_POST_IMPORT: 'https://www.waivio.com/import-objects-service/post-import',
+  WAIVIO_IMPORT_VALIDATE: 'https://www.waivio.com/import-objects-service/import-products/validate',
+  WAIVIO_GENERATE_RECIPE: 'https://www.waivio.com/import-objects-service/import-products/recipe-generation',
+  WAIVIO_CREATE_OBJECT: 'https://www.waivio.com/objects-bot/create-object',
+  WAIVIO_CREATE_UPDATE: 'https://www.waivio.com/objects-bot/append-object',
 };
