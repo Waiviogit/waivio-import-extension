@@ -24,6 +24,18 @@ export const getProductIdSephora = ():productIdType| undefined => {
   };
 };
 
+export const getProductIdAliExpress = ():productIdType| undefined => {
+  const url = document.URL;
+
+  const match = url.match(/\/item\/(\d+)\.html/);
+  if (!match) return;
+
+  return {
+    key: 'aliexpress.com',
+    value: `${match[1]}`,
+  };
+};
+
 export const getProductIdSephoraSku = ():productIdType| undefined => {
   const url = document.URL;
 

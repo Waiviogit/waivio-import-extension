@@ -78,6 +78,72 @@ export const mainButtonsConfig = [
   },
 ];
 
+export const aliexpressButtonsConfig = [
+  {
+    text: BUTTON_TEXT.CREATE_JSON,
+    onClick: async (event:Event): Promise<void> => (
+      sendMessageToContentScript(
+        event,
+        PARSE_COMMANDS.TO_JSON,
+        SOURCE_TYPES.ALIEXPRESS,
+      )),
+    id: generateUniqueId(),
+
+  },
+  {
+    text: BUTTON_TEXT.CREATE_XLSX,
+    onClick: async (event:Event): Promise<void> => (
+      sendMessageToContentScript(
+        event,
+        PARSE_COMMANDS.TO_CSV,
+        SOURCE_TYPES.ALIEXPRESS,
+      )),
+    id: generateUniqueId(),
+  },
+  {
+    text: BUTTON_TEXT.COPY_TO_CLIPBOARD,
+    onClick: async (event:Event): Promise<void> => (
+      sendMessageToContentScript(
+        event,
+        PARSE_COMMANDS.TO_CLIPBOARD,
+        SOURCE_TYPES.ALIEXPRESS,
+      )),
+    id: generateUniqueId(),
+  },
+  {
+    text: BUTTON_TEXT.UPLOAD_TO_WAIVIO,
+    onClick: async (event:Event): Promise<void> => (
+      sendMessageToContentScript(
+        event,
+        PARSE_COMMANDS.IMPORT_WAIVIO,
+        SOURCE_TYPES.ALIEXPRESS,
+      )
+    ),
+    id: generateUniqueId(),
+  },
+  {
+    text: BUTTON_TEXT.CREATE_LINK,
+    onClick: async (event:Event): Promise<void> => (
+      sendMessageToContentScript(
+        event,
+        PARSE_COMMANDS.CREATE_LINK,
+      )
+    ),
+    id: generateUniqueId(),
+  },
+  {
+    text: BUTTON_TEXT.CREATE_LINK_ALL,
+    onClick: async (event:Event): Promise<void> => (
+      sendMessageToContentScript(
+        event,
+        PARSE_COMMANDS.CREATE_LINK,
+        SOURCE_TYPES.LINK_ALL,
+      )
+    ),
+    id: generateUniqueId(),
+  },
+];
+
 export const sephoraButtonsConfig = [
   {
     text: BUTTON_TEXT.CREATE_JSON,

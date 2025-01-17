@@ -8,4 +8,5 @@ export const SOURCE_TYPES = {
   RECIPE_DRAFT: 'recipe_draft',
   YOUTUBE: 'youtube',
   TIKTOK: 'tiktok',
+  ALIEXPRESS: 'aliexpress',
 };

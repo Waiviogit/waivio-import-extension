@@ -38,6 +38,32 @@ export const getAvatarSephora = ():AvatarGalleryType => {
   };
 };
 
+const transformAliExpressUrls = (urls:string[]): string[] => {
+  const transformedUrls = urls.map((url) => url.replace('.jpg_220x220q75.jpg_.avif', '.jpg_960x960q75.jpg_.avif'));
+  const uniqueUrls = [...new Set(transformedUrls)];
+  return uniqueUrls;
+};
+
+export const getAvatarAliexpress = ():AvatarGalleryType => {
+  const pictures = Array.from(document.querySelectorAll<HTMLImageElement>('.pdp-info-left img')).map((el) => el.src);
+
+  if (!pictures.length) {
+    return {
+      avatar: '',
+      gallery: [],
+    };
+  }
+  const images = transformAliExpressUrls(pictures);
+
+  const avatar = images[0];
+  const gallery = images.slice(1);
+
+  return {
+    avatar,
+    gallery,
+  };
+};
+
 export const getAvatarWalmart = (): AvatarGalleryType => {
   const images = Array.from(
     document.querySelectorAll<HTMLImageElement>('div[data-testid="vertical-carousel-container"] img'),

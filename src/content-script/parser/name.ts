@@ -17,6 +17,14 @@ export const productTitleSephora = (): string => {
   return replaceInvisible(title);
 };
 
+export const productTitleAliExpress = (): string => {
+  const nameElement = document.querySelector<HTMLElement>(NAME_SELECTOR.ALIEXPRESS);
+  if (!nameElement) return '';
+
+  const title = nameElement?.innerText ?? '';
+  return replaceInvisible(title);
+};
+
 export const productTitleWalmart = (): string => {
   const nameElement = document.querySelector<HTMLElement>(NAME_SELECTOR.WALMART);
   if (!nameElement) return '';

@@ -3,6 +3,7 @@ import { StyledDashboard } from './Dashboard.styled';
 import { DashboardButton } from './DasboardButton';
 import manifest from '../../extension/manifest.json';
 import {
+  aliexpressButtonsConfig,
   mainButtonsConfig,
   sephoraButtonsConfig,
   tikTokConfig,
@@ -89,6 +90,17 @@ export const Dashboard = () => {
     if (currentUrl.includes('amazon')) {
       return (
         mainButtonsConfig
+          .map((button) => <DashboardButton
+                  text={button.text}
+                  onClick={button.onClick}
+                  id={button.id}
+                  key={button.id}
+              />)
+      );
+    }
+    if (currentUrl.includes('aliexpress.com')) {
+      return (
+        aliexpressButtonsConfig
           .map((button) => <DashboardButton
                   text={button.text}
                   onClick={button.onClick}

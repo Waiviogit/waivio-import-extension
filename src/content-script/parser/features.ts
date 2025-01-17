@@ -153,6 +153,19 @@ export const getFeaturesSephora = () => {
   return features;
 };
 
+export const getFeaturesAliExpress = () => {
+  const features = [] as featuresType[];
+  const rating = document.querySelector<HTMLElement>('[data-pl="product-reviewer"] strong');
+  if (rating) {
+    features.push({
+      key: 'Overall Rating',
+      value: [replaceInvisible(rating.innerText)],
+    });
+  }
+
+  return features;
+};
+
 const getRatingWalmart = (): featuresType => {
   const ratingElement = {
     key: 'Overall Rating',
