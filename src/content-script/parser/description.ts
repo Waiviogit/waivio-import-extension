@@ -45,6 +45,30 @@ export const getDescriptionSephora = (): string => {
   }
 };
 
+export const getDescriptionAliExpress = async (): Promise<string> => new Promise((resolve) => {
+  window.scrollTo({
+    top: document.body.scrollHeight,
+    behavior: 'smooth',
+  });
+
+  setTimeout(() => {
+    const description = document.querySelector<HTMLElement>('#nav-description');
+    if (!description) {
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth',
+      });
+      return resolve('');
+    }
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth',
+    });
+    const response = description.innerText.replace('Description\nReport Item\n', '');
+    return resolve(response);
+  }, 3000);
+});
+
 export const getDescriptionWalmart = (): string => {
   const description = document.querySelector<HTMLElement>('div[data-testid="product-description-content"]');
   if (!description) return '';

@@ -3,6 +3,7 @@ import { PRICE_SELECTOR } from '../constants';
 const CURRENCY_PREFIX = {
   A$: 'AUD',
   $: 'USD',
+  'US $': 'USD',
   C$: 'CAD',
   NZ$: 'NZD',
   '€': 'EUR',
@@ -71,6 +72,23 @@ export const getPriceSephora = (): priceType => {
   };
   const priceElement = document.querySelector<HTMLElement>(PRICE_SELECTOR.SEPHORA);
   if (!priceElement) return price;
+  const prefix = extractCurrency(priceElement.innerText) as keyof typeof CURRENCY_PREFIX;
+  const mostRecentPriceCurrency = CURRENCY_PREFIX[prefix];
+  const mostRecentPriceAmount = extractNumericValue(priceElement.innerText);
+  price.mostRecentPriceCurrency = mostRecentPriceCurrency;
+  price.mostRecentPriceAmount = mostRecentPriceAmount;
+  return price;
+};
+
+export const getPriceAliExpress = (): priceType => {
+  const price = {
+    mostRecentPriceCurrency: '',
+    mostRecentPriceAmount: '',
+  };
+
+  const priceElement = document.querySelector<HTMLElement>(PRICE_SELECTOR.ALIEXPRESS);
+  if (!priceElement) return price;
+
   const prefix = extractCurrency(priceElement.innerText) as keyof typeof CURRENCY_PREFIX;
   const mostRecentPriceCurrency = CURRENCY_PREFIX[prefix];
   const mostRecentPriceAmount = extractNumericValue(priceElement.innerText);

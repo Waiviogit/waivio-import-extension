@@ -1,17 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import getVideoCaptions, { captionType, extractVideoId } from './youtubeHelper';
-import { EXTERNAL_URL } from '../constants';
 import { SOURCE_TYPES } from '../../common/constants';
 import { getWaivioUserInfo } from './userHelper';
 import { getPostImportHost } from './downloadWaivioHelper';
 import CreatePostModal from '../components/createPostModal';
 import { extractHashtags } from './postHelper';
-
-type responseType = {
-    result?: string
-    error?: unknown
-}
+import { getGptAnswer } from './gptHelper';
 
 interface createQueryInterface {
     subs: string
@@ -31,28 +26,6 @@ const convertHashtagsToLowerCase = (inputString: string): string => {
   const regex = /#\w+/g;
   const convertedString = inputString.replace(regex, (match) => match.toLowerCase());
   return convertedString;
-};
-
-const getGptAnswer = async (query: string): Promise<responseType> => {
-  try {
-    console.log('request sent');
-    const response = await fetch(
-      EXTERNAL_URL.WAIVIO_IMPORT_GPT_QUERY,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ query }),
-      },
-    );
-    const responseData = await response.json();
-
-    return { result: responseData.result };
-  } catch (error) {
-    console.error(error);
-    return { error };
-  }
 };
 
 const cutSubs = (subs: string): string => {

@@ -156,7 +156,7 @@ export const downloadToWaivio = async ({
 };
 
 export const downloadProductToWaivio = async (source: string): Promise<void> => {
-  const { product: exportObj, error } = getProduct(source);
+  const { product: exportObj, error } = await  getProduct(source);
   if (!exportObj || error) return;
 
   const jsonFormat = formatToJsonObject(exportObj);

@@ -33,7 +33,12 @@ import {
   getBrandWalmart,
   getFeaturesWalmart,
   getFeaturesSephora,
-  getPossibleIdsWalmart, getAvatarAliexpress, getProductIdAliExpress, productTitleAliExpress, getFeaturesAliExpress,
+  getPossibleIdsWalmart,
+  getAvatarAliexpress,
+  getProductIdAliExpress,
+  productTitleAliExpress,
+  getFeaturesAliExpress,
+  getDescriptionAliExpress, getPriceAliExpress, getDepartmentsFromProductDescription,
 } from './parser';
 import { productSchema } from './validation';
 import { SOURCE_TYPES } from '../common/constants';
@@ -211,19 +216,24 @@ const getProductFromWalmart = (): getProductReturnedType => {
   return { product: object };
 };
 
-const getProductFromAliExpress = (): getProductReturnedType => {
+const getProductFromAliExpress = async (): Promise<getProductReturnedType> => {
   const { avatar, gallery } = getAvatarAliexpress();
+  const name = productTitleAliExpress();
 
   const productId1 = getProductIdAliExpress();
 
+  const description = await getDescriptionAliExpress();
+  const departments = await getDepartmentsFromProductDescription(name);
+  console.log('departments', departments);
+
   const object: parsedObjectType = {
-    name: productTitleAliExpress(), //+
+    name, //+
     avatar,
-    brand: getBrandSephora(), // -
-    departments: getDepartmentsSephora(), // -
-    description: getDescriptionSephora(), // -
+    brand: '', // -
+    departments,
+    description, // +
     options: getSephoraOptions(), // -
-    price: getPriceSephora(), // -
+    price: getPriceAliExpress(), // +
     productIds: [],
     features: getFeaturesAliExpress(), //+
     imageURLs: gallery, //+
@@ -242,7 +252,7 @@ const getProductFromAliExpress = (): getProductReturnedType => {
   return { product: object };
 };
 
-export const getProduct = (source: string): getProductReturnedType => {
+export const getProduct = async (source: string): Promise<getProductReturnedType> => {
   switch (source) {
     case SOURCE_TYPES.AMAZON:
       return getProductFromAmazon();

@@ -57,7 +57,7 @@ export const downloadObjectAsJson = async (source: string): Promise<void> => {
     return;
   }
 
-  const { product: exportObj, error } = getProduct(source);
+  const { product: exportObj, error } = await getProduct(source);
   if (!exportObj || error) return;
   const jsonFormat = formatToJsonObject(exportObj);
   regularFileDownload(
@@ -67,8 +67,8 @@ export const downloadObjectAsJson = async (source: string): Promise<void> => {
   );
 };
 
-export const copyToClipboard = (source: string): void => {
-  const { product: exportObj, error } = getProduct(source);
+export const copyToClipboard = async (source: string): Promise<void> => {
+  const { product: exportObj, error } = await getProduct(source);
   if (!exportObj || error) return;
 
   const object = formatToCsvObject(exportObj);
@@ -79,8 +79,8 @@ export const copyToClipboard = (source: string): void => {
   alert('Product copied to clipboard');
 };
 
-export const downloadXLSX = (source: string): void => {
-  const { product: exportObj, error } = getProduct(source);
+export const downloadXLSX = async (source: string): Promise<void> => {
+  const { product: exportObj, error } = await getProduct(source);
   if (!exportObj || error) return;
   const exportName = randomNameGenerator(8);
 

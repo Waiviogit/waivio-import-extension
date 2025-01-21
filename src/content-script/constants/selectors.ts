@@ -18,6 +18,7 @@ export const DEPARTMENT_SELECTOR = {
 export const PRICE_SELECTOR = {
   AMAZON: '#corePrice_desktop .a-offscreen',
   SEPHORA: '[data-comp="Price "] b',
+  ALIEXPRESS: '[data-pl="product-price"] span',
 };
 
 export const DESCRIPTION_SELECTOR = {
