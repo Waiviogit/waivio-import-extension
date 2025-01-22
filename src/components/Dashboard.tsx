@@ -110,7 +110,7 @@ export const Dashboard = () => {
               />)
       );
     }
-    if (currentUrl.includes('aliexpress.com')) {
+    if (currentUrl.includes('aliexpress')) {
       return (
         aliexpressButtonsConfig
           .map((button) => <DashboardButton
