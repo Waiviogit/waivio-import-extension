@@ -38,7 +38,7 @@ import {
   getProductIdAliExpress,
   productTitleAliExpress,
   getFeaturesAliExpress,
-  getDescriptionAliExpress, getPriceAliExpress, getDepartmentsFromProductDescription,
+  getDescriptionAliExpress, getPriceAliExpress, getDepartmentsFromProductDescription, getAliExpressOptions,
 } from './parser';
 import { productSchema } from './validation';
 import { SOURCE_TYPES } from '../common/constants';
@@ -232,7 +232,7 @@ const getProductFromAliExpress = async (): Promise<getProductReturnedType> => {
     brand: '', // -
     departments,
     description, // +
-    options: getSephoraOptions(), // -
+    options: getAliExpressOptions(), // +
     price: getPriceAliExpress(), // +
     productIds: [],
     features: getFeaturesAliExpress(), //+

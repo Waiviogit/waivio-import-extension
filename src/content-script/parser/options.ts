@@ -1,6 +1,9 @@
-import { getAvatarAmazon, getAvatarSephora, getAvatarWalmart } from './avatar';
+import {
+  getAvatarAliexpress, getAvatarAmazon, getAvatarSephora, getAvatarWalmart,
+} from './avatar';
 import { make2dArray } from '../helpers/commonHelper';
 import { OPTION_SELECTOR } from '../constants';
+import { classSelectorByRegex } from '../helpers/scrapingHelper';
 
 export type OptionType = {
   category: string
@@ -35,6 +38,11 @@ const getOptionObject = (category: string, value: string, source = 'amazon'): Op
   }
   if (option.category === 'Color' && source === 'walmart') {
     const { avatar } = getAvatarWalmart();
+    option.image = avatar;
+  }
+
+  if (option.category === 'Color' && source === 'aliexpress') {
+    const { avatar } = getAvatarAliexpress();
     option.image = avatar;
   }
   return option;
@@ -165,6 +173,18 @@ export const getWalmartOptions = () => {
 
   for (const variant of variants) {
     productOptions.push(getOptionObject(variant[0], variant[1], 'walmart'));
+  }
+
+  return productOptions;
+};
+
+export const getAliExpressOptions = (): OptionType[] => {
+  const productOptions = [];
+  const elements = classSelectorByRegex('div', /sku-item--title/);
+
+  for (const el of elements) {
+    const keyValueMain = el.innerText.split(':');
+    productOptions.push(getOptionObject(keyValueMain[0], keyValueMain[1], 'aliexpress'));
   }
 
   return productOptions;
