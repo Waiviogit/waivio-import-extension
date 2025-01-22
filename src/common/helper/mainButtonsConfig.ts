@@ -56,16 +56,6 @@ export const mainButtonsConfig = [
     id: generateUniqueId(),
   },
   {
-    text: BUTTON_TEXT.CREATE_LINK,
-    onClick: async (event:Event): Promise<void> => (
-      sendMessageToContentScript(
-        event,
-        PARSE_COMMANDS.CREATE_LINK,
-      )
-    ),
-    id: generateUniqueId(),
-  },
-  {
     text: BUTTON_TEXT.CREATE_LINK_ALL,
     onClick: async (event:Event): Promise<void> => (
       sendMessageToContentScript(
@@ -117,16 +107,6 @@ export const aliexpressButtonsConfig = [
         event,
         PARSE_COMMANDS.IMPORT_WAIVIO,
         SOURCE_TYPES.ALIEXPRESS,
-      )
-    ),
-    id: generateUniqueId(),
-  },
-  {
-    text: BUTTON_TEXT.CREATE_LINK,
-    onClick: async (event:Event): Promise<void> => (
-      sendMessageToContentScript(
-        event,
-        PARSE_COMMANDS.CREATE_LINK,
       )
     ),
     id: generateUniqueId(),
@@ -187,16 +167,6 @@ export const sephoraButtonsConfig = [
     id: generateUniqueId(),
   },
   {
-    text: BUTTON_TEXT.CREATE_LINK,
-    onClick: async (event:Event): Promise<void> => (
-      sendMessageToContentScript(
-        event,
-        PARSE_COMMANDS.CREATE_LINK,
-      )
-    ),
-    id: generateUniqueId(),
-  },
-  {
     text: BUTTON_TEXT.CREATE_LINK_ALL,
     onClick: async (event:Event): Promise<void> => (
       sendMessageToContentScript(
@@ -252,16 +222,6 @@ export const walmartButtonsConfig = [
     id: generateUniqueId(),
   },
   {
-    text: BUTTON_TEXT.CREATE_LINK,
-    onClick: async (event:Event): Promise<void> => (
-      sendMessageToContentScript(
-        event,
-        PARSE_COMMANDS.CREATE_LINK,
-      )
-    ),
-    id: generateUniqueId(),
-  },
-  {
     text: BUTTON_TEXT.CREATE_LINK_ALL,
     onClick: async (event:Event): Promise<void> => (
       sendMessageToContentScript(
@@ -299,16 +259,6 @@ export const youtubeButtonConfig = [
         PARSE_COMMANDS.CREATE_POST,
         SOURCE_TYPES.YOUTUBE,
       )),
-    id: generateUniqueId(),
-  },
-  {
-    text: BUTTON_TEXT.CREATE_LINK,
-    onClick: async (event:Event): Promise<void> => (
-      sendMessageToContentScript(
-        event,
-        PARSE_COMMANDS.CREATE_LINK,
-      )
-    ),
     id: generateUniqueId(),
   },
   {
