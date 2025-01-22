@@ -4,6 +4,7 @@ import { DashboardButton } from './DasboardButton';
 import manifest from '../../extension/manifest.json';
 import {
   aliexpressButtonsConfig,
+  instagramButtonConfig,
   mainButtonsConfig,
   sephoraButtonsConfig,
   tikTokConfig,
@@ -68,6 +69,17 @@ export const Dashboard = () => {
     if (currentUrl.includes('youtube')) {
       return (
         youtubeButtonConfig
+          .map((button) => <DashboardButton
+                    text={button.text}
+                    onClick={button.onClick}
+                    id={button.id}
+                    key={button.id}
+                />)
+      );
+    }
+    if (currentUrl.includes('instagram.com')) {
+      return (
+        instagramButtonConfig
           .map((button) => <DashboardButton
                     text={button.text}
                     onClick={button.onClick}
@@ -170,16 +182,6 @@ export const Dashboard = () => {
           id={generateUniqueId()}
       />;
 
-      const createObjectLinkButton = <DashboardButton
-          text={BUTTON_TEXT.CREATE_LINK}
-          onClick={async (event:Event): Promise<void> => (
-            sendMessageToContentScript(
-              event,
-              PARSE_COMMANDS.CREATE_LINK,
-            ))}
-          id={generateUniqueId()}
-      />;
-
       const createObjectLinkAllButton = <DashboardButton
           text={BUTTON_TEXT.CREATE_LINK_ALL}
           onClick={async (event:Event): Promise<void> => (
@@ -196,7 +198,7 @@ export const Dashboard = () => {
         uploadWaivio,
         parseJson,
         getId,
-        createObjectLinkButton,
+
         createObjectLinkAllButton,
       ];
     }
@@ -253,16 +255,6 @@ export const Dashboard = () => {
       />;
 
       const divider = <div style={{ height: '20px' }}></div>;
-      const createObjectLinkButton = <DashboardButton
-          text={BUTTON_TEXT.CREATE_LINK}
-          onClick={async (event:Event): Promise<void> => (
-            sendMessageToContentScript(
-              event,
-              PARSE_COMMANDS.CREATE_LINK,
-            ))}
-          id={generateUniqueId()}
-      />;
-
       const createObjectLinkAllButton = <DashboardButton
           text={BUTTON_TEXT.CREATE_LINK_ALL}
           onClick={async (event:Event): Promise<void> => (
@@ -282,22 +274,11 @@ export const Dashboard = () => {
         uploadWaivio,
         parseJson,
         getId,
-        createObjectLinkButton,
         createObjectLinkAllButton,
       ];
     }
 
     if (validUrlRegEx.test(currentUrl)) {
-      const createObjectLinkButton = <DashboardButton
-          text={BUTTON_TEXT.CREATE_LINK}
-          onClick={async (event:Event): Promise<void> => (
-            sendMessageToContentScript(
-              event,
-              PARSE_COMMANDS.CREATE_LINK,
-            ))}
-          id={generateUniqueId()}
-      />;
-
       const createObjectLinkAllButton = <DashboardButton
           text={BUTTON_TEXT.CREATE_LINK_ALL}
           onClick={async (event:Event): Promise<void> => (
@@ -309,7 +290,7 @@ export const Dashboard = () => {
           id={generateUniqueId()}
       />;
 
-      return [createObjectLinkButton, createObjectLinkAllButton];
+      return [createObjectLinkAllButton];
     }
 
     return (

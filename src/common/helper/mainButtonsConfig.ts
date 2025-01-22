@@ -324,7 +324,71 @@ export const youtubeButtonConfig = [
   },
 ];
 
+export const instagramButtonConfig = [
+  {
+    text: BUTTON_TEXT.CREATE_POST_DRAFT,
+    onClick: async (event:Event): Promise<void> => (
+      sendMessageToContentScript(
+        event,
+        PARSE_COMMANDS.CREATE_DRAFT,
+        SOURCE_TYPES.DRAFT_INSTAGRAM,
+      )),
+    id: generateUniqueId(),
+  },
+  {
+    text: BUTTON_TEXT.CREATE_RECIPE_DRAFT,
+    onClick: async (event:Event): Promise<void> => (
+      sendMessageToContentScript(
+        event,
+        PARSE_COMMANDS.CREATE_DRAFT,
+        SOURCE_TYPES.RECIPE_DRAFT_INSTAGRAM,
+      )),
+    id: generateUniqueId(),
+  },
+  {
+    text: BUTTON_TEXT.CREATE_POST,
+    onClick: async (event:Event): Promise<void> => (
+      sendMessageToContentScript(
+        event,
+        PARSE_COMMANDS.CREATE_POST,
+        SOURCE_TYPES.INSTAGRAM,
+      )),
+    id: generateUniqueId(),
+  },
+  {
+    text: BUTTON_TEXT.CREATE_LINK_ALL,
+    onClick: async (event:Event): Promise<void> => (
+      sendMessageToContentScript(
+        event,
+        PARSE_COMMANDS.CREATE_LINK,
+        SOURCE_TYPES.LINK_ALL,
+      )
+    ),
+    id: generateUniqueId(),
+  },
+];
+
 export const tikTokConfig = [
+  {
+    text: BUTTON_TEXT.CREATE_POST_DRAFT,
+    onClick: async (event:Event): Promise<void> => (
+      sendMessageToContentScript(
+        event,
+        PARSE_COMMANDS.CREATE_DRAFT,
+        SOURCE_TYPES.DRAFT_TIKTOK,
+      )),
+    id: generateUniqueId(),
+  },
+  {
+    text: BUTTON_TEXT.CREATE_RECIPE_DRAFT,
+    onClick: async (event:Event): Promise<void> => (
+      sendMessageToContentScript(
+        event,
+        PARSE_COMMANDS.CREATE_DRAFT,
+        SOURCE_TYPES.RECIPE_DRAFT_TIKTOK,
+      )),
+    id: generateUniqueId(),
+  },
   {
     text: BUTTON_TEXT.CREATE_POST,
     onClick: async (event:Event): Promise<void> => (
@@ -333,6 +397,17 @@ export const tikTokConfig = [
         PARSE_COMMANDS.CREATE_POST,
         SOURCE_TYPES.TIKTOK,
       )),
+    id: generateUniqueId(),
+  },
+  {
+    text: BUTTON_TEXT.CREATE_LINK_ALL,
+    onClick: async (event:Event): Promise<void> => (
+      sendMessageToContentScript(
+        event,
+        PARSE_COMMANDS.CREATE_LINK,
+        SOURCE_TYPES.LINK_ALL,
+      )
+    ),
     id: generateUniqueId(),
   },
 ];

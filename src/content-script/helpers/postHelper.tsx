@@ -42,7 +42,7 @@ const youtubeInfoHandler = async (): Promise<parsedPostType|null> => {
   }
 };
 
-const tikTokInfoHandler = async (): Promise<parsedPostType|null> => {
+export const tikTokInfoHandler = async (): Promise<parsedPostType|null> => {
   try {
     const url = document.URL;
     const content = await fetchTiktok(url);
@@ -58,9 +58,19 @@ const tikTokInfoHandler = async (): Promise<parsedPostType|null> => {
   }
 };
 
+export const instInfoHandler = async (): Promise<parsedPostType> => {
+  const body = document.querySelector('h1')?.innerText || '';
+
+  return {
+    title: '',
+    body,
+  };
+};
+
 const postInfoHandler = {
   [SOURCE_TYPES.YOUTUBE]: youtubeInfoHandler,
   [SOURCE_TYPES.TIKTOK]: tikTokInfoHandler,
+  [SOURCE_TYPES.INSTAGRAM]: instInfoHandler,
 };
 
 export const createPost = async (source?:string): Promise<void> => {

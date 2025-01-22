@@ -6,7 +6,12 @@ export const SOURCE_TYPES = {
   GOOGLE_MAP: 'google_map',
   LINK_ALL: 'link_all',
   RECIPE_DRAFT: 'recipe_draft',
+  RECIPE_DRAFT_INSTAGRAM: 'recipe_draft_instagram',
+  DRAFT_INSTAGRAM: 'draft_instagram',
+  DRAFT_TIKTOK: 'draft_tiktok',
+  RECIPE_DRAFT_TIKTOK: 'recipe_draft_tiktok',
   YOUTUBE: 'youtube',
   TIKTOK: 'tiktok',
+  INSTAGRAM: 'instagram',
   ALIEXPRESS: 'aliexpress',
 };

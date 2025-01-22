@@ -16,3 +16,9 @@ export const getTikTokDesc = (content: string): string => {
   const jsonString = split.slice(0, cutTo);
   return JSON.parse(`${jsonString}}`).desc;
 };
+
+export const getTikTokUsername = (url: string): string => {
+  const regex = /@([^/]+)/;
+  const match = url.match(regex);
+  return match ? match[1] : '';
+};

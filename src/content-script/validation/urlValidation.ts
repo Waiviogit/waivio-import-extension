@@ -163,6 +163,32 @@ const validatePageForYoutube = (url: string):boolean => {
   return result;
 };
 
+const isValidInstagramUrl = (url: string): boolean => {
+  const pattern = /^(https?:\/\/)?(www\.)?instagram\.com\/(?:[\w-]+\/)?(p|reel)\/([\w-]+)(\/?|\?.*)/;
+  return pattern.test(url);
+};
+
+const validateTiktok = (url: string):boolean => {
+  const regex = /^https?:\/\/(?:www\.)?tiktok\.com\//;
+
+  return regex.test(url);
+};
+
+const draftValidation = {
+  [SOURCE_TYPES.RECIPE_DRAFT_TIKTOK]: validateTiktok,
+  [SOURCE_TYPES.DRAFT_TIKTOK]: validateTiktok,
+  [SOURCE_TYPES.DRAFT_INSTAGRAM]: isValidInstagramUrl,
+  [SOURCE_TYPES.RECIPE_DRAFT_INSTAGRAM]: isValidInstagramUrl,
+  [SOURCE_TYPES.RECIPE_DRAFT]: validatePageForYoutube,
+  default: validatePageForYoutube,
+};
+
+const draftUrlValidation = (url: string, source: string):boolean => {
+  const type = source as keyof typeof draftValidation;
+
+  return (draftValidation[type] || draftValidation.default)(url);
+};
+
 const validatePageForOpenstreetmap = (url: string):boolean => {
   const regex = /(^https?:\/\/(?:www\.)?openstreetmap\.org\/node\/[0-9]|^https?:\/\/(?:www\.)?openstreetmap\.org\/way\/[0-9])/;
 
@@ -191,7 +217,7 @@ export const urlValidation = (url: string, message: string, source: string):bool
     [PARSE_COMMANDS.TO_CLIPBOARD]: validatePage,
     [PARSE_COMMANDS.SCAN_ASINS]: validatePageForAsin,
     [PARSE_COMMANDS.IMPORT_WAIVIO]: validatePage,
-    [PARSE_COMMANDS.CREATE_DRAFT]: validatePageForYoutube,
+    [PARSE_COMMANDS.CREATE_DRAFT]: draftUrlValidation,
     [PARSE_COMMANDS.CREATE_POST]: () => true,
     [PARSE_COMMANDS.IMPORT_WAIVIO_OPENSTREETMAP]: validatePageForOpenstreetmap,
     [PARSE_COMMANDS.IMPORT_WAIVIO_GOOGLE]: isValidGoogleMapsUrl,

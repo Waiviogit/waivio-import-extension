@@ -5,21 +5,19 @@ import { SOURCE_TYPES } from '../../common/constants';
 import { getWaivioUserInfo } from './userHelper';
 import { getPostImportHost } from './downloadWaivioHelper';
 import CreatePostModal from '../components/createPostModal';
-import { extractHashtags } from './postHelper';
+import { extractHashtags, tikTokInfoHandler } from './postHelper';
 import { getGptAnswer } from './gptHelper';
+import { getTikTokUsername } from './tikTokHelper';
 
 interface createQueryInterface {
     subs: string
-    author: string
-    linkToChannel: string
     source?:string
 }
 
 interface formatAnswerInterface {
-  author: string
-  linkToChannel: string
+  attribution: string
+  link: string
   answer: string
-  linkToVideo: string
 }
 
 const convertHashtagsToLowerCase = (inputString: string): string => {
@@ -35,12 +33,11 @@ const cutSubs = (subs: string): string => {
 };
 
 const createQuery = ({
-  subs, author, linkToChannel, source,
+  subs, source,
 }: createQueryInterface): string => {
   const query = `act as professional journalist:
   rewrite in third person in 3 paragraphs (make it sound like a human), create title,
-  make attribution to author ${author} channel ${linkToChannel},
-  add hashtags (composed of one word lowercase) at the very end, including #chatgpt,
+  add hashtags (composed of one word lowercase) at the very end,
   if following text would be in other language than english - rewrite it into english, here is the text: ${subs}
   `;
 
@@ -52,14 +49,15 @@ const createQuery = ({
   - Write detailed instructions on how to cook the recipe.
   - If it's relevant to the context of the recipe, add  Prep Time: How long it takes to prepare the ingredients; Cook Time: How long it takes to cook or bake.
     Total Time: Combined prep and cook times; Equipment; Cooking Tips; Servings;
-  - Attribute the recipe to the author ${author} and their YouTube channel ${linkToChannel}.
-  - Add hashtags (composed of one word in lowercase) at the very end, including #chatgpt.
+  - Add hashtags (composed of one word in lowercase) at the very end.
 
   If the following text is in a language other than English, translate it into English: ${subs}. If you think it is not a cooking video, respond: "I can't find a recipe in this video, try another one."
   `;
 
   const querySet = {
     [SOURCE_TYPES.RECIPE_DRAFT]: recipeQuery,
+    [SOURCE_TYPES.RECIPE_DRAFT_INSTAGRAM]: recipeQuery,
+    [SOURCE_TYPES.RECIPE_DRAFT_TIKTOK]: recipeQuery,
     default: query,
   };
   if (source) return querySet[source] || querySet.default;
@@ -68,15 +66,14 @@ const createQuery = ({
 };
 
 const formatGptAnswer = ({
-  answer, author, linkToChannel, linkToVideo,
+  answer, attribution, link,
 }: formatAnswerInterface) :string => {
   const paragraphs = answer.split('\n\n');
-  paragraphs.splice(2, 0, linkToVideo);
+  paragraphs.splice(2, 0, link);
 
   const formatted = convertHashtagsToLowerCase(paragraphs.join('\n'));
 
-  const linkToAuthorAndChannel = `YouTube channel - ${author}: ${linkToChannel}`;
-  return `${formatted}\n${linkToAuthorAndChannel}`;
+  return `${formatted}\n${attribution}`;
 };
 
 const getSubsById = async (videoId :string): Promise<captionType> => {
@@ -94,23 +91,122 @@ const getSubsById = async (videoId :string): Promise<captionType> => {
   }
 };
 
+type BodyTitleType = {
+  title: string
+  body: string
+  attribution: string
+  link: string
+}
+
+const getYoutubeDraft = async (): Promise<BodyTitleType> => {
+  const link = document.URL;
+  const videoId = extractVideoId(link);
+  const {
+    captions, body, title, author, linkToChannel,
+  } = await getSubsById(videoId);
+
+  if (!body && !captions) {
+    return {
+      title: '',
+      body: '',
+      attribution: '',
+      link: '',
+    };
+  }
+
+  const linkToAuthorAndChannel = `YouTube channel - ${author}: ${linkToChannel}`;
+
+  return {
+    title,
+    body: cutSubs(`${body} ${captions}`),
+    attribution: linkToAuthorAndChannel,
+    link,
+  };
+};
+
+const extractInstagramVideoId = (url: string): string => {
+  const match = url.match(/instagram\.com\/(?:[\w-]+\/)?(p|reel)\/([\w-]+)/);
+  return match ? match[2] : '';
+};
+
+const getInstagramDraft = async (): Promise<BodyTitleType> => {
+  const id = extractInstagramVideoId(document.URL);
+
+  if (!id) {
+    return {
+      title: '',
+      body: '',
+      attribution: '',
+      link: '',
+    };
+  }
+
+  const link = `https://www.instagram.com/p/${id}`;
+  const author = document.querySelector<HTMLElement>('header span div a')?.innerText || '';
+  const attribution = `Instagram profile - ${author}: https://www.instagram.com/${author}/`;
+  const body = document.querySelector('h1')?.innerText || '';
+
+  return {
+    body, link, attribution, title: '',
+  };
+};
+
+const getTiktokDraft = async (): Promise<BodyTitleType> => {
+  const link = document.URL;
+
+  if (link === 'https://www.tiktok.com/foryou') {
+    alert('go to explore page or particular author page to get post');
+    return {
+      title: '',
+      body: '',
+      attribution: '',
+      link: '',
+    };
+  }
+
+  const result = await tikTokInfoHandler();
+  if (!result) {
+    return {
+      title: '',
+      body: '',
+      attribution: '',
+      link: '',
+    };
+  }
+  const { title } = result;
+
+  const author = getTikTokUsername(link);
+  const attribution = `Tiktok profile - ${author}: https://www.tiktok.com/@${author}`;
+  return {
+    body: title, link, attribution, title: '',
+  };
+};
+
+const draftBySiteHandler = {
+  [SOURCE_TYPES.RECIPE_DRAFT_TIKTOK]: getTiktokDraft,
+  [SOURCE_TYPES.DRAFT_TIKTOK]: getTiktokDraft,
+  [SOURCE_TYPES.RECIPE_DRAFT_INSTAGRAM]: getInstagramDraft,
+  [SOURCE_TYPES.DRAFT_INSTAGRAM]: getInstagramDraft,
+  [SOURCE_TYPES.RECIPE_DRAFT]: getYoutubeDraft,
+  default: getYoutubeDraft,
+};
+
 export const createDraft = async (source?:string): Promise<void> => {
-  const linkToVideo = document.URL;
-  const videoId = extractVideoId(linkToVideo);
+  const getBody = source ? draftBySiteHandler[source] : draftBySiteHandler.default;
 
   const {
-    captions, author, linkToChannel, body, title,
-  } = await getSubsById(videoId);
-  if (!captions) {
+    title, body, attribution, link,
+  } = await getBody();
+
+  if (!body) {
     alert('Fetch subs error, try to reload page and try again');
     return;
   }
 
-  const subs = cutSubs(`${body} ${captions}`);
-
   const query = createQuery({
-    subs, author, linkToChannel, source,
+    subs: body, source,
   });
+
   const { result: postDraft, error } = await getGptAnswer(query);
   if (!postDraft) {
     // @ts-ignore
@@ -119,7 +215,7 @@ export const createDraft = async (source?:string): Promise<void> => {
   }
 
   const draftBody = formatGptAnswer({
-    answer: postDraft, linkToVideo, author, linkToChannel,
+    answer: postDraft, link, attribution,
   });
 
   const rootElement = document.createElement('div');
