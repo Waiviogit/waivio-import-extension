@@ -124,7 +124,7 @@ const getYoutubeDraft = async (): Promise<BodyTitleType> => {
   };
 };
 
-const extractInstagramVideoId = (url: string): string => {
+export const extractInstagramVideoId = (url: string): string => {
   const match = url.match(/instagram\.com\/(?:[\w-]+\/)?(p|reel)\/([\w-]+)/);
   return match ? match[2] : '';
 };

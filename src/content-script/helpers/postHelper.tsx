@@ -6,6 +6,7 @@ import { extractVideoId, fetchVideoContent, getTitleAndBody } from './youtubeHel
 import { getWaivioUserInfo } from './userHelper';
 import { fetchTiktok, getTikTokDesc } from './tikTokHelper';
 import { getPostImportHost } from './downloadWaivioHelper';
+import { extractInstagramVideoId } from './draftHelper';
 
 type parsedPostType = {
   title: string
@@ -59,11 +60,15 @@ export const tikTokInfoHandler = async (): Promise<parsedPostType|null> => {
 };
 
 export const instInfoHandler = async (): Promise<parsedPostType> => {
+  const id = extractInstagramVideoId(document.URL);
+
+  const link = `https://www.instagram.com/p/${id}`;
+
   const body = document.querySelector('h1')?.innerText || '';
 
   return {
     title: '',
-    body,
+    body: `${link}\n${body}`,
   };
 };
 
