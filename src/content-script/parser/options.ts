@@ -1,9 +1,8 @@
 import {
   getAvatarAliexpress, getAvatarAmazon, getAvatarSephora, getAvatarWalmart,
 } from './avatar';
-import { make2dArray } from '../helpers/commonHelper';
 import { OPTION_SELECTOR } from '../constants';
-import { classSelectorByRegex } from '../helpers/scrapingHelper';
+import { classSelectorByRegex, idSelectorByRegex } from '../helpers/scrapingHelper';
 
 export type OptionType = {
   category: string
@@ -66,36 +65,17 @@ const getTmmOptions = () => {
 
 const getInlineOptions = (): OptionType[] => {
   const productOptions = [] as OptionType[];
-  const inlineOptions = Array
-    .from(document.querySelectorAll<HTMLElement>(OPTION_SELECTOR.INLINE_OPTION))
-    .map((el) => el?.innerText);
+
+  const inlineOptions = idSelectorByRegex('span', /inline-twister-expanded-dimension-text/)
+  // @ts-ignore
+    .map((el) => el?.parentNode?.innerText || '');
+
   if (!inlineOptions.length) return getTmmOptions();
 
-  const arr2d = make2dArray(inlineOptions);
-
-  for (const element of arr2d) {
-    const [category, value] = element;
-    if (!category || !value) continue;
-    if (/select/.test(value.toLowerCase())) {
-      const searchCategory = category.trim()
-        .replace(/[.,%?+*|{}[\]()<>“”^'"\\\-_=!&$:]/g, '')
-        .replace(/  +/g, ' ').toLocaleLowerCase();
-
-      const dynamicSelector = `#inline-twister-expander-content-${searchCategory}_name li span span span span`;
-
-      const values = Array.from(document.querySelectorAll<HTMLElement>(dynamicSelector))
-        .map((el) => el.innerText.trim())
-        .filter((el) => !!el)
-        .filter((el, index, self) => index === self.indexOf(el));
-
-      if (!values.length) continue;
-
-      for (const selectValue of values) {
-        productOptions.push(getOptionObject(category, selectValue));
-      }
-      continue;
-    }
-    productOptions.push(getOptionObject(category, value));
+  for (const el of inlineOptions) {
+    if (!el) continue;
+    const keyValueMain = el.split(':');
+    productOptions.push(getOptionObject(keyValueMain[0], keyValueMain[1], 'amazon'));
   }
 
   return productOptions;
