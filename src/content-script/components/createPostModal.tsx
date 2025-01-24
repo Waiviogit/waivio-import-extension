@@ -60,6 +60,12 @@ const CreatePostModal = ({
     }
     setIsRecipeLoading(false);
   };
+  const recipeButtonExist = [
+    SOURCE_TYPES.RECIPE_DRAFT,
+    SOURCE_TYPES.RECIPE_DRAFT_TIKTOK,
+    SOURCE_TYPES.RECIPE_DRAFT_INSTAGRAM,
+  ]
+    .includes(source || '');
 
   const submitDisabled = !title || !body || title?.length > MAX_TITLE_LENGTH;
 
@@ -83,7 +89,7 @@ const CreatePostModal = ({
                     zIndex={9999999}
                     footer={(_, { OkBtn, CancelBtn }) => (
                         <>
-                            {source === SOURCE_TYPES.RECIPE_DRAFT && <Button
+                            {recipeButtonExist && <Button
                                 onClick={handleCreateObject}
                                 loading={isRecipeLoading}
                                 disabled={isRecipeDisabled}
