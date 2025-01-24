@@ -17,6 +17,7 @@ const errorTypes = {
   VideoNotAvailable: (videoId: string) => new YouTubeCaptionError(`The video is no longer available (${videoId}).`),
   CaptionsDisabled: (videoId: string) => new YouTubeCaptionError(`Captions are disabled for this video (${videoId}).`),
   NoCaptionsAvailable: (videoId: string) => new YouTubeCaptionError(`No captions are available for this video (${videoId}).`),
+  NoDescriptionAvailable: (videoId: string) => new YouTubeCaptionError(`No description are available for this video (${videoId}).`),
   // eslint-disable-next-line max-len
   LanguageUnavailable: (lang: string, availableLangs: string[], videoId: string) => new YouTubeCaptionError(
     `No captions available in ${lang} for this video (${videoId}). Available languages: ${availableLangs.join(
@@ -121,12 +122,26 @@ async function getVideoCaptions(
 
   // eslint-disable-next-line no-use-before-define
   const captionsData = extractCaptionsFromContent(videoPageContent);
+
   if (!captionsData) {
-    throw errorTypes.CaptionsDisabled(videoId);
+    if (!titleAndBody.body) throw errorTypes.NoDescriptionAvailable(videoId);
+    return {
+      captions: '',
+      ...authorWithLink,
+      ...titleAndBody,
+    };
   }
 
   // eslint-disable-next-line no-use-before-define
-  checkCaptionsValidity(captionsData, videoId, options?.lang);
+  const validCaption = checkCaptionsValidity(captionsData, videoId, options?.lang);
+  if (!validCaption) {
+    if (!titleAndBody.body) throw errorTypes.NoDescriptionAvailable(videoId);
+    return {
+      captions: '',
+      ...authorWithLink,
+      ...titleAndBody,
+    };
+  }
   // eslint-disable-next-line no-use-before-define
   const captionLink = getCaptionURL(captionsData, options?.lang);
 
@@ -166,19 +181,16 @@ function extractCaptionsFromContent(content: string) {
 
 function checkCaptionsValidity(captions: any, videoId: string, lang?: string) {
   if (!('captionTracks' in captions)) {
-    throw errorTypes.NoCaptionsAvailable(videoId);
+    return false;
   }
   if (
     lang
     // eslint-disable-next-line max-len
         && !captions.captionTracks.some((track: { languageCode: string }) => track.languageCode === lang)
   ) {
-    throw errorTypes.LanguageUnavailable(
-      lang,
-      captions.captionTracks.map((track: { languageCode: string }) => track.languageCode),
-      videoId,
-    );
+    return false;
   }
+  return true;
 }
 
 function getCaptionURL(captions: any, lang?: string) {

@@ -201,7 +201,7 @@ export const createDraft = async (source?:string): Promise<void> => {
   } = await getBody();
 
   if (!body) {
-    alert('Fetch subs error, try to reload page and try again');
+    alert('Parsing post body error');
     return;
   }
 
