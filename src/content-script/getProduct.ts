@@ -38,10 +38,15 @@ import {
   getProductIdAliExpress,
   productTitleAliExpress,
   getFeaturesAliExpress,
-  getDescriptionAliExpress, getPriceAliExpress, getDepartmentsFromProductDescription, getAliExpressOptions,
+  getDescriptionAliExpress,
+  getPriceAliExpress,
+  getDepartmentsFromProductDescription,
+  getAliExpressOptions,
+  getGroupIdAliExpress,
 } from './parser';
 import { productSchema } from './validation';
 import { SOURCE_TYPES } from '../common/constants';
+import { getMerchantsAliExpress } from './parser/merchant';
 
 export type productIdType = {
   key: string
@@ -64,7 +69,12 @@ export type parsedObjectType = {
   manufacturer?: string
   weight?: string
   imageURLs?: string[]
+  merchants?: string[]
   // gallery items
+}
+
+type merchantType = {
+  name:string
 }
 
 export type exportJsonType = {
@@ -84,6 +94,7 @@ export type exportJsonType = {
   features: featuresType[]
   weight?: string
   imageURLs?: string[]
+  merchants?: merchantType[]
 }
 
 export type exportCSVType = {
@@ -220,11 +231,12 @@ const getProductFromAliExpress = async (): Promise<getProductReturnedType> => {
   const { avatar, gallery } = getAvatarAliexpress();
   const name = productTitleAliExpress();
 
-  const productId1 = getProductIdAliExpress();
+  const groupId = getGroupIdAliExpress();
+
+  const productId1 = getProductIdAliExpress(groupId);
 
   const description = await getDescriptionAliExpress();
   const departments = await getDepartmentsFromProductDescription(name);
-  console.log('departments', departments);
 
   const object: parsedObjectType = {
     name, //+
@@ -237,8 +249,10 @@ const getProductFromAliExpress = async (): Promise<getProductReturnedType> => {
     productIds: [],
     features: getFeaturesAliExpress(), //+
     imageURLs: gallery, //+
-    // groupId: getGroupIdSephora(),
+    groupId,
+    merchants: getMerchantsAliExpress(), //
   };
+
   if (productId1) {
     object.productIds?.push(productId1);
   }
@@ -308,6 +322,9 @@ export const formatToJsonObject = (object: parsedObjectType):exportJsonType => {
     exportObject.mostRecentPriceAmount = mostRecentPriceAmount;
     exportObject.mostRecentPriceCurrency = mostRecentPriceCurrency;
   }
+  if (object?.merchants?.length) {
+    exportObject.merchants = object.merchants.map((el) => ({ name: el }));
+  }
 
   return exportObject;
 };
@@ -332,7 +349,7 @@ export const formatToCsvObject = (object: parsedObjectType):exportCSVType => {
     isbn: '',
     manufacturer: object.manufacturer || '',
     manufacturerLink: '',
-    merchants: '',
+    merchants: (object.merchants ?? []).join(';'),
     merchantLink: '',
     mostRecentPriceAmount,
     mostRecentPriceCurrency,

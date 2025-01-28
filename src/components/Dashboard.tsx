@@ -110,17 +110,17 @@ export const Dashboard = () => {
               />)
       );
     }
-    // if (currentUrl.includes('aliexpress')) {
-    //   return (
-    //     aliexpressButtonsConfig
-    //       .map((button) => <DashboardButton
-    //               text={button.text}
-    //               onClick={button.onClick}
-    //               id={button.id}
-    //               key={button.id}
-    //           />)
-    //   );
-    // }
+    if (currentUrl.includes('aliexpress')) {
+      return (
+        aliexpressButtonsConfig
+          .map((button) => <DashboardButton
+                  text={button.text}
+                  onClick={button.onClick}
+                  id={button.id}
+                  key={button.id}
+              />)
+      );
+    }
     if (currentUrl.includes('sephora.com')) {
       return (sephoraButtonsConfig
         .map((button) => <DashboardButton

@@ -1,5 +1,6 @@
 import { replaceInvisible } from '../helpers/commonHelper';
 import { productIdType } from '../getProduct';
+import { classSelectorByRegex } from '../helpers/scrapingHelper';
 
 const PRODUCT_ID_TYPES = ['ean', 'ean8', 'ean13', 'isbn10', 'isbn13', 'asin'];
 
@@ -24,15 +25,37 @@ export const getProductIdSephora = ():productIdType| undefined => {
   };
 };
 
-export const getProductIdAliExpress = ():productIdType| undefined => {
+export const getGroupIdAliExpress = ():string|undefined => {
   const url = document.URL;
 
   const match = url.match(/\/item\/(\d+)\.html/);
   if (!match) return;
 
+  return match[1];
+};
+
+export const getProductIdAliExpress = (groupId?: string):productIdType| undefined => {
+  if (!groupId) return;
+
+  let productIdPart = '';
+
+  const selectedOptions = classSelectorByRegex('div', /sku-item--selected/);
+
+  for (const selectedOption of selectedOptions) {
+    // @ts-ignore
+    const optionData = selectedOption.attributes?.['data-sku-col']?.value as string | undefined;
+    if (optionData) productIdPart += optionData;
+  }
+  if (!productIdPart) {
+    return {
+      key: 'aliexpress.com',
+      value: groupId,
+    };
+  }
+
   return {
     key: 'aliexpress.com',
-    value: `${match[1]}`,
+    value: `${groupId}/${productIdPart}`,
   };
 };
 
