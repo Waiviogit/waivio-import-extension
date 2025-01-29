@@ -64,7 +64,9 @@ export const getDescriptionAliExpress = async (): Promise<string> => new Promise
       top: 0,
       behavior: 'smooth',
     });
-    const response = description.innerText.replace('Description\nReport Item\n', '');
+    const response = description.innerText
+      .replace('Description\nReport Item\n', '')
+      .replace(/\n/gm, '');
     return resolve(response);
   }, 3000);
 });
