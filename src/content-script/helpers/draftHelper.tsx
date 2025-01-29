@@ -96,7 +96,16 @@ type BodyTitleType = {
   body: string
   attribution: string
   link: string
+  author: string
 }
+
+const EMPTY_BODY_RESPONSE = {
+  title: '',
+  body: '',
+  attribution: '',
+  link: '',
+  author: '',
+};
 
 const getYoutubeDraft = async (): Promise<BodyTitleType> => {
   const link = document.URL;
@@ -105,14 +114,7 @@ const getYoutubeDraft = async (): Promise<BodyTitleType> => {
     captions, body, title, author, linkToChannel,
   } = await getSubsById(videoId);
 
-  if (!body && !captions) {
-    return {
-      title: '',
-      body: '',
-      attribution: '',
-      link: '',
-    };
-  }
+  if (!body && !captions) return EMPTY_BODY_RESPONSE;
 
   const linkToAuthorAndChannel = `YouTube channel - ${author}: ${linkToChannel}`;
 
@@ -121,6 +123,7 @@ const getYoutubeDraft = async (): Promise<BodyTitleType> => {
     body: cutSubs(`${body} ${captions}`),
     attribution: linkToAuthorAndChannel,
     link,
+    author,
   };
 };
 
@@ -133,12 +136,7 @@ const getInstagramDraft = async (): Promise<BodyTitleType> => {
   const id = extractInstagramVideoId(document.URL);
 
   if (!id) {
-    return {
-      title: '',
-      body: '',
-      attribution: '',
-      link: '',
-    };
+    return EMPTY_BODY_RESPONSE;
   }
 
   const link = `https://www.instagram.com/p/${id}`;
@@ -149,7 +147,7 @@ const getInstagramDraft = async (): Promise<BodyTitleType> => {
   const body = document.querySelector('h1')?.innerText || '';
 
   return {
-    body, link, attribution, title: '',
+    body, link, attribution, title: '', author,
   };
 };
 
@@ -158,29 +156,19 @@ const getTiktokDraft = async (): Promise<BodyTitleType> => {
 
   if (link === 'https://www.tiktok.com/foryou') {
     alert('go to explore page or particular author page to get post');
-    return {
-      title: '',
-      body: '',
-      attribution: '',
-      link: '',
-    };
+    return EMPTY_BODY_RESPONSE;
   }
 
   const result = await tikTokInfoHandler();
   if (!result) {
-    return {
-      title: '',
-      body: '',
-      attribution: '',
-      link: '',
-    };
+    return EMPTY_BODY_RESPONSE;
   }
   const { title } = result;
 
   const author = getTikTokUsername(link);
   const attribution = `Tiktok profile - ${author}: https://www.tiktok.com/@${author}`;
   return {
-    body: title, link, attribution, title: '',
+    body: title, link, attribution, title: '', author,
   };
 };
 
@@ -197,7 +185,7 @@ export const createDraft = async (source?:string): Promise<void> => {
   const getBody = source ? draftBySiteHandler[source] : draftBySiteHandler.default;
 
   const {
-    title, body, attribution, link,
+    title, body, attribution, link, author,
   } = await getBody();
 
   if (!body) {
@@ -226,7 +214,7 @@ export const createDraft = async (source?:string): Promise<void> => {
   const rootModal = ReactDOM.createRoot(rootElement);
 
   const tagsFromBody = extractHashtags(draftBody);
-  const tags = ['waivio'];
+  const tags = ['waivio', author];
   if (tagsFromBody.length) tags.push(...tagsFromBody);
 
   const userInfo = await getWaivioUserInfo();

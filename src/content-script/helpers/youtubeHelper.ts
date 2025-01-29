@@ -41,6 +41,7 @@ export interface CaptionResponse {
 type authorLinkType = {
     author: string
     linkToChannel: string
+    account: string
 }
 
 type titleBodyType = {
@@ -56,7 +57,12 @@ export type captionType = {
   body: string
 }
 
-const getChanelURL = (content: string): authorLinkType => {
+const extractYouTubeAccount = (url: string) => {
+  const match = url.match(/\/@([\w\d_-]+)/);
+  return match ? match[1] : '';
+};
+
+export const getChanelURL = (content: string): authorLinkType => {
   try {
     const splitContent = content.split('"itemListElement":')[1];
 
@@ -65,16 +71,19 @@ const getChanelURL = (content: string): authorLinkType => {
 
     const parsed = JSON.parse(stringifiedJson);
     const result = parsed?.[0]?.item;
-    const linkToChannel = (result?.['@id'] ?? '').replace(/^http:\/\//, 'https://');
+    const link = result?.['@id'] ?? '' as string;
+    const linkToChannel = link.replace(/^http:\/\//, 'https://');
 
     return {
       author: result?.name ?? '',
       linkToChannel,
+      account: extractYouTubeAccount(link),
     };
   } catch (error) {
     return {
       author: '',
       linkToChannel: '',
+      account: '',
     };
   }
 };

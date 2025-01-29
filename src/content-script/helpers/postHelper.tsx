@@ -2,15 +2,18 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import CreatePostModal from '../components/createPostModal';
 import { SOURCE_TYPES } from '../../common/constants';
-import { extractVideoId, fetchVideoContent, getTitleAndBody } from './youtubeHelper';
+import {
+  extractVideoId, fetchVideoContent, getChanelURL, getTitleAndBody,
+} from './youtubeHelper';
 import { getWaivioUserInfo } from './userHelper';
-import { fetchTiktok, getTikTokDesc } from './tikTokHelper';
+import { fetchTiktok, getTikTokDesc, getTikTokUsername } from './tikTokHelper';
 import { getPostImportHost } from './downloadWaivioHelper';
 import { extractInstagramVideoId } from './draftHelper';
 
 type parsedPostType = {
   title: string
   body: string
+  author: string
 }
 
 export const extractHashtags = (text: string) : string[] => {
@@ -32,9 +35,10 @@ const youtubeInfoHandler = async (): Promise<parsedPostType|null> => {
     const content = await fetchVideoContent(id);
 
     const { title, body } = getTitleAndBody(content);
+    const { account } = getChanelURL(content);
 
     return {
-      title, body: `${document.URL}\n${body}`,
+      title, body: `${document.URL}\n${body}`, author: account,
     };
   } catch (error) {
     // @ts-ignore
@@ -49,8 +53,10 @@ export const tikTokInfoHandler = async (): Promise<parsedPostType|null> => {
     const content = await fetchTiktok(url);
     const decr = getTikTokDesc(content);
 
+    const author = getTikTokUsername(url);
+
     return {
-      title: decr, body: `${url}\n${decr}`,
+      title: decr, body: `${url}\n${decr}`, author,
     };
   } catch (error) {
     // @ts-ignore
@@ -66,9 +72,14 @@ export const instInfoHandler = async (): Promise<parsedPostType> => {
 
   const body = document.querySelector('h1')?.innerText || '';
 
+  const author = document.querySelector<HTMLElement>('header span div a')?.innerText
+      || document.querySelector<HTMLElement>('span span div a')?.innerText
+      || '';
+
   return {
     title: '',
     body: `${link}\n${body}`,
+    author,
   };
 };
 
@@ -85,7 +96,7 @@ export const createPost = async (source?:string): Promise<void> => {
 
   const response = await handler();
   if (!response) return;
-  const { body, title } = response;
+  const { body, title, author } = response;
 
   const rootElement = document.createElement('div');
   rootElement.id = 'react-chrome-modal';
@@ -93,7 +104,7 @@ export const createPost = async (source?:string): Promise<void> => {
   const rootModal = ReactDOM.createRoot(rootElement);
 
   const tagsFromBody = extractHashtags(body);
-  const tags = ['waivio'];
+  const tags = ['waivio', author];
   if (tagsFromBody.length) tags.push(...tagsFromBody);
 
   const userInfo = await getWaivioUserInfo();
