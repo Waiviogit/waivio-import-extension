@@ -52,7 +52,7 @@ export const getDescriptionAliExpress = async (): Promise<string> => new Promise
   });
 
   setTimeout(() => {
-    const description = document.querySelector<HTMLElement>('#nav-description');
+    const description = document.querySelector<HTMLElement>('#nav-description #product-description');
     if (!description) {
       window.scrollTo({
         top: 0,
@@ -65,8 +65,6 @@ export const getDescriptionAliExpress = async (): Promise<string> => new Promise
       behavior: 'smooth',
     });
     const response = description.innerText.replace('Description\nReport Item\n', '');
-    const notLoaded = /view more/i.test(response);
-    if (notLoaded) return resolve('');
     return resolve(response);
   }, 3000);
 });
