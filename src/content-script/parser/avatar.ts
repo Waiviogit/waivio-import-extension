@@ -1,4 +1,5 @@
 import { replaceInvisible } from '../helpers/commonHelper';
+import { classSelectorByRegex } from '../helpers/scrapingHelper';
 
 export const getAvatarAmazon = () => {
   const gallery = Array.from(document.querySelectorAll<HTMLElement>('li.imageThumbnail'));
@@ -53,10 +54,20 @@ export const getAvatarAliexpress = ():AvatarGalleryType => {
       gallery: [],
     };
   }
-  const images = transformAliExpressUrls(pictures);
 
-  const avatar = images[0];
-  const gallery = images.slice(1);
+  const [avatarElement] = classSelectorByRegex('div', /slider--active--/);
+  if (!avatarElement) {
+    return {
+      avatar: '',
+      gallery: [],
+    };
+  }
+
+  // @ts-ignore
+  const avatar = (avatarElement?.firstChild?.src || '').replace('.jpg_220x220q75.jpg_.avif', '.jpg_960x960q75.jpg_.avif');
+
+  const images = transformAliExpressUrls(pictures);
+  const gallery = images.filter((el) => el !== avatar);
 
   return {
     avatar,

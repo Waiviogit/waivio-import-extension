@@ -44,7 +44,7 @@ export const getProductIdAliExpress = (groupId?: string):productIdType| undefine
   for (const selectedOption of selectedOptions) {
     // @ts-ignore
     const optionData = selectedOption.attributes?.['data-sku-col']?.value as string | undefined;
-    if (optionData) productIdPart += optionData;
+    if (optionData) productIdPart += `/${optionData}`;
   }
   if (!productIdPart) {
     return {
@@ -55,7 +55,7 @@ export const getProductIdAliExpress = (groupId?: string):productIdType| undefine
 
   return {
     key: 'aliexpress.com',
-    value: `${groupId}/${productIdPart}`,
+    value: `${groupId}${productIdPart}`,
   };
 };
 
