@@ -87,6 +87,7 @@ const getSubsById = async (videoId :string): Promise<captionType> => {
       linkToChannel: '',
       body: '',
       title: '',
+      account: '',
     };
   }
 };
@@ -110,8 +111,9 @@ const EMPTY_BODY_RESPONSE = {
 const getYoutubeDraft = async (): Promise<BodyTitleType> => {
   const link = document.URL;
   const videoId = extractVideoId(link);
+
   const {
-    captions, body, title, author, linkToChannel,
+    captions, body, title, author, linkToChannel, account,
   } = await getSubsById(videoId);
 
   if (!body && !captions) return EMPTY_BODY_RESPONSE;
@@ -123,7 +125,7 @@ const getYoutubeDraft = async (): Promise<BodyTitleType> => {
     body: cutSubs(`${body} ${captions}`),
     attribution: linkToAuthorAndChannel,
     link,
-    author,
+    author: account,
   };
 };
 

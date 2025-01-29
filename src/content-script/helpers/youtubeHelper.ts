@@ -55,6 +55,7 @@ export type captionType = {
   linkToChannel: string
   title: string
   body: string
+  account: string
 }
 
 const extractYouTubeAccount = (url: string) => {
