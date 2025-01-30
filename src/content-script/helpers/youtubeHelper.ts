@@ -68,8 +68,7 @@ export const getChanelURL = (content: string): authorLinkType => {
     const splitContent = content.split('"itemListElement":')[1];
 
     const cutTo = splitContent.indexOf(']');
-    const stringifiedJson = splitContent.slice(0, cutTo + 1);
-
+    const stringifiedJson = splitContent.slice(0, cutTo + 1).replace('\\x26', '&');
     const parsed = JSON.parse(stringifiedJson);
     const result = parsed?.[0]?.item;
     const link = result?.['@id'] ?? '' as string;
