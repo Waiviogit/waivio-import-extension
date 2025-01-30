@@ -59,7 +59,7 @@ export type captionType = {
 }
 
 const extractYouTubeAccount = (url: string) => {
-  const match = url.match(/\/@([\w\d_-]+)/);
+  const match = url.match(/\/@([\w\d_.-]+)/);
   return match ? match[1] : '';
 };
 
