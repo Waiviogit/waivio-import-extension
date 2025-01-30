@@ -9,6 +9,7 @@ import { getWaivioUserInfo } from './userHelper';
 import { fetchTiktok, getTikTokDesc, getTikTokUsername } from './tikTokHelper';
 import { getPostImportHost } from './downloadWaivioHelper';
 import { extractInstagramVideoId } from './draftHelper';
+import { getInstagramDescription, getInstagramUsername } from './instaHelper';
 
 type parsedPostType = {
   title: string
@@ -75,11 +76,8 @@ export const instInfoHandler = async (): Promise<parsedPostType> => {
 
   const link = `https://www.instagram.com/p/${id}`;
 
-  const body = document.querySelector('h1')?.innerText || '';
-
-  const author = document.querySelector<HTMLElement>('header span div a')?.innerText
-      || document.querySelector<HTMLElement>('span span div a')?.innerText
-      || '';
+  const body = getInstagramDescription();
+  const author = getInstagramUsername();
 
   return {
     title: '',

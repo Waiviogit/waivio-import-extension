@@ -8,6 +8,7 @@ import CreatePostModal from '../components/createPostModal';
 import { extractHashtags, makeValidTag, tikTokInfoHandler } from './postHelper';
 import { getGptAnswer } from './gptHelper';
 import { getTikTokUsername } from './tikTokHelper';
+import { getInstagramDescription, getInstagramUsername } from './instaHelper';
 
 interface createQueryInterface {
     subs: string
@@ -142,11 +143,9 @@ const getInstagramDraft = async (): Promise<BodyTitleType> => {
   }
 
   const link = `https://www.instagram.com/p/${id}`;
-  const author = document.querySelector<HTMLElement>('header span div a')?.innerText
-      || document.querySelector<HTMLElement>('span span div a')?.innerText
-      || '';
+  const author = getInstagramUsername();
   const attribution = `Instagram profile - ${author}: https://www.instagram.com/${author}/`;
-  const body = document.querySelector('h1')?.innerText || '';
+  const body = getInstagramDescription();
 
   return {
     body, link, attribution, title: '', author,
