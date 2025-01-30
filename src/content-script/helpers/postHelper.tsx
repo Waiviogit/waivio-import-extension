@@ -16,6 +16,11 @@ type parsedPostType = {
   author: string
 }
 
+export const makeValidTag = (tag: string): string => tag
+  .toLocaleLowerCase()
+  .replace(/_/g, '-')
+  .replace(/[^a-z0-9-]+/g, '');
+
 export const extractHashtags = (text: string) : string[] => {
   const regex = /#(\w+)/g;
   const hashtags = [];
@@ -104,7 +109,8 @@ export const createPost = async (source?:string): Promise<void> => {
   const rootModal = ReactDOM.createRoot(rootElement);
 
   const tagsFromBody = extractHashtags(body);
-  const tags = ['waivio', author];
+  const authorTag = makeValidTag(author);
+  const tags = ['waivio', authorTag];
   if (tagsFromBody.length) tags.push(...tagsFromBody);
 
   const userInfo = await getWaivioUserInfo();
@@ -120,7 +126,7 @@ export const createPost = async (source?:string): Promise<void> => {
         <CreatePostModal
             author={userName}
             title={title}
-            body={body}
+            body={`${body}\n#${authorTag}`}
             tags={tags}
             host={host}
         >

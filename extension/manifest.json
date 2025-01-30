@@ -1,6 +1,6 @@
 {
   "name": "Waivio Chrome Extension",
-  "version": "1.6.7",
+  "version": "1.6.8",
   "manifest_version": 3,
   "action": {
     "default_title": "Parse Waivio Product",

@@ -5,7 +5,7 @@ import { SOURCE_TYPES } from '../../common/constants';
 import { getWaivioUserInfo } from './userHelper';
 import { getPostImportHost } from './downloadWaivioHelper';
 import CreatePostModal from '../components/createPostModal';
-import { extractHashtags, tikTokInfoHandler } from './postHelper';
+import { extractHashtags, makeValidTag, tikTokInfoHandler } from './postHelper';
 import { getGptAnswer } from './gptHelper';
 import { getTikTokUsername } from './tikTokHelper';
 
@@ -216,7 +216,8 @@ export const createDraft = async (source?:string): Promise<void> => {
   const rootModal = ReactDOM.createRoot(rootElement);
 
   const tagsFromBody = extractHashtags(draftBody);
-  const tags = ['waivio', author];
+  const authorTag = makeValidTag(author);
+  const tags = ['waivio', authorTag];
   if (tagsFromBody.length) tags.push(...tagsFromBody);
 
   const userInfo = await getWaivioUserInfo();
@@ -232,7 +233,7 @@ export const createDraft = async (source?:string): Promise<void> => {
       <CreatePostModal
           author={userName}
           title={title}
-          body={draftBody}
+          body={`${draftBody}\n#${authorTag}`}
           tags={tags}
           host={host}
           source={source}
