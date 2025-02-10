@@ -1,6 +1,7 @@
 import { DETAILS_SELECTOR } from '../constants';
 import { make2dArray, replaceInvisible } from '../helpers/commonHelper';
 import { getProductIdSephoraSku } from './productId';
+import { classSelectorByRegex, elementSelectorByRegex } from '../helpers/scrapingHelper';
 
 const modelRegEx = /model number/;
 const languageRegEx = /language/i;
@@ -153,6 +154,25 @@ export const getFeaturesSephora = () => {
   return features;
 };
 
+const getFeatureNavItems = () => {
+  const features = [] as featuresType[];
+  const button = document.querySelector<HTMLElement>('#nav-specification button');
+  if (!button) return features;
+  button.click();
+  const elements = classSelectorByRegex('div', /specification--prop--/);
+  for (const element of elements) {
+    const title = elementSelectorByRegex(element, 'div', /specification--title--/);
+    const desc = elementSelectorByRegex(element, 'div', /specification--desc--/);
+    if (!title.length || !desc.length) continue;
+    features.push({
+      key: title[0].innerText,
+      value: [desc[0].innerText],
+    });
+  }
+
+  return features;
+};
+
 export const getFeaturesAliExpress = () => {
   const features = [] as featuresType[];
   const rating = document.querySelector<HTMLElement>('[data-pl="product-reviewer"] strong');
@@ -162,6 +182,9 @@ export const getFeaturesAliExpress = () => {
       value: [replaceInvisible(rating.innerText)],
     });
   }
+
+  const navFeatures = getFeatureNavItems();
+  if (navFeatures.length) features.push(...navFeatures);
 
   return features;
 };
