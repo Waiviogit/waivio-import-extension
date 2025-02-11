@@ -247,7 +247,7 @@ const getProductFromAliExpress = async (): Promise<getProductReturnedType> => {
     options: getAliExpressOptions(), // +
     price: getPriceAliExpress(), // +
     productIds: [],
-    features: getFeaturesAliExpress(), //+
+    features: await getFeaturesAliExpress(), //+
     imageURLs: gallery, //+
     groupId,
     merchants: getMerchantsAliExpress(), //

@@ -154,26 +154,31 @@ export const getFeaturesSephora = () => {
   return features;
 };
 
-const getFeatureNavItems = () => {
+const getFeatureNavItems = async (): Promise<featuresType[]> => {
   const features = [] as featuresType[];
   const button = document.querySelector<HTMLElement>('#nav-specification button');
   if (!button) return features;
   button.click();
-  const elements = classSelectorByRegex('div', /specification--prop--/);
-  for (const element of elements) {
-    const title = elementSelectorByRegex(element, 'div', /specification--title--/);
-    const desc = elementSelectorByRegex(element, 'div', /specification--desc--/);
-    if (!title.length || !desc.length) continue;
-    features.push({
-      key: title[0].innerText,
-      value: [desc[0].innerText],
-    });
-  }
 
-  return features;
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      const elements = classSelectorByRegex('div', /specification--prop--/);
+      for (const element of elements) {
+        const title = elementSelectorByRegex(element, 'div', /specification--title--/);
+        const desc = elementSelectorByRegex(element, 'div', /specification--desc--/);
+        if (!title.length || !desc.length) continue;
+        features.push({
+          key: title[0].innerText,
+          value: [desc[0].innerText],
+        });
+      }
+
+      resolve(features);
+    }, 500);
+  });
 };
 
-export const getFeaturesAliExpress = () => {
+export const getFeaturesAliExpress = async () => {
   const features = [] as featuresType[];
   const rating = document.querySelector<HTMLElement>('[data-pl="product-reviewer"] strong');
   if (rating) {
@@ -183,7 +188,7 @@ export const getFeaturesAliExpress = () => {
     });
   }
 
-  const navFeatures = getFeatureNavItems();
+  const navFeatures = await getFeatureNavItems();
   if (navFeatures.length) features.push(...navFeatures);
 
   return features;
