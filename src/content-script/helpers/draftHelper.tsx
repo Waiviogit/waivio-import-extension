@@ -152,6 +152,98 @@ const getInstagramDraft = async (): Promise<BodyTitleType> => {
   };
 };
 
+const getGptMarkdownFormat = async (body: string, source: string):Promise<string> => {
+  if (![SOURCE_TYPES.RECIPE_DRAFT, SOURCE_TYPES.RECIPE_DRAFT_INSTAGRAM, SOURCE_TYPES.RECIPE_DRAFT_TIKTOK].includes(source)) return body;
+
+  const query = `I have a series of recipe posts that need formatting in Markdown. Please format each recipe following these detailed guidelines:
+
+1. **Introduction:**
+   - Begin with a brief introduction about the recipe, capturing its essence and unique attributes.
+
+2. **YouTube Link:**
+   - Include the YouTube link provided for each recipe immediately after the introduction.
+
+3. **Ingredients Section:**
+   - Use a heading for the Ingredients section.
+   - List each ingredient starting with an emoji, followed by the quantity and description, without bullet points.
+   - Ensure there is a separator line (\`---\`) after the Ingredients section.
+
+4. **Instructions Section:**
+   - Use a heading for the Instructions section.
+   - Number each main step using  "1- " "2- " "3- " "4- " and so on.
+   - Add two empty lines after each step
+   - Format each main step with a bolded sub-step title.
+   - Use bullet points for each sub-step to enhance clarity and readability.
+
+5. **Time, Servings, and Equipment Section:**
+   - Combine the Prep Time, Cook Time, Total Time, Servings, and Equipment into one section.
+   - Ensure no separator lines break this combined section.
+
+6. **Cooking Tips:**
+   - Use a heading for Cooking Tips.
+   - Provide bullet points for each tip to enhance clarity.
+
+7. **Hashtags and YouTube Channel:**
+   - Include a section for hashtags relevant to the recipe, formatted with a separator line before and after.
+   - Include a link to the YouTube channel, formatted similarly with separator lines.
+
+Provide the output in markdown code that I can copy and paste.
+This is the Example Format in markdown:
+[Introduction about the recipe]
+[YouTube link]
+
+#### Ingredients
+[Emoji] [Quantity] [Ingredient Description]  
+[Continue listing ingredients]
+
+---
+
+#### Instructions
+1) **[Step Title]:**  
+   - [Sub-step description]
+   - [Sub-step description]
+
+2) **[Step Title]:**  
+   - [Sub-step description]
+   - [Sub-step description]
+
+---
+
+**Prep Time:** [Time]  
+**Cook Time:** [Time]  
+**Total Time:** [Time]  
+**Servings:** [Number of servings]  
+**Equipment:** [List of equipment]  
+
+---
+
+**Cooking Tips:**  
+- [Tip 1]
+- [Tip 2]
+
+---
+
+#[Hashtags]
+
+---
+
+YouTube channel - [Channel Name]: [YouTube URL]
+
+
+---
+
+I will give you the recipes next and you give me the edited text in markdown so I can copy and paste it-
+Remember to put a separator after the instructions section and another separator before cooking tips.
+don't use wrapping in \`\`\`markdown
+${body}
+
+  `;
+  const { result: postDraft, error } = await getGptAnswer(query);
+  if (error) return body;
+
+  return postDraft as string;
+};
+
 const getTiktokDraft = async (): Promise<BodyTitleType> => {
   const link = document.URL;
 
@@ -225,6 +317,8 @@ export const createDraft = async (source?:string): Promise<void> => {
     userName,
   } = userInfo;
 
+  const resultBody = await getGptMarkdownFormat(draftBody, source || '');
+
   const host = await getPostImportHost(userName) || 'www.waivio.com';
 
   rootModal.render(
@@ -232,7 +326,7 @@ export const createDraft = async (source?:string): Promise<void> => {
       <CreatePostModal
           author={userName}
           title={title}
-          body={`${draftBody}\n#${authorTag}`}
+          body={`${resultBody}\n#${authorTag}`}
           tags={tags}
           host={host}
           source={source}

@@ -34,6 +34,7 @@
     "lint": "eslint --fix --ext=.jsx,.js,.tsx,.ts  .",
     "dist-to-aws": "node ./deploy/index.js",
     "deploy": "npm run build && npm run dist-to-aws",
+    "update-browser-list": "npx update-browserslist-db@latest",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
