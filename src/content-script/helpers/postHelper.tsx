@@ -124,7 +124,7 @@ export const createPost = async (source?:string): Promise<void> => {
         <CreatePostModal
             author={userName}
             title={title}
-            body={`${body}\n#${authorTag}`}
+            body={`${body}\n#${authorTag}\n`}
             tags={tags}
             host={host}
         >
