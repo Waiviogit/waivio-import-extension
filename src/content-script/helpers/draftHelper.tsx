@@ -326,7 +326,7 @@ export const createDraft = async (source?:string): Promise<void> => {
       <CreatePostModal
           author={userName}
           title={title}
-          body={`${resultBody}\n#${authorTag}\n`}
+          body={`${resultBody}\n#${authorTag}\n\n`}
           tags={tags}
           host={host}
           source={source}
