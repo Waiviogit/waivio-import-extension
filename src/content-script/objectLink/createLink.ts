@@ -70,7 +70,7 @@ const makeBlobFromHtmlPage = async ():Promise<Blob |null> => {
 export const createLink = async (source?: string) => {
   const name = extractName(document.URL);
 
-  const fieldUrl = source ? `${document.URL}*` : document.URL;
+  const fieldUrl = document.URL;
   const fieldTitle = extractTitleFromDocument();
   const fieldDescription = extractDescriptionFromDocument();
 
