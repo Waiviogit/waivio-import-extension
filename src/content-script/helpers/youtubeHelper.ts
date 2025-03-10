@@ -105,9 +105,13 @@ export const getTitleAndBody = (content:string): titleBodyType => {
   const stringifiedJson = firstSlice.slice(0, cutTo);
 
   const parsed = JSON.parse(`{${stringifiedJson}}`);
+
+  const title = parsed?.title?.simpleText ?? '';
+  const body = parsed?.description?.simpleText ?? '';
+
   return {
-    title: parsed?.title?.simpleText ?? '',
-    body: parsed?.description?.simpleText ?? '',
+    title,
+    body: body || title,
   };
 };
 
