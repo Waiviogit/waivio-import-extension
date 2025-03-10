@@ -21,6 +21,12 @@ interface formatAnswerInterface {
   answer: string
 }
 
+export interface Draft {
+  body: string
+  title: string
+  tags: string[]
+}
+
 const convertHashtagsToLowerCase = (inputString: string): string => {
   const regex = /#\w+/g;
   const convertedString = inputString.replace(regex, (match) => match.toLowerCase());
@@ -274,7 +280,7 @@ const draftBySiteHandler = {
   default: getYoutubeDraft,
 };
 
-export const createDraft = async (source?:string): Promise<void> => {
+export const getDraftBodyTitleTags = async (source?:string): Promise<Draft|null> => {
   const getBody = source ? draftBySiteHandler[source] : draftBySiteHandler.default;
 
   const {
@@ -283,7 +289,7 @@ export const createDraft = async (source?:string): Promise<void> => {
 
   if (!body) {
     alert('Parsing post body error');
-    return;
+    return null;
   }
 
   const query = createQuery({
@@ -294,40 +300,50 @@ export const createDraft = async (source?:string): Promise<void> => {
   if (!postDraft) {
     // @ts-ignore
     alert(`Gpt error ${error?.message ?? ''}`);
-    return;
+    return null;
   }
 
   const draftBody = formatGptAnswer({
     answer: postDraft, link, attribution,
   });
 
-  const rootElement = document.createElement('div');
-  rootElement.id = 'react-chrome-modal';
-  document.body.appendChild(rootElement);
-  const rootModal = ReactDOM.createRoot(rootElement);
-
   const tagsFromBody = extractHashtags(draftBody);
   const authorTag = makeValidTag(author);
   const tags = ['waivio', authorTag];
   if (tagsFromBody.length) tags.push(...tagsFromBody);
 
-  const userInfo = await getWaivioUserInfo();
-  if (!userInfo) return;
-  const {
-    userName,
-  } = userInfo;
-
   const resultBody = await getGptMarkdownFormat(draftBody, source || '');
 
+  return {
+    body: `${resultBody}\n#${authorTag}\n\n`,
+    title,
+    tags,
+  };
+};
+
+export const createDraft = async (source?:string): Promise<void> => {
+  const userInfo = await getWaivioUserInfo();
+  if (!userInfo) return;
+  const { userName } = userInfo;
+
+  const draftData = await getDraftBodyTitleTags(source);
+  if (!draftData) return;
+  const { body, title, tags } = draftData;
+
   const host = await getPostImportHost(userName) || 'www.waivio.com';
+
+  const rootElement = document.createElement('div');
+  rootElement.id = 'react-chrome-modal';
+  document.body.appendChild(rootElement);
+  const rootModal = ReactDOM.createRoot(rootElement);
 
   rootModal.render(
       // @ts-ignore
       <CreatePostModal
-          author={userName}
           title={title}
-          body={`${resultBody}\n#${authorTag}\n\n`}
+          body={body}
           tags={tags}
+          author={userName}
           host={host}
           source={source}
       >

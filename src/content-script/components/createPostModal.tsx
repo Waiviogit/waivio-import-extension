@@ -2,11 +2,13 @@ import React, { useState } from 'react';
 import {
   ConfigProvider, Modal, Input, Popover, Button,
 } from 'antd';
+import { ReloadOutlined } from '@ant-design/icons';
 import WaivioTags from './WaivioTags';
 import { postImportWaivio } from '../helpers/downloadWaivioHelper';
 import { copyContent } from '../helpers/commonHelper';
 import { SOURCE_TYPES } from '../../common/constants';
 import { createObjectForPost } from '../helpers/objectHelper';
+import { getDraftBodyTitleTags } from '../helpers/draftHelper';
 
 interface CreatePostProps {
     author: string;
@@ -19,11 +21,24 @@ interface CreatePostProps {
 
 const MAX_TITLE_LENGTH = 255;
 
+const RECIPE_SOURCES = [
+  SOURCE_TYPES.RECIPE_DRAFT,
+  SOURCE_TYPES.RECIPE_DRAFT_TIKTOK,
+  SOURCE_TYPES.RECIPE_DRAFT_INSTAGRAM,
+];
+
+const POST_SOURCES = [
+  SOURCE_TYPES.YOUTUBE,
+  SOURCE_TYPES.INSTAGRAM,
+  SOURCE_TYPES.TIKTOK,
+];
+
 const CreatePostModal = ({
   author, body: initialBody, title: initialTitle = 'Post draft', tags, host, source,
 }: CreatePostProps) => {
   const [isModalOpen, setIsModalOpen] = useState(true);
   const [isRecipeLoading, setIsRecipeLoading] = useState(false);
+  const [isRefreshLoading, setIsRefreshLoading] = useState(false);
   const [isRecipeDisabled, setIsRecipeDisabled] = useState(false);
   const [title, setTitle] = useState(initialTitle);
   const [body, setBody] = useState(initialBody);
@@ -60,14 +75,42 @@ const CreatePostModal = ({
     }
     setIsRecipeLoading(false);
   };
-  const recipeButtonExist = [
-    SOURCE_TYPES.RECIPE_DRAFT,
-    SOURCE_TYPES.RECIPE_DRAFT_TIKTOK,
-    SOURCE_TYPES.RECIPE_DRAFT_INSTAGRAM,
-  ]
-    .includes(source || '');
+
+  const handleRefreshGpt = async () => {
+    setIsRefreshLoading(true);
+    const draftData = await getDraftBodyTitleTags(source);
+    setIsRefreshLoading(false);
+    if (!draftData) return;
+    const { body: reBody, title: reTitle, tags: reTags } = draftData;
+
+    setBody(reBody);
+    setTitle(reTitle);
+    setTags(reTags);
+  };
+
+  const recipeButtonExist = RECIPE_SOURCES.includes(source || '');
+  const isDraft = !POST_SOURCES.includes(source || '');
 
   const submitDisabled = !title || !body || title?.length > MAX_TITLE_LENGTH;
+
+  const recipeButtons = <>
+      <Button
+      onClick={handleCreateObject}
+      loading={isRecipeLoading}
+      disabled={isRecipeDisabled}
+  >
+      Create object
+  </Button>
+
+      </>;
+
+  const draftButtons = <>
+          <Button
+              icon={<ReloadOutlined />}
+              onClick={handleRefreshGpt}
+              loading={isRefreshLoading}
+          />
+      </>;
 
   return (
         <>
@@ -89,13 +132,8 @@ const CreatePostModal = ({
                     zIndex={9999999}
                     footer={(_, { OkBtn, CancelBtn }) => (
                         <>
-                            {recipeButtonExist && <Button
-                                onClick={handleCreateObject}
-                                loading={isRecipeLoading}
-                                disabled={isRecipeDisabled}
-                            >
-                                Create object
-                            </Button>}
+                            {recipeButtonExist && recipeButtons}
+                            {isDraft && draftButtons}
                             <Button
                                 onClick={handleCopy}
                             >
