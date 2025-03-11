@@ -78,13 +78,12 @@ const CreatePostModal = ({
 
   const handleRefreshGpt = async () => {
     setIsRefreshLoading(true);
-    const draftData = await getDraftBodyTitleTags(source);
+    const draftData = await getDraftBodyTitleTags(source, body);
     setIsRefreshLoading(false);
     if (!draftData) return;
-    const { body: reBody, title: reTitle, tags: reTags } = draftData;
+    const { body: reBody, tags: reTags } = draftData;
 
     setBody(reBody);
-    setTitle(reTitle);
     setTags(reTags);
   };
 

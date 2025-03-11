@@ -280,7 +280,7 @@ const draftBySiteHandler = {
   default: getYoutubeDraft,
 };
 
-export const getDraftBodyTitleTags = async (source?:string): Promise<Draft|null> => {
+export const getDraftBodyTitleTags = async (source?:string, bodyFromEditor?:string): Promise<Draft|null> => {
   const getBody = source ? draftBySiteHandler[source] : draftBySiteHandler.default;
 
   const {
@@ -293,7 +293,7 @@ export const getDraftBodyTitleTags = async (source?:string): Promise<Draft|null>
   }
 
   const query = createQuery({
-    subs: body, source,
+    subs: bodyFromEditor || body, source,
   });
 
   const { result: postDraft, error } = await getGptAnswer(query);
