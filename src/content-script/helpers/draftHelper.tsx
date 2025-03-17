@@ -161,13 +161,13 @@ const getInstagramDraft = async (): Promise<BodyTitleType> => {
 const getGptMarkdownFormat = async (body: string, source: string):Promise<string> => {
   if (![SOURCE_TYPES.RECIPE_DRAFT, SOURCE_TYPES.RECIPE_DRAFT_INSTAGRAM, SOURCE_TYPES.RECIPE_DRAFT_TIKTOK].includes(source)) return body;
 
-  const query = `I have a series of recipe posts that need formatting in Markdown. Please format each recipe following these detailed guidelines:
-
+  const query = `I have a recipe post that need formatting in Markdown. Please format recipe following these detailed guidelines:
+format as bold only steps and sub-steps
 1. **Introduction:**
    - Begin with a brief introduction about the recipe, capturing its essence and unique attributes.
 
 2. **YouTube Link:**
-   - Include the YouTube link provided for each recipe immediately after the introduction.
+   - Include the YouTube link without formating  immediately after the introduction.
 
 3. **Ingredients Section:**
    - Use a heading for the Ingredients section.
@@ -238,7 +238,7 @@ YouTube channel - [Channel Name]: [YouTube URL]
 
 ---
 
-I will give you the recipes next and you give me the edited text in markdown so I can copy and paste it-
+I will give you the recipe next and you give me the edited text in markdown so I can copy and paste it-
 Remember to put a separator after the instructions section and another separator before cooking tips.
 don't use wrapping in \`\`\`markdown
 ${body}
