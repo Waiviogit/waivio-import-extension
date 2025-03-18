@@ -162,9 +162,8 @@ const getGptMarkdownFormat = async (body: string, source: string):Promise<string
   if (![SOURCE_TYPES.RECIPE_DRAFT, SOURCE_TYPES.RECIPE_DRAFT_INSTAGRAM, SOURCE_TYPES.RECIPE_DRAFT_TIKTOK].includes(source)) return body;
 
   const query = `I have a recipe post that need formatting in Markdown. Please format recipe following these detailed guidelines:
-format as bold only steps and sub-steps
 1. **Introduction:**
-   - Begin with a brief introduction about the recipe, capturing its essence and unique attributes.
+   - Begin with a brief introduction about the recipe, describing its essence and unique attributes.
 
 2. **YouTube Link:**
    - Include the YouTube link without formating  immediately after the introduction.
@@ -240,9 +239,8 @@ YouTube channel - [Channel Name]: [YouTube URL]
 
 I will give you the recipe next and you give me the edited text in markdown so I can copy and paste it-
 Remember to put a separator after the instructions section and another separator before cooking tips.
-don't use wrapping in \`\`\`markdown
+Please ensure the final output is in Markdown that can be copied and pasted directly, and do not use triple backticks or any wrapping code blocks.
 ${body}
-
   `;
   const { result: postDraft, error } = await getGptAnswer(query);
   if (error) return body;
