@@ -63,12 +63,14 @@ const extractYouTubeAccount = (url: string) => {
   return match ? match[1] : '';
 };
 
+const escapeHexSequences = (jsonString: string) => jsonString.replace(/\\x([0-9A-Fa-f]{2})/g, '\\\\x$1');
+
 export const getChanelURL = (content: string): authorLinkType => {
   try {
     const splitContent = content.split('"itemListElement":')[1];
 
     const cutTo = splitContent.indexOf(']');
-    const stringifiedJson = splitContent.slice(0, cutTo + 1).replace('\\x26', '&');
+    const stringifiedJson = escapeHexSequences(splitContent.slice(0, cutTo + 1));
     const parsed = JSON.parse(stringifiedJson);
     const result = parsed?.[0]?.item;
     const link = result?.['@id'] ?? '' as string;
