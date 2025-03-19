@@ -8,7 +8,7 @@ import {
 import { getWaivioUserInfo } from './userHelper';
 import { fetchTiktok, getTikTokDesc, getTikTokUsername } from './tikTokHelper';
 import { getPostImportHost } from './downloadWaivioHelper';
-import { extractInstagramVideoId } from './draftHelper';
+import { Draft, extractInstagramVideoId } from './draftHelper';
 import { getInstagramDescription, getInstagramUsername } from './instaHelper';
 
 type parsedPostType = {
@@ -88,28 +88,47 @@ export const instInfoHandler = async (): Promise<parsedPostType> => {
 
 const postInfoHandler = {
   [SOURCE_TYPES.YOUTUBE]: youtubeInfoHandler,
+  [SOURCE_TYPES.DRAFT_YOUTUBE]: youtubeInfoHandler,
+  [SOURCE_TYPES.RECIPE_DRAFT]: youtubeInfoHandler,
   [SOURCE_TYPES.TIKTOK]: tikTokInfoHandler,
+  [SOURCE_TYPES.DRAFT_TIKTOK]: tikTokInfoHandler,
+  [SOURCE_TYPES.RECIPE_DRAFT_TIKTOK]: tikTokInfoHandler,
   [SOURCE_TYPES.INSTAGRAM]: instInfoHandler,
+  [SOURCE_TYPES.DRAFT_INSTAGRAM]: instInfoHandler,
+  [SOURCE_TYPES.RECIPE_DRAFT_INSTAGRAM]: instInfoHandler,
 };
 
-export const createPost = async (source?:string): Promise<void> => {
-  if (!source) return;
-
+export const extractPostInfo = async (source: string): Promise<Draft|null> => {
   const handler = postInfoHandler[source as keyof typeof postInfoHandler];
 
   const response = await handler();
-  if (!response) return;
+  if (!response) return null;
   const { body, title, author } = response;
-
-  const rootElement = document.createElement('div');
-  rootElement.id = 'react-chrome-modal';
-  document.body.appendChild(rootElement);
-  const rootModal = ReactDOM.createRoot(rootElement);
 
   const tagsFromBody = extractHashtags(body);
   const authorTag = makeValidTag(author);
   const tags = ['waivio', authorTag];
   if (tagsFromBody.length) tags.push(...tagsFromBody);
+
+  return {
+    body: `${body}\n#${authorTag}\n\n`,
+    tags,
+    title,
+  };
+};
+
+export const createPost = async (source?:string): Promise<void> => {
+  if (!source) return;
+
+  const draft = await extractPostInfo(source);
+  if (!draft) return;
+
+  const { body, title, tags } = draft;
+
+  const rootElement = document.createElement('div');
+  rootElement.id = 'react-chrome-modal';
+  document.body.appendChild(rootElement);
+  const rootModal = ReactDOM.createRoot(rootElement);
 
   const userInfo = await getWaivioUserInfo();
   if (!userInfo) return;
@@ -124,7 +143,7 @@ export const createPost = async (source?:string): Promise<void> => {
         <CreatePostModal
             author={userName}
             title={title}
-            body={`${body}\n#${authorTag}\n\n`}
+            body={body}
             tags={tags}
             host={host}
         >

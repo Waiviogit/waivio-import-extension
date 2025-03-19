@@ -275,6 +275,7 @@ const draftBySiteHandler = {
   [SOURCE_TYPES.RECIPE_DRAFT_INSTAGRAM]: getInstagramDraft,
   [SOURCE_TYPES.DRAFT_INSTAGRAM]: getInstagramDraft,
   [SOURCE_TYPES.RECIPE_DRAFT]: getYoutubeDraft,
+  [SOURCE_TYPES.DRAFT_YOUTUBE]: getYoutubeDraft,
   default: getYoutubeDraft,
 };
 

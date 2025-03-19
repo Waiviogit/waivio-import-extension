@@ -6,6 +6,7 @@ export const SOURCE_TYPES = {
   GOOGLE_MAP: 'google_map',
   LINK_ALL: 'link_all',
   RECIPE_DRAFT: 'recipe_draft',
+  DRAFT_YOUTUBE: 'draft_youtube',
   RECIPE_DRAFT_INSTAGRAM: 'recipe_draft_instagram',
   DRAFT_INSTAGRAM: 'draft_instagram',
   DRAFT_TIKTOK: 'draft_tiktok',

@@ -9,6 +9,7 @@ import { copyContent } from '../helpers/commonHelper';
 import { SOURCE_TYPES } from '../../common/constants';
 import { createObjectForPost } from '../helpers/objectHelper';
 import { getDraftBodyTitleTags } from '../helpers/draftHelper';
+import { extractPostInfo } from '../helpers/postHelper';
 
 interface CreatePostProps {
     author: string;
@@ -78,7 +79,13 @@ const CreatePostModal = ({
 
   const handleRefreshGpt = async () => {
     setIsRefreshLoading(true);
-    const draftData = await getDraftBodyTitleTags(source, body);
+    let bodyFromEditor = body;
+    const videoData = await extractPostInfo(source || '');
+    if (videoData) {
+      bodyFromEditor = `${videoData.title}${videoData.body} ${bodyFromEditor}`;
+    }
+
+    const draftData = await getDraftBodyTitleTags(source, bodyFromEditor);
     setIsRefreshLoading(false);
     if (!draftData) return;
     const { body: reBody, tags: reTags } = draftData;
