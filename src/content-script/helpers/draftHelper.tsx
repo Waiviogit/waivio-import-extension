@@ -188,7 +188,7 @@ const getGptMarkdownFormat = async (body: string, source: string):Promise<string
    - Use bullet points for each sub-step to enhance clarity and readability.
 
 5. **Time, Servings, and Equipment Section:**
-   - Combine the Prep Time, Cook Time, Total Time, Servings, and Equipment into one section.
+   - Combine the Prep Time, Cook Time, Total Time, Servings ,Calories, Proteins, fats and carbohydrates per serving, and Equipment into one section.
    - Ensure no separator lines break this combined section.
 
 6. **Cooking Tips:**
