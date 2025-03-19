@@ -62,7 +62,7 @@ const createQuery = ({
     Cooking Tips; 
     Servings;
     Calories;
-    Proteins, fats and carbohydrates in 100 g.
+    Proteins, fats and carbohydrates per serving.
   - Add hashtags (composed of one word in lowercase) at the very end.
 
   If the following text is in a language other than English, translate it into English: ${subs}. If you think it is not a cooking video, respond: "I can't find a recipe in this video, try another one."
