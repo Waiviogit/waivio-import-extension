@@ -3,6 +3,7 @@ import {
   ConfigProvider, Modal, Input, Popover, Button,
 } from 'antd';
 import { ReloadOutlined } from '@ant-design/icons';
+import Draggable, { DraggableEvent, DraggableData } from 'react-draggable';
 import WaivioTags from './WaivioTags';
 import { postImportWaivio } from '../helpers/downloadWaivioHelper';
 import { copyContent } from '../helpers/commonHelper';
@@ -40,10 +41,28 @@ const CreatePostModal = ({
   const [isModalOpen, setIsModalOpen] = useState(true);
   const [isRecipeLoading, setIsRecipeLoading] = useState(false);
   const [isRefreshLoading, setIsRefreshLoading] = useState(false);
-  const [isRecipeDisabled, setIsRecipeDisabled] = useState(false);
+  const [disabled, setDisabled] = useState(true);
+  const [bounds, setBounds] = useState({
+    left: 0, top: 0, bottom: 0, right: 0,
+  });
   const [title, setTitle] = useState(initialTitle);
   const [body, setBody] = useState(initialBody);
   const [postTags, setTags] = useState<string[]>([]);
+
+  const draggleRef = React.useRef<HTMLDivElement>(null);
+
+  const onStart = (event: DraggableEvent, uiData: DraggableData) => {
+    const { clientWidth, clientHeight } = window.document.documentElement;
+    const targetRect = draggleRef.current?.getBoundingClientRect();
+    if (!targetRect) return;
+
+    setBounds({
+      left: -targetRect.left + uiData.x,
+      right: clientWidth - (targetRect.right - uiData.x),
+      top: -targetRect.top + uiData.y,
+      bottom: clientHeight - (targetRect.bottom - uiData.y),
+    });
+  };
 
   const handleSubmit = async () => {
     const nested = document.getElementById('react-chrome-modal');
@@ -69,7 +88,6 @@ const CreatePostModal = ({
 
   const handleCreateObject = async () => {
     setIsRecipeLoading(true);
-    setIsRecipeDisabled(true);
     const objectForPost = await createObjectForPost(body);
     if (objectForPost) {
       setBody(`${body}\n[${objectForPost.name}](https://${host}/object/${objectForPost.permlink})`);
@@ -103,7 +121,6 @@ const CreatePostModal = ({
       <Button
       onClick={handleCreateObject}
       loading={isRecipeLoading}
-      disabled={isRecipeDisabled}
   >
       Create object
   </Button>
@@ -128,6 +145,35 @@ const CreatePostModal = ({
                 }}
             >
                 <Modal
+                    title={
+                      <div
+                        style={{
+                          width: '100%',
+                          cursor: 'move',
+                        }}
+                        onMouseOver={() => {
+                          if (disabled) {
+                            setDisabled(false);
+                          }
+                        }}
+                        onMouseOut={() => {
+                          setDisabled(true);
+                        }}
+                        onFocus={() => undefined}
+                        onBlur={() => undefined}
+                      >
+                        Create Post
+                      </div>
+                    }
+                    modalRender={(modal) => (
+                      <Draggable
+                        disabled={disabled}
+                        bounds={bounds}
+                        onStart={(event, uiData) => onStart(event, uiData)}
+                      >
+                        <div ref={draggleRef}>{modal}</div>
+                      </Draggable>
+                    )}
                     bodyStyle={{ overflowY: 'auto', maxHeight: 'calc(100vh - 200px)' }}
                     open={isModalOpen}
                     onOk={handleSubmit}
@@ -136,6 +182,7 @@ const CreatePostModal = ({
                     cancelText="Cancel"
                     okButtonProps={{ disabled: submitDisabled }}
                     zIndex={9999999}
+                    maskClosable={false}
                     footer={(_, { OkBtn, CancelBtn }) => (
                         <>
                             {recipeButtonExist && recipeButtons}
