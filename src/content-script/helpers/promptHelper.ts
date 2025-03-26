@@ -30,7 +30,7 @@ Note any important visual cues, such as color or texture changes indicating the 
 Provide the information clearly structured and organized under each heading. 
 Don't use phrases like “here's your answer” in your answer, don't repeat the assignment.`;
 
-const regularVideoPrompt = 'Analyze the video and provide a detailed step-by-step scenario script';
+const regularVideoPrompt = 'Analyze the video and provide a step-by-step scenario. No need for timestamps—summarize where possible, but retain key moments, names, products, and equipment.';
 
 export const createAnalysisVideoPromptBySource = (source:string): string => {
   if (RECIPE_SOURCE_TYPES.includes(source)) return recipeVideoPrompt;
