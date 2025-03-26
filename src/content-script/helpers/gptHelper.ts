@@ -26,6 +26,30 @@ export const getGptAnswer = async (query: string): Promise<responseType> => {
   }
 };
 
+export const videoAnalysesByLink = async (prompt: string, url: string): Promise<responseType> => {
+  try {
+    console.log('request sent');
+    const response = await fetch(
+      EXTERNAL_URL.WAIVIO_IMPORT_VIDEO_ANALYSES,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          prompt, url,
+        }),
+      },
+    );
+    const responseData = await response.json();
+
+    return { result: responseData.result };
+  } catch (error) {
+    console.error(error);
+    return { error };
+  }
+};
+
 export const formatResponseToValidJson = (string = '') => string
   .replace(/```/gm, '')
   .replace('json', '')

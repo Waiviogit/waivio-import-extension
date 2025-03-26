@@ -156,7 +156,7 @@ export const downloadToWaivio = async ({
 };
 
 export const downloadProductToWaivio = async (source: string): Promise<void> => {
-  const { product: exportObj, error } = await  getProduct(source);
+  const { product: exportObj, error } = await getProduct(source);
   if (!exportObj || error) return;
 
   const jsonFormat = formatToJsonObject(exportObj);
@@ -257,6 +257,6 @@ export const postImportWaivio = async ({
     alert('The post has been added to the queue and will be published soon.');
   } catch (error) {
     // @ts-ignore
-    alert(error?.message);
+    alert(`${error?.message} ${error?.response?.data?.message}`);
   }
 };

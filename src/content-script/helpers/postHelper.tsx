@@ -146,6 +146,7 @@ export const createPost = async (source?:string): Promise<void> => {
             body={body}
             tags={tags}
             host={host}
+            source={source}
         >
         </CreatePostModal>,
   );

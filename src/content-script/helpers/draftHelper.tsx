@@ -327,7 +327,7 @@ export const getDraftBodyTitleTags = async (source?:string, bodyFromEditor?:stri
   };
 };
 
-export const createDraft = async (source?:string): Promise<void> => {
+export const createDraft = async (source:string): Promise<void> => {
   const userInfo = await getWaivioUserInfo();
   if (!userInfo) return;
   const { userName } = userInfo;

@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import {
-  ConfigProvider, Modal, Input, Popover, Button,
+  ConfigProvider, Modal, Input, Popover, Button, Tooltip,
 } from 'antd';
-import { ReloadOutlined } from '@ant-design/icons';
+import { ReloadOutlined, VideoCameraAddOutlined } from '@ant-design/icons';
 import Draggable, { DraggableEvent, DraggableData } from 'react-draggable';
 import WaivioTags from './WaivioTags';
 import { postImportWaivio } from '../helpers/downloadWaivioHelper';
@@ -11,6 +11,8 @@ import { SOURCE_TYPES } from '../../common/constants';
 import { createObjectForPost } from '../helpers/objectHelper';
 import { getDraftBodyTitleTags } from '../helpers/draftHelper';
 import { extractPostInfo } from '../helpers/postHelper';
+import { createAnalysisVideoPromptBySource } from '../helpers/promptHelper';
+import { videoAnalysesByLink } from '../helpers/gptHelper';
 
 interface CreatePostProps {
     author: string;
@@ -18,7 +20,7 @@ interface CreatePostProps {
     title?: string;
     host: string;
     tags: string[];
-    source?: string
+    source: string
 }
 
 const MAX_TITLE_LENGTH = 255;
@@ -41,6 +43,7 @@ const CreatePostModal = ({
   const [isModalOpen, setIsModalOpen] = useState(true);
   const [isRecipeLoading, setIsRecipeLoading] = useState(false);
   const [isRefreshLoading, setIsRefreshLoading] = useState(false);
+  const [isAnalysisLoading, setIsAnalysisLoading] = useState(false);
   const [disabled, setDisabled] = useState(true);
   const [bounds, setBounds] = useState({
     left: 0, top: 0, bottom: 0, right: 0,
@@ -112,6 +115,21 @@ const CreatePostModal = ({
     setTags(reTags);
   };
 
+  const handleAnalysis = async () => {
+    setIsAnalysisLoading(true);
+    const prompt = createAnalysisVideoPromptBySource(source);
+    const response = await videoAnalysesByLink(prompt, document.URL);
+    console.log(response);
+    if (!response.result) {
+      alert('Error while video processing');
+      setIsAnalysisLoading(false);
+      return;
+    }
+
+    setBody(response.result);
+    setIsAnalysisLoading(false);
+  };
+
   const recipeButtonExist = RECIPE_SOURCES.includes(source || '');
   const isDraft = !POST_SOURCES.includes(source || '');
 
@@ -128,11 +146,20 @@ const CreatePostModal = ({
       </>;
 
   const draftButtons = <>
-          <Button
-              icon={<ReloadOutlined />}
-              onClick={handleRefreshGpt}
-              loading={isRefreshLoading}
-          />
+          <Tooltip title="Analyze video content with AI">
+            <Button
+                icon={<VideoCameraAddOutlined />}
+                onClick={handleAnalysis}
+                loading={isAnalysisLoading}
+            />
+          </Tooltip>
+          <Tooltip title="Regenerate draft">
+              <Button
+                  icon={<ReloadOutlined />}
+                  onClick={handleRefreshGpt}
+                  loading={isRefreshLoading}
+              />
+          </Tooltip>
       </>;
 
   return (
@@ -186,7 +213,7 @@ const CreatePostModal = ({
                     footer={(_, { OkBtn, CancelBtn }) => (
                         <>
                             {recipeButtonExist && recipeButtons}
-                            {isDraft && draftButtons}
+                            {draftButtons}
                             <Button
                                 onClick={handleCopy}
                             >
