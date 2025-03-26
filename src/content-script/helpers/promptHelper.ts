@@ -1,6 +1,6 @@
 import { RECIPE_SOURCE_TYPES } from '../../common/constants';
 
-const recipeVideoPrompt = `Analyze the provided cooking video thoroughly and extract the following details clearly and concisely:
+const recipeVideoPrompt = `Analyze the provided cooking video thoroughly and extract as much information as possible the following. Include the following details:
 
 1. Recipe Overview:
 Brief description or gist of the recipe.
@@ -30,7 +30,7 @@ Note any important visual cues, such as color or texture changes indicating the 
 Provide the information clearly structured and organized under each heading. 
 Don't use phrases like “here's your answer” in your answer, don't repeat the assignment.`;
 
-const regularVideoPrompt = `Analyze the provided video to extract and summarize its essential information clearly. Include the following key aspects:
+const regularVideoPrompt = `Analyze the provided video to extract as much information as possible. Include the following key aspects:
 
 Main Topic and Objective:
 Briefly identify the primary focus and purpose of the video.
