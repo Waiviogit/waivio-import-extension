@@ -30,31 +30,7 @@ Note any important visual cues, such as color or texture changes indicating the 
 Provide the information clearly structured and organized under each heading. 
 Don't use phrases like “here's your answer” in your answer, don't repeat the assignment.`;
 
-const regularVideoPrompt = `Analyze the provided video to extract as much information as possible. Include the following key aspects:
-
-Main Topic and Objective:
-Briefly identify the primary focus and purpose of the video.
-
-Key Points and Arguments:
-List the main ideas, arguments, or concepts presented, along with relevant examples.
-
-Participants and Roles (if applicable):
-Mention key speakers, their roles, or their expertise.
-
-Important Data or Statistics:
-Highlight any critical data, statistics, or facts mentioned in the video.
-
-Conclusions and Recommendations:
-Summarize the key conclusions drawn and recommendations made in the video.
-
-Visual and Contextual Information (if relevant):
-Describe significant visual elements, diagrams, charts, or context provided visually.
-
-Any Notable Quotes or Statements:
-Include critical quotes or notable statements that encapsulate key points from the video.
-
-Overall Impression and Utility:
-Provide a brief assessment of the video’s clarity, usefulness, and effectiveness in conveying its message.`;
+const regularVideoPrompt = 'Analyze the video and provide a detailed step-by-step scenario script';
 
 export const createAnalysisVideoPromptBySource = (source:string): string => {
   if (RECIPE_SOURCE_TYPES.includes(source)) return recipeVideoPrompt;
