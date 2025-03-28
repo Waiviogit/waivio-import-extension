@@ -302,7 +302,7 @@ export const getDraftBodyTitleTags = async (source?:string, bodyFromEditor?:stri
   }
 
   const query = createQuery({
-    subs: bodyFromEditor || body, source,
+    subs: bodyFromEditor || `${title} ${body}`, source,
   });
   const { result: postDraft, error } = await getGptAnswer(query);
   if (!postDraft) {
