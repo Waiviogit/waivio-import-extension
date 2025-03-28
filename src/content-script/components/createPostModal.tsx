@@ -119,7 +119,6 @@ const CreatePostModal = ({
     setIsAnalysisLoading(true);
     const prompt = createAnalysisVideoPromptBySource(source);
     const response = await videoAnalysesByLink(prompt, document.URL);
-    console.log(response);
     if (!response.result) {
       alert('Error while video processing');
       setIsAnalysisLoading(false);

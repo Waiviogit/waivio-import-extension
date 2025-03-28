@@ -49,7 +49,7 @@ const createQuery = ({
   `;
 
   const recipeQuery = `act as professional chef:
-  create a recipe from YouTube subtitles. Focus on the recipe itself and follow these steps:
+  create a recipe from content I'll give you. Focus on the recipe itself and follow these steps:
   - Create a title for the recipe.
   - Write a short introduction.
   - Provide a list of ingredients, each ingredient start with new line and corresponding emoji e.g. 🥚 2 eggs\n🫒 1 teaspoon olive oil.
@@ -65,7 +65,7 @@ const createQuery = ({
     Proteins, fats and carbohydrates per serving.
   - Add hashtags (composed of one word in lowercase) at the very end.
 
-  If the following text is in a language other than English, translate it into English: ${subs}. If you think it is not a cooking video, respond: "I can't find a recipe in this video, try another one."
+  If the following text is in a language other than English, translate it into English. content: ${subs}"
   `;
 
   const querySet = {
@@ -279,10 +279,13 @@ const getTiktokDraft = async (): Promise<BodyTitleType> => {
 const draftBySiteHandler = {
   [SOURCE_TYPES.RECIPE_DRAFT_TIKTOK]: getTiktokDraft,
   [SOURCE_TYPES.DRAFT_TIKTOK]: getTiktokDraft,
+  [SOURCE_TYPES.TIKTOK]: getTiktokDraft,
   [SOURCE_TYPES.RECIPE_DRAFT_INSTAGRAM]: getInstagramDraft,
   [SOURCE_TYPES.DRAFT_INSTAGRAM]: getInstagramDraft,
+  [SOURCE_TYPES.INSTAGRAM]: getInstagramDraft,
   [SOURCE_TYPES.RECIPE_DRAFT]: getYoutubeDraft,
   [SOURCE_TYPES.DRAFT_YOUTUBE]: getYoutubeDraft,
+  [SOURCE_TYPES.YOUTUBE]: getYoutubeDraft,
   default: getYoutubeDraft,
 };
 
@@ -301,7 +304,6 @@ export const getDraftBodyTitleTags = async (source?:string, bodyFromEditor?:stri
   const query = createQuery({
     subs: bodyFromEditor || body, source,
   });
-
   const { result: postDraft, error } = await getGptAnswer(query);
   if (!postDraft) {
     // @ts-ignore
