@@ -6,5 +6,13 @@ export const getInstagramDescription = (): string => {
   for (const item of items) {
     if (item.innerText) return item.innerText;
   }
-  return '';
+
+  const elements = Array.from(document.querySelectorAll<HTMLElement>('span[dir="auto"]')).slice(0, 10);
+
+  let content = '';
+
+  for (const el of elements) {
+    content += el.innerText || '';
+  }
+  return content;
 };

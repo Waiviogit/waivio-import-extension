@@ -51,8 +51,7 @@ const youtubeInfoHandler = async (): Promise<parsedPostType|null> => {
     const id = extractVideoId(document.URL);
     const content = await fetchVideoContent(id);
 
-    const { title, body } = getTitleAndBody(content);
-    const { account } = getChanelURL(content);
+    const { title, body, account } = getTitleAndBody(content);
 
     return {
       title, body: `${document.URL}\n${body}`, author: account,
