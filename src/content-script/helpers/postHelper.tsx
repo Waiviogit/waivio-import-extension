@@ -35,6 +35,17 @@ export const extractHashtags = (text: string) : string[] => {
   return hashtags;
 };
 
+export const formatHashTags = (body: string, author: string) => {
+  const tagsFromBody = extractHashtags(body);
+  const authorTag = makeValidTag(author);
+  const tags = ['waivio'];
+
+  if (authorTag) tags.push(authorTag);
+  if (tagsFromBody.length) tags.push(...tagsFromBody);
+
+  return tags;
+};
+
 const youtubeInfoHandler = async (): Promise<parsedPostType|null> => {
   try {
     const id = extractVideoId(document.URL);
@@ -105,10 +116,8 @@ export const extractPostInfo = async (source: string): Promise<Draft|null> => {
   if (!response) return null;
   const { body, title, author } = response;
 
-  const tagsFromBody = extractHashtags(body);
+  const tags = formatHashTags(body, author);
   const authorTag = makeValidTag(author);
-  const tags = ['waivio', authorTag];
-  if (tagsFromBody.length) tags.push(...tagsFromBody);
 
   return {
     body: `${body}\n#${authorTag}\n\n`,

@@ -5,7 +5,9 @@ import { SOURCE_TYPES } from '../../common/constants';
 import { getWaivioUserInfo } from './userHelper';
 import { getPostImportHost } from './downloadWaivioHelper';
 import CreatePostModal from '../components/createPostModal';
-import { extractHashtags, makeValidTag, tikTokInfoHandler } from './postHelper';
+import {
+  extractHashtags, formatHashTags, makeValidTag, tikTokInfoHandler,
+} from './postHelper';
 import { getGptAnswer } from './gptHelper';
 import { getTikTokUsername } from './tikTokHelper';
 import { getInstagramDescription, getInstagramUsername } from './instaHelper';
@@ -315,10 +317,8 @@ export const getDraftBodyTitleTags = async (source?:string, bodyFromEditor?:stri
     answer: postDraft, link, attribution,
   });
 
-  const tagsFromBody = extractHashtags(draftBody);
+  const tags = formatHashTags(draftBody, author);
   const authorTag = makeValidTag(author);
-  const tags = ['waivio', authorTag];
-  if (tagsFromBody.length) tags.push(...tagsFromBody);
 
   const resultBody = await getGptMarkdownFormat(draftBody, source || '');
 
