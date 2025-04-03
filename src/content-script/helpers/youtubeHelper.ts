@@ -47,6 +47,9 @@ type authorLinkType = {
 type titleBodyType = {
   title: string
   body: string
+  author: string
+  linkToChannel: string
+  account: string
 }
 
 export type captionType = {
@@ -103,7 +106,7 @@ export const getTitleAndBody = (content:string): titleBodyType => {
   const index = content.indexOf('"title":{');
   const firstSlice = content.slice(index);
 
-  const cutTo = firstSlice.indexOf(',"lengthSeconds"');
+  const cutTo = firstSlice.indexOf(',"externalVideoId"');
   const stringifiedJson = firstSlice.slice(0, cutTo);
 
   const parsed = JSON.parse(`{${stringifiedJson}}`);
@@ -111,9 +114,16 @@ export const getTitleAndBody = (content:string): titleBodyType => {
   const title = parsed?.title?.simpleText ?? '';
   const body = parsed?.description?.simpleText ?? '';
 
+  const author = parsed?.ownerChannelName;
+  const linkToChannel = parsed?.ownerProfileUrl.replace(/^http:\/\//, 'https://');
+  const account = extractYouTubeAccount(linkToChannel);
+
   return {
     title,
     body: body || title,
+    author,
+    linkToChannel,
+    account,
   };
 };
 
@@ -132,7 +142,6 @@ async function getVideoCaptions(
   // eslint-disable-next-line no-use-before-define
   const videoPageContent = await fetchVideoContent(id, options?.lang);
 
-  const authorWithLink = getChanelURL(videoPageContent);
   const titleAndBody = getTitleAndBody(videoPageContent);
 
   // eslint-disable-next-line no-use-before-define
@@ -142,7 +151,6 @@ async function getVideoCaptions(
     if (!titleAndBody.body) throw errorTypes.NoDescriptionAvailable(videoId);
     return {
       captions: '',
-      ...authorWithLink,
       ...titleAndBody,
     };
   }
@@ -153,7 +161,6 @@ async function getVideoCaptions(
     if (!titleAndBody.body) throw errorTypes.NoDescriptionAvailable(videoId);
     return {
       captions: '',
-      ...authorWithLink,
       ...titleAndBody,
     };
   }
@@ -167,7 +174,6 @@ async function getVideoCaptions(
 
   return {
     captions,
-    ...authorWithLink,
     ...titleAndBody,
   };
 }
