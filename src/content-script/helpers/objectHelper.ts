@@ -121,10 +121,32 @@ const generateObjectFromDescription = async (
   }
 };
 
-const getProductId = (name: string) => ([{
+const getIdFromUrl = (url:string) => {
+  const patterns = [
+    // YouTube Shorts: https://www.youtube.com/shorts/ID
+    { regex: /youtube\.com\/shorts\/([^?\/]+)/, group: 1 },
+    // YouTube watch: https://www.youtube.com/watch?v=ID
+    { regex: /youtube\.com\/watch\?v=([^&]+)/, group: 1 },
+    // Instagram post: https://www.instagram.com/p/ID/
+    { regex: /instagram\.com\/p\/([^\/]+)/, group: 1 },
+    // TikTok video: https://www.tiktok.com/@user/video/ID
+    { regex: /tiktok\.com\/@[^\/]+\/video\/(\d+)/, group: 1 },
+  ];
+
+  for (const { regex, group } of patterns) {
+    const m = url.match(regex);
+    if (m) return m[group];
+  }
+
+  // fallback: strip protocol
+  return url.replace(/^https?:\/\//, '');
+};
+
+const getRecipeProductId = (name: string) => ([{
   key: 'instacart',
-  value: name.replace(/[.,%?+*|{}[\]()<>“”^'"\\\-_=!&$:]/g, '')
-    .replace(/ +/g, '-').trim().toLocaleLowerCase(),
+  // value: name.replace(/[.,%?+*|{}[\]()<>“”^'"\\\-_=!&$:]/g, '')
+  //   .replace(/ +/g, '-').trim().toLocaleLowerCase(),
+  value: getIdFromUrl(document.URL),
 }]);
 
 const PERMLINK_MAX_LEN = 255;
@@ -301,7 +323,7 @@ export const createObjectForPost = async (postBody: string)
     return;
   }
   const recipe = generationResponse.result;
-  const productId = getProductId(recipe.name);
+  const productId = getRecipeProductId(recipe.name);
   const recipeCreateBody = await getRecipeCreateBody(recipe.name, userName);
 
   const createObjectResponse = await createWaivioObject(recipeCreateBody);
@@ -323,12 +345,16 @@ export const createObjectForPost = async (postBody: string)
     alert(`socket subscribeTransactionId create object error ${transactionId}`);
     return;
   }
+
   const updateBody = getUpdateBody({
     author: userName,
     parentAuthor,
     parentPermlink,
     field: {
-      body: JSON.stringify({ productIdType: productId[0].key, productId: productId[0].value }),
+      body: JSON.stringify({
+        productIdType: productId[0].key,
+        productId: productId[0].value,
+      }),
       locale: 'en-US',
       name: 'productId',
     },
