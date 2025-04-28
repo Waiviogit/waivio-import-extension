@@ -8,9 +8,10 @@ import CreatePostModal from '../components/createPostModal';
 import {
   extractHashtags, formatHashTags, makeValidTag, tikTokInfoHandler,
 } from './postHelper';
-import { getGptAnswer } from './gptHelper';
+import { getGptAnswer, videoAnalysesByLink } from './gptHelper';
 import { getTikTokUsername } from './tikTokHelper';
 import { getInstagramDescription, getInstagramUsername } from './instaHelper';
+import { createAnalysisVideoPromptBySource } from './promptHelper';
 
 interface createQueryInterface {
     subs: string
@@ -329,12 +330,54 @@ export const getDraftBodyTitleTags = async (source?:string, bodyFromEditor?:stri
   };
 };
 
+const initialDeepAnalysis = async (source:string): Promise<Draft|null> => {
+  const getBody = source ? draftBySiteHandler[source] : draftBySiteHandler.default;
+
+  const {
+    title, body, attribution, link, author,
+  } = await getBody();
+
+  const prompt = createAnalysisVideoPromptBySource(source);
+  const response = await videoAnalysesByLink(prompt, document.URL);
+
+  if (!body && !response.result) {
+    alert('Can\'t process Video');
+    return null;
+  }
+
+  const query = createQuery({
+    subs: `${title} ${body} ${response.result}`, source,
+  });
+
+  const { result: postDraft, error } = await getGptAnswer(query);
+  if (!postDraft) {
+    // @ts-ignore
+    alert(`Gpt error ${error?.message ?? ''}`);
+    return null;
+  }
+
+  const draftBody = formatGptAnswer({
+    answer: postDraft, link, attribution,
+  });
+
+  const tags = formatHashTags(draftBody, author);
+  const authorTag = makeValidTag(author);
+
+  const resultBody = await getGptMarkdownFormat(draftBody, source || '');
+
+  return {
+    body: `${resultBody}\n#${authorTag}\n\n`,
+    title,
+    tags,
+  };
+};
+
 export const createDraft = async (source:string): Promise<void> => {
   const userInfo = await getWaivioUserInfo();
   if (!userInfo) return;
   const { userName } = userInfo;
 
-  const draftData = await getDraftBodyTitleTags(source);
+  const draftData = await initialDeepAnalysis(source);
   if (!draftData) return;
   const { body, title, tags } = draftData;
 
