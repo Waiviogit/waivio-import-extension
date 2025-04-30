@@ -120,7 +120,7 @@ const CreatePostModal = ({
     const prompt = createAnalysisVideoPromptBySource(source);
     const response = await videoAnalysesByLink(prompt, document.URL);
     if (!response.result) {
-      alert('Error while video processing');
+      alert('Failed to upload the video. Please try again.');
       setIsAnalysisLoading(false);
       return;
     }
