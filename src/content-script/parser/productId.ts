@@ -131,3 +131,13 @@ export const getPossibleIdsWalmart = ():productIdType[] => {
 
   return productIds;
 };
+
+export const getProductIdInstacart = ():productIdType| undefined => {
+  const url = document.URL;
+  const match = url.match(/\/products\/([^\/]+)/);
+  if (!match) return;
+  return {
+    key: 'instacartProductId',
+    value: match[1],
+  };
+};

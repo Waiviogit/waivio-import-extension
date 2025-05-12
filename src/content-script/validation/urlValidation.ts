@@ -49,6 +49,7 @@ export const regexBySource = {
   [SOURCE_TYPES.OPENSTREETMAP]: /(^https?:\/\/(?:www\.)?openstreetmap\.org\/node\/[0-9]|^https?:\/\/(?:www\.)?openstreetmap\.org\/way\/[0-9])/,
   [SOURCE_TYPES.GOOGLE_MAP]: /^https?:\/\/(?:www\.)?google\.com\/maps\//,
   [SOURCE_TYPES.ALIEXPRESS]: /^https:\/\/www\.aliexpress[^\/]+\/item\//,
+  [SOURCE_TYPES.INSTACART]: /^https:\/\/www\.instacart[^\/]+\/products\//,
 };
 
 const getProductIdAmazon = (url:string): string => {

@@ -15,6 +15,7 @@ export const SOURCE_TYPES = {
   TIKTOK: 'tiktok',
   INSTAGRAM: 'instagram',
   ALIEXPRESS: 'aliexpress',
+  INSTACART: 'instacart',
 };
 
 export const RECIPE_SOURCE_TYPES = [

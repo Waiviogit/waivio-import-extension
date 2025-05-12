@@ -89,3 +89,27 @@ export const getAvatarWalmart = (): AvatarGalleryType => {
     gallery,
   };
 };
+
+export const getAvatarInstacart = (): AvatarGalleryType => {
+  const avatar = document.querySelector<HTMLImageElement>('div .ic-image-zoomer img')?.src || '';
+  if (!avatar) {
+    const links = Array.from(document.querySelectorAll<HTMLImageElement>('div picture img')).map((v) => v.srcset.split(',')[0].trim().replace(/\/(86|68)x(86|68)\//g, '/466x466/')).filter((v) => /product-image/.test(v)).filter((el, index, self) => index === self.indexOf(el));
+    if (links.length) {
+      return {
+        avatar: links[0],
+        gallery: links.slice(1),
+      };
+    }
+    return {
+      avatar: '',
+      gallery: [],
+    };
+  }
+
+  const gallery = Array.from(document.querySelectorAll<HTMLImageElement>('ul li button img')).map((v) => v.src).filter((el) => el !== avatar);
+
+  return {
+    avatar,
+    gallery,
+  };
+};

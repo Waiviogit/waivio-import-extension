@@ -43,6 +43,10 @@ import {
   getDepartmentsFromProductDescription,
   getAliExpressOptions,
   getGroupIdAliExpress,
+  getAvatarInstacart,
+  productTitleInstacart,
+  getDescriptionInstacart,
+  getProductIdInstacart,
 } from './parser';
 import { productSchema } from './validation';
 import { SOURCE_TYPES } from '../common/constants';
@@ -266,6 +270,36 @@ const getProductFromAliExpress = async (): Promise<getProductReturnedType> => {
   return { product: object };
 };
 
+const getProductFromInstacart = async (): Promise<getProductReturnedType> => {
+  const { avatar, gallery } = getAvatarInstacart();
+
+  const productId = getProductIdInstacart();
+
+  const object: parsedObjectType = {
+    name: productTitleInstacart(),
+    avatar,
+    brand: '',
+    departments: [],
+    description: getDescriptionInstacart(),
+    options: [],
+    price: undefined,
+    features: [],
+    imageURLs: gallery,
+    productIds: [],
+  };
+  if (productId) {
+    object.productIds?.push(productId);
+  }
+
+  const validation = productSchema.validate(object);
+  if (validation.error) {
+    alert(validation.error.message);
+    return { error: validation.error };
+  }
+
+  return { product: object };
+};
+
 export const getProduct = async (source: string): Promise<getProductReturnedType> => {
   switch (source) {
     case SOURCE_TYPES.AMAZON:
@@ -276,6 +310,8 @@ export const getProduct = async (source: string): Promise<getProductReturnedType
       return getProductFromWalmart();
     case SOURCE_TYPES.ALIEXPRESS:
       return getProductFromAliExpress();
+    case SOURCE_TYPES.INSTACART:
+      return getProductFromInstacart();
 
     default: return { error: new Error('Source not found') };
   }

@@ -1,4 +1,5 @@
 import { DESCRIPTION_SELECTOR } from '../constants';
+import { idSelectorByRegex } from '../helpers/scrapingHelper';
 
 const descriptionV2 = ():string => {
   const bulletPoints = Array
@@ -75,4 +76,13 @@ export const getDescriptionWalmart = (): string => {
   const description = document.querySelector<HTMLElement>('div[data-testid="product-description-content"]');
   if (!description) return '';
   return description.innerText;
+};
+
+export const getDescriptionInstacart = (): string => {
+  const elements = idSelectorByRegex('div', /item_details-items_/);
+  let description = '';
+  for (const element of elements) {
+    description += element.innerText;
+  }
+  return description;
 };

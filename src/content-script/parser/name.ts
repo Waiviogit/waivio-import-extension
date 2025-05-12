@@ -31,3 +31,10 @@ export const productTitleWalmart = (): string => {
   const title = nameElement?.innerText ?? '';
   return replaceInvisible(title);
 };
+
+export const productTitleInstacart = (): string => {
+  const nameElement = document.querySelector<HTMLElement>('h1');
+  if (!nameElement) return '';
+  const title = nameElement?.innerText ?? '';
+  return replaceInvisible(title);
+};

@@ -10,6 +10,7 @@ import {
   tikTokConfig,
   walmartButtonsConfig,
   youtubeButtonConfig,
+  instacartButtonsConfig,
 } from '../common/helper';
 import { getCurrentTab } from '../services/chromeHelper';
 import { DashboardSelect } from './DashboardSelect';
@@ -102,6 +103,17 @@ export const Dashboard = () => {
     if (currentUrl.includes('amazon')) {
       return (
         mainButtonsConfig
+          .map((button) => <DashboardButton
+                  text={button.text}
+                  onClick={button.onClick}
+                  id={button.id}
+                  key={button.id}
+              />)
+      );
+    }
+    if (currentUrl.includes('instacart')) {
+      return (
+        instacartButtonsConfig
           .map((button) => <DashboardButton
                   text={button.text}
                   onClick={button.onClick}
