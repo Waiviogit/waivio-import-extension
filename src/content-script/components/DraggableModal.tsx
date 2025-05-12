@@ -8,6 +8,7 @@ interface DraggableModalProps {
     open: boolean;
     onOk: () => void;
     onCancel: () => void;
+    footerComponents?: React.ReactNode;
     children: React.ReactNode;
     okText?: string;
     cancelText?: string;
@@ -20,9 +21,10 @@ export const DraggableModal: React.FC<DraggableModalProps> = ({
   onOk,
   onCancel,
   children,
-  okText = 'Copy',
+  okText = 'Import Object',
   cancelText = 'Cancel',
   width = 800,
+  footerComponents,
 }) => {
   const [disabled, setDisabled] = useState(true);
   const [bounds, setBounds] = useState({
@@ -72,6 +74,13 @@ export const DraggableModal: React.FC<DraggableModalProps> = ({
                 >
                     <div ref={draggleRef}>{modal}</div>
                 </Draggable>
+            )}
+            footer={(_, { OkBtn, CancelBtn }) => (
+                <>
+                    {footerComponents}
+                    <CancelBtn />
+                    <OkBtn />
+                </>
             )}
         >
             {children}

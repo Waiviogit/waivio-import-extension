@@ -5,7 +5,7 @@ import { EditAiModalProps } from '../types/product';
 import { DraggableModal } from './DraggableModal';
 import { FormField } from './FormField';
 
-const EditAiModal = ({ product, title = 'Post draft' }: EditAiModalProps) => {
+const EditAiModal = ({ product, title = 'Object draft' }: EditAiModalProps) => {
   const [isModalOpen, setIsModalOpen] = useState(true);
   const [form] = Form.useForm();
 
