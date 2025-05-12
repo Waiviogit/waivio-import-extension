@@ -291,6 +291,15 @@ export const Dashboard = () => {
     }
 
     if (validUrlRegEx.test(currentUrl)) {
+      const editWithAi = <DashboardButton
+          text={BUTTON_TEXT.EDIT_WITH_AI}
+          onClick={async (event:Event): Promise<void> => (
+            sendMessageToContentScript(
+              event,
+              PARSE_COMMANDS.EDIT_WITH_AI,
+            ))}
+          id={generateUniqueId()}
+      />;
       const createObjectLinkAllButton = <DashboardButton
           text={BUTTON_TEXT.CREATE_LINK_ALL}
           onClick={async (event:Event): Promise<void> => (
@@ -302,7 +311,7 @@ export const Dashboard = () => {
           id={generateUniqueId()}
       />;
 
-      return [createObjectLinkAllButton];
+      return [createObjectLinkAllButton, editWithAi];
     }
 
     return (

@@ -11,6 +11,7 @@ export const PARSE_COMMANDS = {
   ALERT_OBJECT_MODAL: 'alert_object_modal',
   CREATE_LINK: 'create_link',
   CREATE_POST: 'create_post',
+  EDIT_WITH_AI: 'edit_with_ai',
 };
 
 export const EXTENSION_COMMANDS = {

@@ -10,6 +10,7 @@ import uploadGooglePlaceToWaivio from './googleMaps/uploadGooglePlaceToWaivio';
 import { checkWaivioObjects, getId } from './helpers/idHelper';
 import { createLink } from './objectLink/createLink';
 import { createPost } from './helpers/postHelper';
+import { editWithAi } from './editAi/editWithAi';
 
 const actionScript = {
   [PARSE_COMMANDS.TO_JSON]: downloadObjectAsJson,
@@ -23,6 +24,7 @@ const actionScript = {
   [PARSE_COMMANDS.CREATE_POST]: createPost,
   [PARSE_COMMANDS.GET_ID]: getId,
   [PARSE_COMMANDS.CREATE_LINK]: createLink,
+  [PARSE_COMMANDS.EDIT_WITH_AI]: editWithAi,
   default: () => {},
 };
 

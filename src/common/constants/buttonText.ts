@@ -11,4 +11,5 @@ export const BUTTON_TEXT = {
   CREATE_LINK: 'Create exact link',
   CREATE_LINK_ALL: 'Create link object',
   CREATE_POST: 'Re-post',
+  EDIT_WITH_AI: 'Edit with AI',
 };
