@@ -2,6 +2,8 @@ import ReactDOM from 'react-dom/client';
 import EditAiModal from '../components/editWithAiModal';
 
 const mock = {
+  primaryImageURLs: ['https://m.media-amazon.com/images/I/61zSTWnbsAL._AC_SX679_.jpg'],
+  imageURLs: ['https://m.media-amazon.com/images/I/81cVDPCvIsL._AC_SL1500_.jpg'],
   categories: [
     'Makeup',
     'Lipstick',

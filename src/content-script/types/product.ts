@@ -13,6 +13,8 @@ export interface Merchant {
 }
 
 export interface Product {
+    primaryImageURLs: string[];
+    imageURLs: string[]
     categories: string[];
     fieldDescription: string;
     name: string;

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ConfigProvider, Form } from 'antd';
+import { ConfigProvider, Form, Image } from 'antd';
 import { THEME_CONFIG } from '../constants/styles';
 import { EditAiModalProps } from '../types/product';
 import { DraggableModal } from './DraggableModal';
@@ -38,6 +38,52 @@ const EditAiModal = ({ product, title = 'Object draft' }: EditAiModalProps) => {
           layout="vertical"
           initialValues={product}
         >
+
+            <FormField
+              label="Avatar"
+              name={['primaryImageURLs', 0]}
+              type="imageUrl"
+              preview={
+                <Form.Item noStyle shouldUpdate>
+                  {(formInstance) => {
+                    const value = formInstance.getFieldValue(['primaryImageURLs', 0]);
+                    return value ? (
+                      <Image
+                        src={value}
+                        style={{ maxWidth: 200, marginTop: 8 }}
+                        preview={false}
+                      />
+                    ) : null;
+                  }}
+                </Form.Item>
+              }
+            />
+
+            <FormField
+              label="Gallery"
+              name="imageURLs"
+              type="imageList"
+              preview={
+                <Form.Item noStyle shouldUpdate>
+                  {(formInstance) => {
+                    const value = formInstance.getFieldValue('imageURLs');
+                    return value?.length > 0 ? (
+                      <div style={{ marginTop: 8 }}>
+                        {value.map((url: string) => (
+                            <Image
+                                key={url}
+                                src={url}
+                                style={{ maxWidth: 200, marginTop: 8 }}
+                                preview={false}
+                            />
+                        ))}
+                      </div>
+                    ) : null;
+                  }}
+                </Form.Item>
+              }
+            />
+
           <FormField label="Product Name" name="name" />
           <FormField label="Brand" name="brand" />
           <FormField label="Manufacturer" name="manufacturer" />
