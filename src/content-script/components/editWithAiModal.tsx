@@ -118,6 +118,7 @@ const EditAiModal = ({ product, title = 'Post draft' }: EditAiModalProps) => {
           okText="Copy"
           cancelText="Cancel"
           width={800}
+          maskClosable={false}
           modalRender={(modal) => (
             <Draggable
               disabled={disabled}
