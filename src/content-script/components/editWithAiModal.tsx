@@ -64,7 +64,6 @@ const EditAiModal = ({ product, title = 'Object draft' }: EditAiModalProps) => {
               label="Gallery"
               name="imageURLs"
               type="imageList"
-              maxItems={10}
               preview={
                 <Form.Item noStyle shouldUpdate>
                   {(formInstance) => {

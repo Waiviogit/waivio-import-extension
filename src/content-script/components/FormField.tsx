@@ -14,7 +14,7 @@ interface FormFieldProps {
 }
 
 export const FormField: React.FC<FormFieldProps> = ({
-  label, name, type = 'text', rows = 4, preview, maxItems = Infinity,
+  label, name, type = 'text', rows = 4, preview, maxItems = 10,
 }) => {
   if (type === 'imageUrl') {
     return (
@@ -87,9 +87,11 @@ export const FormField: React.FC<FormFieldProps> = ({
                 </Space>
               ))}
               <Form.Item>
-                <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
-                  Add Item
-                </Button>
+                {fields.length < maxItems && (
+                  <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
+                    Add Item
+                  </Button>
+                )}
               </Form.Item>
             </>
           )}
@@ -124,9 +126,11 @@ export const FormField: React.FC<FormFieldProps> = ({
                 </Space>
               ))}
               <Form.Item>
-                <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
-                  Add Item
-                </Button>
+                {fields.length < maxItems && (
+                  <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
+                    Add Item
+                  </Button>
+                )}
               </Form.Item>
             </>
           )}
@@ -161,9 +165,11 @@ export const FormField: React.FC<FormFieldProps> = ({
                 </Space>
               ))}
               <Form.Item>
-                <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
-                  Add Item
-                </Button>
+                {fields.length < maxItems && (
+                  <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
+                    Add Item
+                  </Button>
+                )}
               </Form.Item>
             </>
           )}
