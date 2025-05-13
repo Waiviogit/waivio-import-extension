@@ -27,46 +27,61 @@ export const Dashboard = () => {
   const [currentUrl, setUrl] = useState('');
   const [timeoutId, setIntervalId] = useState<NodeJS.Timer | undefined>(undefined);
   const [selectedValue, setSelectedValue] = useState('business');
+  const [isLoading, setIsLoading] = useState(true);
 
   const handleSelectChange = (value:string) => {
     setSelectedValue(value);
-    chrome.storage.local.set({ waivioObjectType: value }, () => {});
+    chrome.storage.local.set({ waivioObjectType: value });
   };
 
   useEffect(() => {
     async function getUrl() {
-      const tab = await getCurrentTab();
-      clearTimeout(timeoutId);
+      try {
+        const tab = await getCurrentTab();
+        clearTimeout(timeoutId);
 
-      if (tab?.status !== 'complete') {
-        setUrl('loading');
+        if (!tab?.url) {
+          setUrl('');
+          setIsLoading(false);
+          return;
+        }
 
-        const id = setTimeout(getUrl, 100);
-        setIntervalId(id);
-      } else {
-        const url = tab?.url ?? '';
-
-        await sendMessageToContentScriptNoEvent(
-          PARSE_COMMANDS.ALERT_OBJECT_MODAL,
-          url,
-        );
-
-        setUrl(url);
+        if (tab.status !== 'complete') {
+          setIsLoading(true);
+          const id = setTimeout(getUrl, 100);
+          setIntervalId(id);
+        } else {
+          setUrl(tab.url);
+          setIsLoading(false);
+        }
+      } catch (error) {
+        console.error('Error getting current tab:', error);
+        setUrl('');
+        setIsLoading(false);
       }
     }
-    // for select on businesses
+
     chrome.storage.local.get('waivioObjectType', (el) => {
       setSelectedValue(el?.waivioObjectType ?? 'business');
     });
     getUrl();
+
+    return () => {
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+    };
   }, []);
 
   const renderButton = () => {
-    if (currentUrl === 'loading') {
-      return (
-          <h2>Loading...</h2>
-      );
+    if (isLoading) {
+      return <h2>Loading...</h2>;
     }
+
+    if (!currentUrl) {
+      return <h2>No URL detected</h2>;
+    }
+
     if (currentUrl.includes('youtube')) {
       return (
         youtubeButtonConfig
@@ -134,24 +149,22 @@ export const Dashboard = () => {
       );
     }
     if (currentUrl.includes('sephora.com')) {
-      return (sephoraButtonsConfig
+      return sephoraButtonsConfig
         .map((button) => <DashboardButton
               text={button.text}
               onClick={button.onClick}
               id={button.id}
               key={button.id}
-          />)
-      );
+          />);
     }
     if (currentUrl.includes('walmart.com')) {
-      return (walmartButtonsConfig
+      return walmartButtonsConfig
         .map((button) => <DashboardButton
                   text={button.text}
                   onClick={button.onClick}
                   id={button.id}
                   key={button.id}
-              />)
-      );
+              />);
     }
 
     if (currentUrl.includes('openstreetmap.org')) {
