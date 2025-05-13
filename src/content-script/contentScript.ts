@@ -35,45 +35,48 @@ const IMPORT_WAIVIO_COMMANDS = [
   PARSE_COMMANDS.CREATE_LINK,
 ];
 
-chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (!message.action || typeof message.action !== 'string') {
-    await chrome.runtime.sendMessage({
+    chrome.runtime.sendMessage({
       action: EXTENSION_COMMANDS.ENABLE, id: message.buttonId, buttonText: message.buttonText,
     });
-    return;
+    return true;
   }
 
   if (message.action === PARSE_COMMANDS.ALERT_OBJECT_MODAL) {
-    await checkWaivioObjects(message.payload);
-    return;
+    checkWaivioObjects(message.payload);
+    return true;
   }
 
   if (IMPORT_WAIVIO_COMMANDS.includes(message.action)) {
-    const { valid, message: errorMessage } = await validateWaivioImport();
-    if (!valid) {
-      alert(errorMessage);
-      await chrome.runtime.sendMessage({
-        action: EXTENSION_COMMANDS.ENABLE, id: message.buttonId, buttonText: message.buttonText,
-      });
-      return;
-    }
+    validateWaivioImport().then(({ valid, message: errorMessage }) => {
+      if (!valid) {
+        alert(errorMessage);
+        chrome.runtime.sendMessage({
+          action: EXTENSION_COMMANDS.ENABLE, id: message.buttonId, buttonText: message.buttonText,
+        });
+      }
+    });
+    return true;
   }
 
   const downLoadType = message.action as keyof typeof actionScript;
 
   if (!urlValidation(message.payload, message.action, message.source)) {
-    await chrome.runtime.sendMessage({
+    chrome.runtime.sendMessage({
       action: EXTENSION_COMMANDS.ENABLE, id: message.buttonId, buttonText: message.buttonText,
     });
-    return;
+    return true;
   }
 
-  await (actionScript[downLoadType]
-      || actionScript.default)(message.source);
-
-  await chrome.runtime.sendMessage({
-    action: EXTENSION_COMMANDS.ENABLE, id: message.buttonId, buttonText: message.buttonText,
+  const action = actionScript[downLoadType] || actionScript.default;
+  Promise.resolve(action(message.source)).then(() => {
+    chrome.runtime.sendMessage({
+      action: EXTENSION_COMMANDS.ENABLE, id: message.buttonId, buttonText: message.buttonText,
+    });
   });
+
+  return true;
 });
 
 export {};
