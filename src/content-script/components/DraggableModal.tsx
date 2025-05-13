@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
-import { Modal } from 'antd';
 import Draggable from 'react-draggable';
+import { Button } from 'antd';
+import { CloseOutlined } from '@ant-design/icons';
 import { MODAL_STYLES } from '../constants/styles';
 
 interface DraggableModalProps {
@@ -23,7 +24,7 @@ export const DraggableModal: React.FC<DraggableModalProps> = ({
   children,
   okText = 'Import Object',
   cancelText = 'Cancel',
-  width = 800,
+  width = 500,
   footerComponents,
 }) => {
   const [disabled, setDisabled] = useState(true);
@@ -46,44 +47,39 @@ export const DraggableModal: React.FC<DraggableModalProps> = ({
   };
 
   return (
-        <Modal
-            bodyStyle={MODAL_STYLES.body}
-            title={
-                <div
-                    style={MODAL_STYLES.title}
-                    onMouseOver={() => setDisabled(false)}
-                    onMouseOut={() => setDisabled(true)}
-                    onFocus={() => undefined}
-                    onBlur={() => undefined}
-                >
-                    {title}
-                </div>
-            }
-            open={open}
-            onOk={onOk}
-            onCancel={onCancel}
-            okText={okText}
-            cancelText={cancelText}
-            width={width}
-            maskClosable={false}
-            modalRender={(modal) => (
-                <Draggable
-                    disabled={disabled}
-                    bounds={bounds}
-                    onStart={(event, uiData) => onStart(event, uiData)}
-                >
-                    <div ref={draggleRef}>{modal}</div>
-                </Draggable>
-            )}
-            footer={(_, { OkBtn, CancelBtn }) => (
-                <>
-                    {footerComponents}
-                    <CancelBtn />
-                    <OkBtn />
-                </>
-            )}
-        >
-            {children}
-        </Modal>
-  );
+      <Draggable
+          disabled={disabled}
+          bounds={bounds}
+          onStart={(event, uiData) => onStart(event, uiData)}
+      >
+          <div
+              ref={draggleRef}
+              style={{
+                display: open ? 'block' : 'none',
+                width: `${width}px`,
+                position: 'fixed',
+                backgroundColor: 'white',
+                borderRadius: '8px',
+                top: '10%',
+                left: '30%',
+                zIndex: 9999,
+                boxShadow: '0 4px 12px rgba(0,0,0,.15)',
+              }}
+          >
+              <div
+                  style={MODAL_STYLES.header}
+                  onMouseOver={() => setDisabled(false)}
+                  onMouseOut={() => setDisabled(true)}
+              >
+                  <div style={MODAL_STYLES.title}>{title}</div>
+                  <div style={MODAL_STYLES.close} onClick={onCancel}><CloseOutlined /></div>
+              </div>
+              <div style={MODAL_STYLES.body}>{children}</div>
+              <div style={MODAL_STYLES.footer}>
+                  {footerComponents}
+                  <Button style={{ marginRight: '10px' }} type={'primary'} onClick={onOk}>{okText}</Button>
+                  <Button onClick={onCancel}>{cancelText}</Button>
+              </div>
+          </div>
+      </Draggable>);
 };
