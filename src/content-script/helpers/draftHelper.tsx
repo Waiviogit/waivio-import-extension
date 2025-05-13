@@ -332,12 +332,13 @@ export const getDraftBodyTitleTags = async (source?:string, bodyFromEditor?:stri
 
 const initialDeepAnalysis = async (source:string): Promise<Draft|null> => {
   const getBody = source ? draftBySiteHandler[source] : draftBySiteHandler.default;
-
+  console.log('get body');
   const {
     title, body, attribution, link, author,
   } = await getBody();
 
   const prompt = createAnalysisVideoPromptBySource(source);
+  console.log('videoAnalysesByLink');
   const response = await videoAnalysesByLink(prompt, document.URL);
 
   if (!body && !response.result) {
@@ -348,7 +349,7 @@ const initialDeepAnalysis = async (source:string): Promise<Draft|null> => {
   const query = createQuery({
     subs: `${title} ${body} ${response.result}`, source,
   });
-
+  console.log('getGptAnswer');
   const { result: postDraft, error } = await getGptAnswer(query);
   if (!postDraft) {
     // @ts-ignore
@@ -363,6 +364,7 @@ const initialDeepAnalysis = async (source:string): Promise<Draft|null> => {
   const tags = formatHashTags(draftBody, author);
   const authorTag = makeValidTag(author);
 
+  console.log('getGptMarkdownFormat');
   const resultBody = await getGptMarkdownFormat(draftBody, source || '');
 
   return {
@@ -374,10 +376,12 @@ const initialDeepAnalysis = async (source:string): Promise<Draft|null> => {
 
 export const createDraft = async (source:string): Promise<void> => {
   const userInfo = await getWaivioUserInfo();
+  console.log('userInfo');
   if (!userInfo) return;
   const { userName } = userInfo;
 
   const draftData = await initialDeepAnalysis(source);
+
   if (!draftData) return;
   const { body, title, tags } = draftData;
 
