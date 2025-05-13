@@ -22,7 +22,7 @@ export const DraggableModal: React.FC<DraggableModalProps> = ({
   onOk,
   onCancel,
   children,
-  okText = 'Import Object',
+  okText = 'Import',
   cancelText = 'Cancel',
   width = 500,
   footerComponents,
@@ -77,8 +77,8 @@ export const DraggableModal: React.FC<DraggableModalProps> = ({
               <div style={MODAL_STYLES.body}>{children}</div>
               <div style={MODAL_STYLES.footer}>
                   {footerComponents}
-                  <Button style={{ marginRight: '10px' }} type={'primary'} onClick={onOk}>{okText}</Button>
                   <Button onClick={onCancel}>{cancelText}</Button>
+                  <Button style={{ marginRight: '10px' }} type={'primary'} onClick={onOk}>{okText}</Button>
               </div>
           </div>
       </Draggable>);

@@ -22,6 +22,9 @@ export const MODAL_STYLES = {
     width: '100%',
     padding: '20px',
     boxShadow: '0 4px 12px rgba(0,0,0,.15)',
+    display: 'flex',
+    justifyContent: 'flex-end',
+    gap: '10px',
   },
 };
 
