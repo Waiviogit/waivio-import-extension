@@ -7,16 +7,33 @@ import { FormField } from './FormField';
 import { PRODUCT_FORM_FIELDS } from '../config/formFields';
 import { ImagePreview } from './ImagePreview';
 
+interface ValidationError {
+  errorFields?: Array<{
+    name: string[];
+    errors: string[];
+    warnings: string[];
+  }>;
+  message?: string;
+}
+
 const EditAiModal = ({ product, title = 'Object draft' }: EditAiModalProps) => {
   const [isModalOpen, setIsModalOpen] = useState(true);
   const [form] = Form.useForm();
 
   const handleOk = async () => {
-    const values = await form.validateFields();
-    const nested = document.getElementById('react-chrome-modal');
-    if (!nested) return;
-    console.log(values);
-    document.body.removeChild(nested);
+    try {
+      const values = await form.validateFields();
+      const nested = document.getElementById('react-chrome-modal');
+      if (!nested) return;
+      console.log(values);
+      document.body.removeChild(nested);
+    } catch (error) {
+      const validationError = error as ValidationError;
+      const message = validationError?.errorFields?.length
+        ? validationError.errorFields.map((field) => `${field.name.join('.')}: ${field.errors.join(', ')}`).join('\n')
+        : validationError?.message;
+      alert(message);
+    }
   };
 
   const handleCancel = () => {

@@ -11,14 +11,16 @@ interface FormFieldProps {
     rows?: number;
     preview?: React.ReactNode;
     maxItems?: number;
+    required?: boolean;
+    rules?: any[];
 }
 
 export const FormField: React.FC<FormFieldProps> = ({
-  label, name, type = 'text', rows = 4, preview, maxItems = 10,
+  label, name, type = 'text', rows = 4, preview, maxItems = 10, required, rules,
 }) => {
   if (type === 'imageUrl') {
     return (
-      <Form.Item label={label} name={name}>
+      <Form.Item label={label} name={name} rules={rules}>
         <Space direction="vertical" style={{ width: '100%' }}>
           <Input placeholder="Enter image URL" />
           {preview}
@@ -62,7 +64,7 @@ export const FormField: React.FC<FormFieldProps> = ({
 
   if (type === 'textarea') {
     return (
-            <Form.Item label={label} name={name}>
+            <Form.Item label={label} name={name} rules={rules}>
                 <Input.TextArea rows={rows} />
             </Form.Item>
     );
@@ -103,7 +105,7 @@ export const FormField: React.FC<FormFieldProps> = ({
   if (type === 'keyValue') {
     return (
       <Form.Item label={label}>
-        <Form.List name={name}>
+        <Form.List name={name} rules={rules}>
           {(fields, { add, remove }) => (
             <>
               {fields.map(({ key, name: fieldName, ...restField }) => (
@@ -179,7 +181,7 @@ export const FormField: React.FC<FormFieldProps> = ({
   }
 
   return (
-        <Form.Item label={label} name={name}>
+        <Form.Item label={label} name={name} rules={rules}>
             <Input />
         </Form.Item>
   );

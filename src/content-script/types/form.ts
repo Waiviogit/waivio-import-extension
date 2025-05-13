@@ -6,6 +6,8 @@ export interface FormFieldConfig {
   type?: FormFieldType;
   maxItems?: number;
   showPreview?: boolean;
+  required?: boolean;
+  rules?: any[];
 }
 
 export interface ImagePreviewProps {
