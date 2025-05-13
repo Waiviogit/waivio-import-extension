@@ -10,10 +10,11 @@ interface FormFieldProps {
     type?: 'text' | 'textarea' | 'list' | 'keyValue' | 'categoryValue' | 'imageUrl' | 'imageList';
     rows?: number;
     preview?: React.ReactNode;
+    maxItems?: number;
 }
 
 export const FormField: React.FC<FormFieldProps> = ({
-  label, name, type = 'text', rows = 4, preview,
+  label, name, type = 'text', rows = 4, preview, maxItems = Infinity,
 }) => {
   if (type === 'imageUrl') {
     return (
@@ -46,9 +47,11 @@ export const FormField: React.FC<FormFieldProps> = ({
                 </Space>
               ))}
               <Form.Item>
-                <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
-                  Add Image URL
-                </Button>
+                {fields.length < maxItems && (
+                  <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
+                    Add Image URL
+                  </Button>
+                )}
               </Form.Item>
               {preview}
             </>

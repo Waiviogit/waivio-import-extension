@@ -41,15 +41,16 @@ const EditAiModal = ({ product, title = 'Object draft' }: EditAiModalProps) => {
 
             <FormField
               label="Avatar"
-              name={['primaryImageURLs', 0]}
-              type="imageUrl"
+              name="primaryImageURLs"
+              type="imageList"
+              maxItems={1}
               preview={
                 <Form.Item noStyle shouldUpdate>
                   {(formInstance) => {
-                    const value = formInstance.getFieldValue(['primaryImageURLs', 0]);
-                    return value ? (
+                    const value = formInstance.getFieldValue('primaryImageURLs');
+                    return value && value[0] ? (
                       <Image
-                        src={value}
+                        src={value[0]}
                         style={{ maxWidth: 200, marginTop: 8 }}
                         preview={false}
                       />
