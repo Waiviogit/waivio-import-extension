@@ -1,68 +1,149 @@
 import ReactDOM from 'react-dom/client';
 import EditAiModal from '../components/editWithAiModal';
+import {
+  getAvatarAmazon,
+  getAvatarSephora,
+  getAvatarAliexpress,
+  getAvatarWalmart,
+  getAvatarInstacart,
+} from '../parser/avatar';
+import {
+  getProductIdAmazon,
+  getProductIdSephora,
+  getProductIdAliExpress,
+  getProductIdWalmart,
+  getProductIdInstacart,
+  getPossibleIdsWalmart,
+} from '../parser/productId';
+import { generateObjectFromImage } from '../helpers/objectHelper';
+import { getWaivioUserInfo } from '../helpers/userHelper';
+import { makeBlobFromHtmlPage } from '../objectLink/createLink';
+import { loadImageBase64 } from '../helpers/downloadWaivioHelper';
 
-const mock = {
-  primaryImageURLs: ['https://m.media-amazon.com/images/I/61zSTWnbsAL._AC_SX679_.jpg'],
-  imageURLs: ['https://m.media-amazon.com/images/I/81cVDPCvIsL._AC_SL1500_.jpg'],
-  categories: [
-    'Makeup',
-    'Lipstick',
-    'Lip Liner',
-    'Lip Set',
-    'Beauty & Body',
-  ],
-  fieldDescription: "What it is: A mini lip set featuring Charlotte’s iconic, bestselling Matte Revolution or K.I.S.S.I.N.G Lipstick with a Lip Cheat Lip Liner Pencil for a dreamy, nude-pink, kissable look.What Else You Need to Know: Charlotte Tilbury’s globally loved Pillow Talk duo is your ultimate secret weapon to re-shape and re-size the look of lips for a 'your lips but better' finish. Highlighted Ingredients:\n- Lipstick Tree and Orchid Extract: Visibly softens, protects, and hydrates lips.Ingredient Callouts: Free of parabens.",
-  name: 'Charlotte Tilbury Beauty Mini Pillow Talk Lipstick & Liner Set - Fair',
-  waivio_options: [
-    {
-      category: 'Color',
-      value: 'Pillow Talk Fair',
-    },
-  ],
-  brand: 'Charlotte Tilbury Beauty',
-  features: [
-    {
-      key: 'Ingredient',
-      value: 'Lipstick Tree Extract',
-    },
-    {
-      key: 'Ingredient',
-      value: 'Orchid Extract',
-    },
-    {
-      key: 'Formulation',
-      value: 'Paraben-Free',
-    },
-    {
-      key: 'Set Contains',
-      value: '0.02 oz / 0.8 g Lip Cheat Lip Liner in Pillow Talk Fair (cool pink nude)',
-    },
-    {
-      key: 'Set Contains',
-      value: '0.05 oz / 1.5 g K.I.S.S.I.N.G Lipstick in Pillow Talk Fair (cool pink nude)',
-    },
-  ],
-  manufacturer: 'Charlotte Tilbury Beauty',
-  merchants: [
-    {
-      name: 'Sephora',
-    },
-  ],
-  mostRecentPriceAmount: '25.00',
-  mostRecentPriceCurrency: 'USD',
-  weight: '0.02 oz (Liner) + 0.05 oz (Lipstick)',
-  fieldRating: '3',
-  waivio_product_ids: [{ key: 'instacart', value: '12312455' }],
-  groupId: 'ddsderw',
+const getAvatarAndGallery = () => {
+  const url = document.URL.toLowerCase();
+
+  if (url.includes('amazon')) {
+    const avatar = getAvatarAmazon();
+    return {
+      primaryImageURLs: avatar ? [avatar] : [],
+      imageURLs: [],
+    };
+  }
+
+  if (url.includes('sephora')) {
+    const { avatar, gallery } = getAvatarSephora();
+    return {
+      primaryImageURLs: avatar ? [avatar] : [],
+      imageURLs: gallery,
+    };
+  }
+
+  if (url.includes('aliexpress')) {
+    const { avatar, gallery } = getAvatarAliexpress();
+    return {
+      primaryImageURLs: avatar ? [avatar] : [],
+      imageURLs: gallery,
+    };
+  }
+
+  if (url.includes('walmart')) {
+    const { avatar, gallery } = getAvatarWalmart();
+    return {
+      primaryImageURLs: avatar ? [avatar] : [],
+      imageURLs: gallery,
+    };
+  }
+
+  if (url.includes('instacart')) {
+    const { avatar, gallery } = getAvatarInstacart();
+    return {
+      primaryImageURLs: avatar ? [avatar] : [],
+      imageURLs: gallery,
+    };
+  }
+
+  return {
+    primaryImageURLs: [],
+    imageURLs: [],
+  };
+};
+
+const getWaivioProductIds = () => {
+  const url = document.URL.toLowerCase();
+
+  if (url.includes('amazon')) {
+    const asin = getProductIdAmazon();
+    return asin ? [{ key: 'asin', value: asin }] : [];
+  }
+
+  if (url.includes('sephora')) {
+    const sephoraId = getProductIdSephora();
+    return sephoraId ? [sephoraId] : [];
+  }
+
+  if (url.includes('aliexpress')) {
+    const aliId = getProductIdAliExpress();
+    return aliId ? [aliId] : [];
+  }
+
+  if (url.includes('walmart')) {
+    const walmartId = getProductIdWalmart();
+    const possibleIds = getPossibleIdsWalmart();
+    return walmartId ? [walmartId, ...possibleIds] : possibleIds;
+  }
+
+  if (url.includes('instacart')) {
+    const instacartId = getProductIdInstacart();
+    return instacartId ? [instacartId] : [];
+  }
+
+  return [];
 };
 
 export const editWithAi = async () => {
+  const { primaryImageURLs, imageURLs } = getAvatarAndGallery();
+  const waivioProductIds = getWaivioProductIds();
+  const userInfo = await getWaivioUserInfo();
+  if (!userInfo) return;
+  const {
+    accessToken, guestName, userName, auth,
+  } = userInfo;
+
+  const imageBlob = await makeBlobFromHtmlPage(false);
+  if (!imageBlob) {
+    alert('Can\'t make screenshot of this page');
+    return;
+  }
+  const { result: imageUrl } = await loadImageBase64(imageBlob);
+  if (!imageUrl) {
+    alert('Can\'t save screenshot of this page');
+    return;
+  }
+  console.log(imageUrl);
+
+  const response = await generateObjectFromImage({
+    accessToken, guestName, auth, user: userName, url: imageUrl,
+  });
+
+  if ('error' in response) {
+    alert(response.error?.message);
+    return;
+  }
+
+  const product = {
+    ...response.result,
+    primaryImageURLs,
+    imageURLs,
+    waivio_product_ids: waivioProductIds,
+  };
+
   const rootElement = document.createElement('div');
   rootElement.id = 'react-chrome-modal';
   document.body.appendChild(rootElement);
   const rootModal = ReactDOM.createRoot(rootElement);
 
   rootModal.render(<EditAiModal
-      product={mock}
+      product={product}
   />);
 };

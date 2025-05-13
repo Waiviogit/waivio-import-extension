@@ -3,6 +3,7 @@ import { getWaivioUserInfo } from './userHelper';
 import { downloadToWaivio } from './downloadWaivioHelper';
 import { EXTERNAL_URL } from '../constants';
 import Cookie = chrome.cookies.Cookie;
+import { Product } from '../types/product';
 
 type userImportResultType = {
     result: boolean
@@ -55,6 +56,7 @@ type objectForPostType = {
 
 type validateUserImportType = userImportResultType|importProductErrorType;
 type generateObjectFromDescriptionType = generateRecipeType|importProductErrorType;
+type generateObjectFromURLType = {result: Product}|importProductErrorType;
 type createWaivioObjectType = createObjectType|importProductErrorType;
 type checkObjectExistType = objectExistResultType|importProductErrorType;
 
@@ -76,6 +78,14 @@ const validateUserImport = async (user:string): Promise<validateUserImportType> 
 
 interface GenerateObjectFromDescriptionI {
   description: string
+  user: string
+  accessToken: string
+  guestName: string
+  auth: Cookie|undefined
+}
+
+interface GenerateObjectFromURLImageI {
+  url: string
   user: string
   accessToken: string
   guestName: string
@@ -115,6 +125,39 @@ const generateObjectFromDescription = async (
     const data = await response.json();
     return {
       result: data.result,
+    };
+  } catch (error) {
+    return { error } as importProductErrorType;
+  }
+};
+
+export const generateObjectFromImage = async (
+  {
+    url, user, accessToken, guestName, auth,
+  }: GenerateObjectFromURLImageI,
+): Promise<generateObjectFromURLType> => {
+  try {
+    const requestUrl = new URL(EXTERNAL_URL.WAIVIO_GENERATE_PRODUCT);
+
+    const response = await fetch(
+      requestUrl,
+      {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+          'Access-Token': accessToken,
+          'Hive-Auth': auth ? 'true' : 'false',
+          'Waivio-Auth': guestName ? 'true' : 'false',
+        },
+        body: JSON.stringify({ user, url }),
+      },
+    );
+
+    const data = await response.json();
+    console.log('response object', data);
+    return {
+      result: data,
     };
   } catch (error) {
     return { error } as importProductErrorType;

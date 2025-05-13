@@ -48,15 +48,20 @@ const takeScreenshot = () => {
   });
 };
 
-const makeBlobFromHtmlPage = async ():Promise<Blob |null> => {
+export const makeBlobFromHtmlPage = async (cropHeight = true):Promise<Blob |null> => {
   const body = document.querySelector('body');
   if (!body) return null;
+
+  const width = Math.max(1, window.innerWidth);
+  const height = cropHeight
+    ? Math.max(1, window.innerWidth > window.innerHeight ? window.innerHeight : window.innerWidth)
+    : Math.max(1, window.innerHeight);
 
   // Use a Promise to handle the asynchronous nature of html2canvas
   const canvas = await html2canvas(body, {
     useCORS: true,
-    width: window.innerWidth,
-    height: window.innerWidth > window.innerHeight ? window.innerHeight : window.innerWidth,
+    width,
+    height,
   });
 
   // Convert the canvas to a Blob

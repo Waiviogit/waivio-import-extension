@@ -6,6 +6,7 @@ import { DraggableModal } from './DraggableModal';
 import { FormField } from './FormField';
 import { PRODUCT_FORM_FIELDS } from '../config/formFields';
 import { ImagePreview } from './ImagePreview';
+import { downloadToWaivio } from '../helpers/downloadWaivioHelper';
 
 interface ValidationError {
   errorFields?: Array<{
@@ -22,10 +23,14 @@ const EditAiModal = ({ product, title = 'Object draft' }: EditAiModalProps) => {
 
   const handleOk = async () => {
     try {
-      const values = await form.validateFields();
+      const object = await form.validateFields();
       const nested = document.getElementById('react-chrome-modal');
       if (!nested) return;
-      console.log(values);
+      await downloadToWaivio({
+        object,
+        objectType: object.objectType,
+      });
+
       document.body.removeChild(nested);
     } catch (error) {
       const validationError = error as ValidationError;

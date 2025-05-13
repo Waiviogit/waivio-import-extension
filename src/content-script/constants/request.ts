@@ -11,6 +11,7 @@ export const EXTERNAL_URL = {
   WAIVIO_POST_IMPORT: 'https://www.waivio.com/import-objects-service/post-import',
   WAIVIO_IMPORT_VALIDATE: 'https://www.waivio.com/import-objects-service/import-products/validate',
   WAIVIO_GENERATE_RECIPE: 'https://www.waivio.com/import-objects-service/import-products/recipe-generation',
+  WAIVIO_GENERATE_PRODUCT: 'https://www.waivio.com/import-objects-service/product-image-analyses',
   WAIVIO_CREATE_OBJECT: 'https://www.waivio.com/objects-bot/create-object',
   WAIVIO_CREATE_UPDATE: 'https://www.waivio.com/objects-bot/append-object',
 };

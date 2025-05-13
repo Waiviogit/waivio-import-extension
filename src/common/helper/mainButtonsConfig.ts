@@ -1,6 +1,18 @@
+import React from 'react';
 import { sendMessageToContentScript } from '../../services/pageParser';
 import { BUTTON_TEXT, PARSE_COMMANDS, SOURCE_TYPES } from '../constants';
 import { generateUniqueId } from './commonHelper';
+import { DashboardButton } from '../../components/DasboardButton';
+
+const editWithAi = {
+  text: BUTTON_TEXT.EDIT_WITH_AI,
+  onClick: async (event:Event): Promise<void> => (
+    sendMessageToContentScript(
+      event,
+      PARSE_COMMANDS.EDIT_WITH_AI,
+    )),
+  id: generateUniqueId(),
+};
 
 export const mainButtonsConfig = [
   {
@@ -66,6 +78,7 @@ export const mainButtonsConfig = [
     ),
     id: generateUniqueId(),
   },
+  editWithAi,
 ];
 
 export const aliexpressButtonsConfig = [
@@ -122,6 +135,7 @@ export const aliexpressButtonsConfig = [
     ),
     id: generateUniqueId(),
   },
+  editWithAi,
 ];
 
 export const instacartButtonsConfig = [
@@ -180,6 +194,7 @@ export const instacartButtonsConfig = [
     ),
     id: generateUniqueId(),
   },
+  editWithAi,
 ];
 
 export const sephoraButtonsConfig = [
@@ -235,6 +250,7 @@ export const sephoraButtonsConfig = [
     ),
     id: generateUniqueId(),
   },
+  editWithAi,
 ];
 
 export const walmartButtonsConfig = [
@@ -290,6 +306,7 @@ export const walmartButtonsConfig = [
     ),
     id: generateUniqueId(),
   },
+  editWithAi,
 ];
 
 export const youtubeButtonConfig = [
