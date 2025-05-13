@@ -52,6 +52,8 @@ const mock = {
   mostRecentPriceCurrency: 'USD',
   weight: '0.02 oz (Liner) + 0.05 oz (Lipstick)',
   fieldRating: '3',
+  waivio_product_ids: [{ key: 'instacart', value: '12312455' }],
+  groupId: 'ddsderw',
 };
 
 export const editWithAi = async () => {

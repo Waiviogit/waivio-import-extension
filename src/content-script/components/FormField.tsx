@@ -28,7 +28,6 @@ export const FormField: React.FC<FormFieldProps> = ({
   }
 
   if (type === 'imageList') {
-    console.log(preview);
     return (
       <Form.Item label={label}>
         <Form.List name={name}>
@@ -89,7 +88,7 @@ export const FormField: React.FC<FormFieldProps> = ({
               ))}
               <Form.Item>
                 <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
-                  Add {label}
+                  Add Item
                 </Button>
               </Form.Item>
             </>
@@ -126,7 +125,7 @@ export const FormField: React.FC<FormFieldProps> = ({
               ))}
               <Form.Item>
                 <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
-                  Add Feature
+                  Add Item
                 </Button>
               </Form.Item>
             </>
@@ -163,7 +162,7 @@ export const FormField: React.FC<FormFieldProps> = ({
               ))}
               <Form.Item>
                 <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
-                  Add Option
+                  Add Item
                 </Button>
               </Form.Item>
             </>

@@ -21,6 +21,8 @@ export interface Product {
     waivio_options: WaivioOption[];
     brand: string;
     features: ProductFeature[];
+    waivio_product_ids: ProductFeature[];
+    groupId: string;
     manufacturer: string;
     merchants: Merchant[];
     mostRecentPriceAmount: string;

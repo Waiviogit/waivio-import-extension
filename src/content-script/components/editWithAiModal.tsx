@@ -64,6 +64,7 @@ const EditAiModal = ({ product, title = 'Object draft' }: EditAiModalProps) => {
               label="Gallery"
               name="imageURLs"
               type="imageList"
+              maxItems={10}
               preview={
                 <Form.Item noStyle shouldUpdate>
                   {(formInstance) => {
@@ -93,6 +94,8 @@ const EditAiModal = ({ product, title = 'Object draft' }: EditAiModalProps) => {
           <FormField label="Price Currency" name="mostRecentPriceCurrency" />
           <FormField label="Weight" name="weight" />
           <FormField label="Rating" name="fieldRating" />
+          <FormField label="Group Id" name="groupId" />
+          <FormField label="Product Ids:" name="waivio_product_ids" type="keyValue" />
           <FormField label="Categories:" name="categories" type="list" />
           <FormField label="Merchants" name={['merchants', 0, 'name']} />
           <FormField label="Features:" name="features" type="keyValue" />
