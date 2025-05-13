@@ -73,7 +73,7 @@ const EditAiModal = ({ product, title = 'Object draft' }: EditAiModalProps) => {
         <Form
           form={form}
           layout="vertical"
-          initialValues={product}
+          initialValues={{ ...product, objectType: 'product' }}
         >
           {renderFormFields()}
         </Form>

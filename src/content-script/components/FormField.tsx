@@ -1,23 +1,32 @@
 import React from 'react';
 import {
-  Form, Input, Space, Button, Image,
+  Form, Input, Space, Button, Image, Select,
 } from 'antd';
 import { PlusOutlined, MinusCircleOutlined } from '@ant-design/icons';
 
 interface FormFieldProps {
     label: string;
     name: string | (string | number)[];
-    type?: 'text' | 'textarea' | 'list' | 'keyValue' | 'categoryValue' | 'imageUrl' | 'imageList';
+    type?: 'text' | 'textarea' | 'list' | 'keyValue' | 'categoryValue' | 'imageUrl' | 'imageList' | 'select';
     rows?: number;
     preview?: React.ReactNode;
     maxItems?: number;
     required?: boolean;
     rules?: any[];
+    options?: { value: string; label: string }[];
 }
 
 export const FormField: React.FC<FormFieldProps> = ({
-  label, name, type = 'text', rows = 4, preview, maxItems = 10, required, rules,
+  label, name, type = 'text', rows = 4, preview, maxItems = 10, required, rules, options,
 }) => {
+  if (type === 'select') {
+    return (
+      <Form.Item label={label} name={name} rules={rules}>
+        <Select options={options} />
+      </Form.Item>
+    );
+  }
+
   if (type === 'imageUrl') {
     return (
       <Form.Item label={label} name={name} rules={rules}>

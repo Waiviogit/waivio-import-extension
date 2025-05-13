@@ -2,6 +2,17 @@ import { FormFieldConfig } from '../types/form';
 
 export const PRODUCT_FORM_FIELDS: FormFieldConfig[] = [
   {
+    label: 'Object Type',
+    name: 'objectType',
+    type: 'select',
+    options: [
+      { value: 'product', label: 'Product' },
+      { value: 'book', label: 'Book' },
+    ],
+    required: true,
+    rules: [{ required: true, message: 'Object type is required' }],
+  },
+  {
     label: 'Avatar',
     name: 'primaryImageURLs',
     type: 'imageList',
