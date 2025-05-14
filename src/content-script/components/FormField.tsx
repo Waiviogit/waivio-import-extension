@@ -32,7 +32,7 @@ export const FormField: React.FC<FormFieldProps> = ({
 
   if (type === 'imageUrl') {
     return (
-      <Form.Item label={label} name={name} rules={rules}>
+      <Form.Item label={<span style={{ fontWeight: 600 }}>{label}</span>} name={name} rules={rules}>
         <Space direction="vertical" style={{ width: '100%' }}>
           <Input placeholder="Enter image URL" />
           {preview}
@@ -43,7 +43,7 @@ export const FormField: React.FC<FormFieldProps> = ({
 
   if (type === 'imageList') {
     return (
-      <Form.Item label={label}>
+      <Form.Item label={<span style={{ fontWeight: 600 }}>{label}</span>}>
         <Form.List name={name}>
           {(fields, { add, remove }) => (
             <>
@@ -62,7 +62,7 @@ export const FormField: React.FC<FormFieldProps> = ({
               <Form.Item>
                 {fields.length < maxItems && (
                   <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
-                    Add Image URL
+                    Add image URL
                   </Button>
                 )}
               </Form.Item>
@@ -76,7 +76,7 @@ export const FormField: React.FC<FormFieldProps> = ({
 
   if (type === 'textarea') {
     return (
-            <Form.Item label={label} name={name} rules={rules}>
+            <Form.Item label={<span style={{ fontWeight: 600 }}>{label}</span>} name={name} rules={rules}>
                 <Input.TextArea rows={rows} />
             </Form.Item>
     );
@@ -84,7 +84,7 @@ export const FormField: React.FC<FormFieldProps> = ({
 
   if (type === 'list') {
     return (
-      <Form.Item label={label}>
+      <Form.Item label={<span style={{ fontWeight: 600 }}>{label}</span>}>
         <Form.List name={name}>
           {(fields, { add, remove }) => (
             <>
@@ -103,7 +103,7 @@ export const FormField: React.FC<FormFieldProps> = ({
               <Form.Item>
                 {fields.length < maxItems && (
                   <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
-                    Add Item
+                    Add
                   </Button>
                 )}
               </Form.Item>
@@ -116,7 +116,7 @@ export const FormField: React.FC<FormFieldProps> = ({
 
   if (type === 'keyValue') {
     return (
-      <Form.Item label={label}>
+      <Form.Item label={<span style={{ fontWeight: 600 }}>{label}</span>}>
         <Form.List name={name} rules={rules}>
           {(fields, { add, remove }) => (
             <>
@@ -142,7 +142,7 @@ export const FormField: React.FC<FormFieldProps> = ({
               <Form.Item>
                 {fields.length < maxItems && (
                   <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
-                    Add Item
+                    Add
                   </Button>
                 )}
               </Form.Item>
@@ -155,7 +155,7 @@ export const FormField: React.FC<FormFieldProps> = ({
 
   if (type === 'categoryValue') {
     return (
-      <Form.Item label={label}>
+      <Form.Item label={<span style={{ fontWeight: 600 }}>{label}</span>}>
         <Form.List name={name}>
           {(fields, { add, remove }) => (
             <>
@@ -181,7 +181,7 @@ export const FormField: React.FC<FormFieldProps> = ({
               <Form.Item>
                 {fields.length < maxItems && (
                   <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
-                    Add Item
+                    Add
                   </Button>
                 )}
               </Form.Item>
@@ -193,7 +193,7 @@ export const FormField: React.FC<FormFieldProps> = ({
   }
 
   return (
-        <Form.Item label={label} name={name} rules={rules}>
+        <Form.Item label={<span style={{ fontWeight: 600 }}>{label}</span>} name={name} rules={rules}>
             <Input />
         </Form.Item>
   );
