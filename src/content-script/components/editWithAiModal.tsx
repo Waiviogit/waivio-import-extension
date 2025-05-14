@@ -24,6 +24,10 @@ const EditAiModal = ({ product, title = 'Object draft' }: EditAiModalProps) => {
   const handleOk = async () => {
     try {
       const object = await form.validateFields();
+      if (object?.features?.length) {
+        object.features = object.features
+          .map((el: {value: string}) => ({ ...el, value: [el.value] }));
+      }
       const nested = document.getElementById('react-chrome-modal');
       if (!nested) return;
       await downloadToWaivio({
