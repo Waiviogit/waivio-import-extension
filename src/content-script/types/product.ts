@@ -29,6 +29,7 @@ export interface Product {
     mostRecentPriceCurrency: string;
     weight: string;
     fieldRating: string;
+    objectType?: 'product' | 'book';
 }
 
 export interface EditAiModalProps {

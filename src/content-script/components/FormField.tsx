@@ -22,7 +22,10 @@ export const FormField: React.FC<FormFieldProps> = ({
   if (type === 'select') {
     return (
       <Form.Item label={label} name={name} rules={rules}>
-        <Select options={options} />
+        <Select
+          options={options}
+          getPopupContainer={(triggerNode) => triggerNode.parentElement || document.body}
+        />
       </Form.Item>
     );
   }

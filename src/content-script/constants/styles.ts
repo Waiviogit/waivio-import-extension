@@ -8,6 +8,8 @@ export const MODAL_STYLES = {
     overflowY: 'auto' as const,
     maxHeight: 'calc(100vh - 200px)',
     padding: '20px',
+    position: 'relative' as const,
+    zIndex: 10000,
   },
   title: {
     width: '100%',
@@ -20,7 +22,7 @@ export const MODAL_STYLES = {
   },
   footer: {
     width: '100%',
-    padding: '20px',
+    padding: '10px',
     boxShadow: '0 4px 12px rgba(0,0,0,.15)',
     display: 'flex',
     justifyContent: 'flex-end',

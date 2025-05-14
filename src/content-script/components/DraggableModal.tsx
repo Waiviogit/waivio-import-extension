@@ -60,10 +60,11 @@ export const DraggableModal: React.FC<DraggableModalProps> = ({
                 position: 'fixed',
                 backgroundColor: 'white',
                 borderRadius: '8px',
-                top: '10%',
+                top: '1%',
                 left: '30%',
                 zIndex: 9999,
                 boxShadow: '0 4px 12px rgba(0,0,0,.15)',
+                pointerEvents: 'auto',
               }}
           >
               <div
@@ -78,7 +79,7 @@ export const DraggableModal: React.FC<DraggableModalProps> = ({
               <div style={MODAL_STYLES.footer}>
                   {footerComponents}
                   <Button onClick={onCancel}>{cancelText}</Button>
-                  <Button style={{ marginRight: '10px' }} type={'primary'} onClick={onOk}>{okText}</Button>
+                  <Button style={{ marginRight: '20px' }} type={'primary'} onClick={onOk}>{okText}</Button>
               </div>
           </div>
       </Draggable>);
