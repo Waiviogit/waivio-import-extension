@@ -21,7 +21,7 @@ export const FormField: React.FC<FormFieldProps> = ({
 }) => {
   if (type === 'select') {
     return (
-      <Form.Item label={label} name={name} rules={rules}>
+      <Form.Item label={<span style={{ fontWeight: 600 }}>{label}</span>} name={name} rules={rules}>
         <Select
           options={options}
           getPopupContainer={(triggerNode) => triggerNode.parentElement || document.body}
