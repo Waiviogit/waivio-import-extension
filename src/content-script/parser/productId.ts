@@ -132,9 +132,9 @@ export const getPossibleIdsWalmart = ():productIdType[] => {
   return productIds;
 };
 
-export const getProductIdInstacart = ():productIdType| undefined => {
+export const getProductIdInstacart = (): productIdType | undefined => {
   const url = document.URL;
-  const match = url.match(/\/products\/([^\/]+)/);
+  const match = url.match(/\/products\/([^\/?]+)/);
   if (!match) return;
   return {
     key: 'instacart',
@@ -144,10 +144,11 @@ export const getProductIdInstacart = ():productIdType| undefined => {
 
 export const getProductIdDefault = () => {
   const urlObject = new URL(document.URL);
-  const value = urlObject.pathname.length > 8 ? urlObject.pathname : document.URL;
+  const pathWithId = urlObject.pathname.split('/').at(-1);
+  const value = (pathWithId?.length || 0) > 8 ? pathWithId : document.URL;
 
   return {
-    key: urlObject.host,
+    key: urlObject.host.replace(/www\./, ''),
     value,
   };
 };
