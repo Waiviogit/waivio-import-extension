@@ -14,6 +14,7 @@ import {
   getProductIdWalmart,
   getProductIdInstacart,
   getPossibleIdsWalmart,
+  getProductIdDefault,
 } from '../parser/productId';
 import { generateObjectFromImage } from '../helpers/objectHelper';
 import { getWaivioUserInfo } from '../helpers/userHelper';
@@ -74,17 +75,17 @@ const getWaivioProductIds = () => {
 
   if (url.includes('amazon')) {
     const asin = getProductIdAmazon();
-    return asin ? [{ key: 'asin', value: asin }] : [];
+    return asin ? [{ key: 'asin', value: asin }] : [getProductIdDefault()];
   }
 
   if (url.includes('sephora')) {
     const sephoraId = getProductIdSephora();
-    return sephoraId ? [sephoraId] : [];
+    return sephoraId ? [sephoraId] : [getProductIdDefault()];
   }
 
   if (url.includes('aliexpress')) {
     const aliId = getProductIdAliExpress();
-    return aliId ? [aliId] : [];
+    return aliId ? [aliId] : [getProductIdDefault()];
   }
 
   if (url.includes('walmart')) {
@@ -95,10 +96,10 @@ const getWaivioProductIds = () => {
 
   if (url.includes('instacart')) {
     const instacartId = getProductIdInstacart();
-    return instacartId ? [instacartId] : [];
+    return instacartId ? [instacartId] : [getProductIdDefault()];
   }
 
-  return [];
+  return [getProductIdDefault()];
 };
 
 export const editWithAi = async () => {

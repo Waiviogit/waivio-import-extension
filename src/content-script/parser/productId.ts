@@ -137,7 +137,17 @@ export const getProductIdInstacart = ():productIdType| undefined => {
   const match = url.match(/\/products\/([^\/]+)/);
   if (!match) return;
   return {
-    key: 'instacartProductId',
+    key: 'instacart',
     value: match[1],
+  };
+};
+
+export const getProductIdDefault = () => {
+  const urlObject = new URL(document.URL);
+  const value = urlObject.pathname.length > 8 ? urlObject.pathname : document.URL;
+
+  return {
+    key: urlObject.host,
+    value,
   };
 };
