@@ -117,14 +117,14 @@ const CreatePostModal = ({
       </>;
 
   const draftButtons = <>
-          <Tooltip title="Analyze video content with AI">
+          <Tooltip title="Analyze video content with AI" zIndex={9999}>
             <Button
                 icon={<VideoCameraAddOutlined />}
                 onClick={handleAnalysis}
                 loading={isAnalysisLoading}
             />
           </Tooltip>
-          <Tooltip title="Regenerate draft">
+          <Tooltip title="Regenerate draft" zIndex={9999}>
               <Button
                   icon={<ReloadOutlined />}
                   onClick={handleRefreshGpt}
@@ -150,7 +150,7 @@ const CreatePostModal = ({
       }}
     >
       <DraggableModal
-        title="Create Post"
+        title="Create post"
         open={isModalOpen}
         onOk={handleSubmit}
         onCancel={handleCancel}
@@ -161,15 +161,16 @@ const CreatePostModal = ({
       >
         <Popover
           content={'Author of the post. Change by signing in to Waivio with different account.'}
+          styles={{ root: {zIndex: 9999} }}
         >
           <Input
-            style={{ marginTop: '30px' }}
             value={author}
             disabled={true}
           />
         </Popover>
         <Popover
           content={'Domain associated with a post, establishing it as its canonical source. Can be changed on Waivio.'}
+          styles={{ root: {zIndex: 9999} }}
         >
           <Input
             value={host}

@@ -1,8 +1,12 @@
+import { color } from "html2canvas/dist/types/css/types/color";
+
 export const MODAL_STYLES = {
   header: {
     display: 'flex',
     justifyContent: 'space-between',
     borderBottom: '1px solid #e8e8e8',
+    fontSize: '14px',
+    color: 'black'
   },
   body: {
     overflowY: 'auto' as const,
