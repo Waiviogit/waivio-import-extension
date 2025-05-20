@@ -144,7 +144,7 @@ export const getProductIdInstacart = (): productIdType | undefined => {
 
 export const getProductIdDefault = () => {
   const urlObject = new URL(document.URL);
-  const pathWithId = urlObject.pathname.split('/').at(-1);
+  const pathWithId = urlObject.pathname.split('/').at(-1) || '';
   const value = (pathWithId?.length || 0) > 8 ? pathWithId : document.URL;
 
   return {
