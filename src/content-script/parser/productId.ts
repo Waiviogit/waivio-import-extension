@@ -142,13 +142,13 @@ export const getProductIdInstacart = (): productIdType | undefined => {
   };
 };
 
-export const getProductIdDefault = () => {
+export const getProductIdDefault = (value?:string) => {
   const urlObject = new URL(document.URL);
   const pathWithId = urlObject.pathname.split('/').at(-1) || '';
-  const value = (pathWithId?.length || 0) > 8 ? pathWithId : document.URL;
+  const valueFromPath = (pathWithId?.length || 0) > 8 ? pathWithId : document.URL;
 
   return {
     key: urlObject.host.replace(/www\./, ''),
-    value,
+    value: value || valueFromPath,
   };
 };

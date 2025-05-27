@@ -16,10 +16,11 @@ import {
   getPossibleIdsWalmart,
   getProductIdDefault,
 } from '../parser/productId';
-import { generateObjectFromImage } from '../helpers/objectHelper';
+import { extractIdFromUrlRequest, generateObjectFromImage } from '../helpers/objectHelper';
 import { getWaivioUserInfo } from '../helpers/userHelper';
 import { makeBlobFromHtmlPage } from '../objectLink/createLink';
 import { loadImageBase64 } from '../helpers/downloadWaivioHelper';
+import Cookie = chrome.cookies.Cookie;
 
 const getAvatarAndGallery = () => {
   const url = document.URL.toLowerCase();
@@ -70,7 +71,16 @@ const getAvatarAndGallery = () => {
   };
 };
 
-const getWaivioProductIds = () => {
+interface GetWaivioProductIds {
+  user: string
+  accessToken: string
+  guestName: string
+  auth: Cookie|undefined
+}
+
+const getWaivioProductIds = async ({
+  user, auth, accessToken, guestName,
+}: GetWaivioProductIds) => {
   const url = document.URL.toLowerCase();
 
   if (url.includes('amazon')) {
@@ -99,17 +109,36 @@ const getWaivioProductIds = () => {
     return instacartId ? [instacartId] : [getProductIdDefault()];
   }
 
-  return [getProductIdDefault()];
+  const response = await extractIdFromUrlRequest({
+    url: document.URL,
+    user,
+    accessToken,
+    guestName,
+    auth,
+  });
+
+  if ('error' in response) {
+    return [getProductIdDefault()];
+  }
+
+  return [getProductIdDefault(response.result)];
 };
 
 export const editWithAi = async () => {
   const { primaryImageURLs, imageURLs } = getAvatarAndGallery();
-  const waivioProductIds = getWaivioProductIds();
+
   const userInfo = await getWaivioUserInfo();
   if (!userInfo) return;
   const {
     accessToken, guestName, userName, auth,
   } = userInfo;
+
+  const waivioProductIds = await getWaivioProductIds({
+    user: userName,
+    auth,
+    accessToken,
+    guestName,
+  });
 
   const imageBlob = await makeBlobFromHtmlPage(false);
   if (!imageBlob) {
