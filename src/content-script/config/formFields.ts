@@ -38,6 +38,9 @@ export const PRODUCT_FORM_FIELDS: FormFieldConfig[] = [
   { label: 'Price currency', name: 'mostRecentPriceCurrency' },
   { label: 'Weight', name: 'weight' },
   { label: 'Rating', name: 'fieldRating' },
+  {
+    label: 'Website', name: ['websites', 0],
+  },
   { label: 'Group ID', name: 'groupId' },
   {
     label: 'Product IDs',

@@ -30,6 +30,7 @@ export interface Product {
     weight: string;
     fieldRating: string;
     objectType?: 'product' | 'book';
+    websites?: string[]
 }
 
 export interface EditAiModalProps {

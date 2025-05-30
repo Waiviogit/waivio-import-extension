@@ -166,6 +166,7 @@ export const editWithAi = async () => {
     primaryImageURLs,
     imageURLs,
     waivio_product_ids: waivioProductIds,
+    websites: [document.URL],
   };
 
   const rootElement = document.createElement('div');
