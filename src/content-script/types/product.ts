@@ -31,6 +31,7 @@ export interface Product {
     fieldRating: string;
     objectType?: 'product' | 'book';
     websites?: string[]
+    galleryLength?: number
 }
 
 export interface EditAiModalProps {

@@ -37,6 +37,13 @@ type extractIdType = {
   result: string
 }
 
+type extractGalleryType = {
+  result: {
+    avatar: string
+    gallery: string[]
+  }
+}
+
 type importProductErrorType = {
     error: {
         message: string
@@ -65,6 +72,7 @@ type createWaivioObjectType = createObjectType|importProductErrorType;
 type checkObjectExistType = objectExistResultType|importProductErrorType;
 
 type extractIdResponseType = extractIdType|importProductErrorType;
+type extractGalleryResponseType = extractGalleryType|importProductErrorType;
 
 const validateUserImport = async (user:string): Promise<validateUserImportType> => {
   try {
@@ -92,6 +100,15 @@ interface GenerateObjectFromDescriptionI {
 
 interface ExtractIdFromUrl {
   url: string
+  user: string
+  accessToken: string
+  guestName: string
+  auth: Cookie|undefined
+}
+
+interface ExtractGallery {
+  imageData: string
+  galleryLength: number
   user: string
   accessToken: string
   guestName: string
@@ -171,6 +188,38 @@ export const extractIdFromUrlRequest = async (
     const data = await response.json();
     return {
       result: data.id,
+    };
+  } catch (error) {
+    return { error } as importProductErrorType;
+  }
+};
+
+export const extractGalleryRequest = async (
+  {
+    imageData, galleryLength, user, accessToken, guestName, auth,
+  }: ExtractGallery,
+): Promise<extractGalleryResponseType> => {
+  try {
+    const requestUrl = new URL(EXTERNAL_URL.WAIVIO_EXTRACT_GALLERY);
+
+    const response = await fetch(
+      requestUrl,
+      {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+          'Access-Token': accessToken,
+          'Hive-Auth': auth ? 'true' : 'false',
+          'Waivio-Auth': guestName ? 'true' : 'false',
+        },
+        body: JSON.stringify({ user, imageData, galleryLength }),
+      },
+    );
+
+    const data = await response.json();
+    return {
+      result: data,
     };
   } catch (error) {
     return { error } as importProductErrorType;

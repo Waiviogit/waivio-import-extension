@@ -16,20 +16,38 @@ import {
   getPossibleIdsWalmart,
   getProductIdDefault,
 } from '../parser/productId';
-import { extractIdFromUrlRequest, generateObjectFromImage } from '../helpers/objectHelper';
+import { extractGalleryRequest, extractIdFromUrlRequest, generateObjectFromImage } from '../helpers/objectHelper';
 import { getWaivioUserInfo } from '../helpers/userHelper';
 import { makeBlobFromHtmlPage } from '../objectLink/createLink';
 import { loadImageBase64 } from '../helpers/downloadWaivioHelper';
 import Cookie = chrome.cookies.Cookie;
+import { getGalleryItemsAmazon } from '../parser';
 
-const getAvatarAndGallery = () => {
+interface GetWaivioProductIds {
+  user: string
+  accessToken: string
+  guestName: string
+  auth: Cookie|undefined
+}
+
+interface GetWaivioAvatar {
+  user: string
+  accessToken: string
+  guestName: string
+  galleryLength: number
+  auth: Cookie|undefined
+}
+
+const getAvatarAndGallery = async ({
+  user, accessToken, guestName, auth, galleryLength,
+}: GetWaivioAvatar) => {
   const url = document.URL.toLowerCase();
 
   if (url.includes('amazon')) {
     const avatar = getAvatarAmazon();
     return {
       primaryImageURLs: avatar ? [avatar] : [],
-      imageURLs: [],
+      imageURLs: getGalleryItemsAmazon(),
     };
   }
 
@@ -65,18 +83,41 @@ const getAvatarAndGallery = () => {
     };
   }
 
+  const images = Array.from(document.querySelectorAll<HTMLImageElement>('img'));
+  const extractImgData = (img:HTMLImageElement) => {
+    const attrs: Record<string, string> = {};
+    if (img.className) attrs.class = img.className;
+    Array.from(img.attributes).forEach((attr) => {
+      if (attr.name !== 'class') attrs[attr.name] = attr.value;
+    });
+    return attrs;
+  };
+
+  const imageList = images.map(extractImgData);
+  const MAX_SIZE = 40 * 1024; // 40KB in bytes
+  let imageData = JSON.stringify(imageList, null, 2);
+
+  while (imageData.length > MAX_SIZE && imageList.length > 1) {
+    imageList.pop();
+    imageData = JSON.stringify(imageList, null, 2);
+  }
+
+  const response = await extractGalleryRequest({
+    user, galleryLength, imageData, auth, accessToken, guestName,
+  });
+
+  if ('error' in response) {
+    return {
+      primaryImageURLs: [],
+      imageURLs: [],
+    };
+  }
+
   return {
-    primaryImageURLs: [],
-    imageURLs: [],
+    primaryImageURLs: [response.result.avatar],
+    imageURLs: response.result.gallery,
   };
 };
-
-interface GetWaivioProductIds {
-  user: string
-  accessToken: string
-  guestName: string
-  auth: Cookie|undefined
-}
 
 const getWaivioProductIds = async ({
   user, auth, accessToken, guestName,
@@ -125,20 +166,11 @@ const getWaivioProductIds = async ({
 };
 
 export const editWithAi = async () => {
-  const { primaryImageURLs, imageURLs } = getAvatarAndGallery();
-
   const userInfo = await getWaivioUserInfo();
   if (!userInfo) return;
   const {
     accessToken, guestName, userName, auth,
   } = userInfo;
-
-  const waivioProductIds = await getWaivioProductIds({
-    user: userName,
-    auth,
-    accessToken,
-    guestName,
-  });
 
   const imageBlob = await makeBlobFromHtmlPage(false);
   if (!imageBlob) {
@@ -150,7 +182,6 @@ export const editWithAi = async () => {
     alert('Can\'t save screenshot of this page');
     return;
   }
-  console.log(imageUrl);
 
   const response = await generateObjectFromImage({
     accessToken, guestName, auth, user: userName, url: imageUrl,
@@ -160,6 +191,26 @@ export const editWithAi = async () => {
     alert(response.error?.message);
     return;
   }
+
+  const galleryLength = (response.result?.galleryLength || 0) > 2
+    ? (response.result?.galleryLength || 0) - 1
+    : response.result?.galleryLength || 1;
+
+  const [waivioProductIds, { primaryImageURLs, imageURLs }] = await Promise.all([
+    getWaivioProductIds({
+      user: userName,
+      auth,
+      accessToken,
+      guestName,
+    }),
+    getAvatarAndGallery({
+      user: userName,
+      auth,
+      accessToken,
+      guestName,
+      galleryLength,
+    }),
+  ]);
 
   const product = {
     ...response.result,
