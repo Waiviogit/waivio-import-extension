@@ -49,27 +49,47 @@ const takeScreenshot = () => {
 };
 
 export const makeBlobFromHtmlPage = async (cropHeight = true):Promise<Blob |null> => {
-  const body = document.querySelector('body');
-  if (!body) return null;
+  try {
+    const body = document.querySelector('body');
+    if (!body) return null;
 
-  const width = Math.max(1, window.innerWidth);
-  const height = cropHeight
-    ? Math.max(1, window.innerWidth > window.innerHeight ? window.innerHeight : window.innerWidth)
-    : Math.max(1, window.innerHeight);
+    const width = Math.max(1, window.innerWidth);
+    const height = cropHeight
+      ? Math.max(1, window.innerWidth > window.innerHeight ? window.innerHeight : window.innerWidth)
+      : Math.max(1, window.innerHeight);
 
-  // Use a Promise to handle the asynchronous nature of html2canvas
-  const canvas = await html2canvas(body, {
-    useCORS: true,
-    width,
-    height,
-  });
+    // Use a Promise to handle the asynchronous nature of html2canvas
+    const canvas = await html2canvas(body, {
+      useCORS: true,
+      width,
+      height,
+      scale: 1,
+      allowTaint: true,
+      foreignObjectRendering: false,
+      removeContainer: true,
+      backgroundColor: '#ffffff',
+      logging: false,
+      onclone: (clonedDoc) => {
+        // Remove any problematic gradient elements
+        const gradients = clonedDoc.querySelectorAll('[style*="gradient"]');
+        gradients.forEach((gradient) => {
+          const element = gradient as HTMLElement;
+          if (element) {
+            element.setAttribute('style', 'background: #ffffff');
+          }
+        });
+      },
+    });
 
-  // Convert the canvas to a Blob
-  return new Promise((resolve) => {
-    canvas.toBlob((blob) => {
-      resolve(blob);
-    }, 'image/png');
-  });
+    // Convert the canvas to a Blob
+    return new Promise((resolve) => {
+      canvas.toBlob((blob) => {
+        resolve(blob);
+      }, 'image/png');
+    });
+  } catch (error) {
+    return null;
+  }
 };
 
 export const createLink = async (source?: string) => {
