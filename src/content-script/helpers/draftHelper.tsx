@@ -45,11 +45,16 @@ const cutSubs = (subs: string): string => {
 const createQuery = ({
   subs, source,
 }: createQueryInterface): string => {
-  const query = `act as professional journalist:
-  rewrite in third person in 3 paragraphs (make it sound like a human), create title,
-  add hashtags (composed of one word lowercase) at the very end,
-  if following text would be in other language than english - rewrite it into english, here is the text: ${subs}
-  `;
+  const query = `Act as a professional journalist and product reviewer. 
+Rewrite the following content for blog post in social media. 
+Focus on clarity, product insight, and storytelling that captures real user experience. 
+
+Generate an engaging and informative title suitable for a product review post. 
+Generate body of post based on content do not just retell.
+Important: Mention all products that shown in video.
+At the very end, add 3–5 relevant hashtags (one word, all lowercase, no special characters) that relate to the product, its category, and the user experience. 
+If the original text is not in English, translate it into fluent English. 
+Here is the content to work with: ${subs}`;
 
   const recipeQuery = `act as professional chef:
   create a recipe from content I'll give you. Focus on the recipe itself and follow these steps:
@@ -332,24 +337,22 @@ export const getDraftBodyTitleTags = async (source?:string, bodyFromEditor?:stri
 
 const initialDeepAnalysis = async (source:string): Promise<Draft|null> => {
   const getBody = source ? draftBySiteHandler[source] : draftBySiteHandler.default;
-  console.log('get body');
+
   const {
     title, body, attribution, link, author,
   } = await getBody();
 
   const prompt = createAnalysisVideoPromptBySource(source);
-  console.log('videoAnalysesByLink');
   const response = await videoAnalysesByLink(prompt, document.URL);
 
   if (!body && !response.result) {
     alert('Can\'t process Video');
     return null;
   }
-
   const query = createQuery({
     subs: `${title} ${body} ${response.result}`, source,
   });
-  console.log('getGptAnswer');
+
   const { result: postDraft, error } = await getGptAnswer(query);
   if (!postDraft) {
     // @ts-ignore
@@ -363,8 +366,6 @@ const initialDeepAnalysis = async (source:string): Promise<Draft|null> => {
 
   const tags = formatHashTags(draftBody, author);
   const authorTag = makeValidTag(author);
-
-  console.log('getGptMarkdownFormat');
   const resultBody = await getGptMarkdownFormat(draftBody, source || '');
 
   return {
