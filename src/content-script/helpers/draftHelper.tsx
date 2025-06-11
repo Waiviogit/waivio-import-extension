@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import getVideoCaptions, { captionType, extractVideoId } from './youtubeHelper';
-import { SOURCE_TYPES } from '../../common/constants';
+import { RECIPE_SOURCE_TYPES, SOURCE_TYPES } from '../../common/constants';
 import { getWaivioUserInfo } from './userHelper';
 import { getPostImportHost } from './downloadWaivioHelper';
 import CreatePostModal from '../components/createPostModal';
@@ -174,7 +174,7 @@ const getInstagramDraft = async (): Promise<BodyTitleType> => {
 };
 
 const getGptMarkdownFormat = async (body: string, source: string):Promise<string> => {
-  if (![SOURCE_TYPES.RECIPE_DRAFT, SOURCE_TYPES.RECIPE_DRAFT_INSTAGRAM, SOURCE_TYPES.RECIPE_DRAFT_TIKTOK].includes(source)) return body;
+  if (!RECIPE_SOURCE_TYPES.includes(source)) return body;
 
   const query = `I have a recipe post that need formatting in Markdown. Please format recipe following these detailed guidelines:
 1. **Introduction:**
@@ -297,7 +297,7 @@ const draftBySiteHandler = {
   default: getYoutubeDraft,
 };
 
-export const getDraftBodyTitleTags = async (source?:string, bodyFromEditor?:string): Promise<Draft|null> => {
+export const getDraftBodyTitleTags = async (source:string, bodyFromEditor?:string): Promise<Draft|null> => {
   const getBody = source ? draftBySiteHandler[source] : draftBySiteHandler.default;
 
   const {
@@ -342,34 +342,40 @@ const initialDeepAnalysis = async (source:string): Promise<Draft|null> => {
     title, body, attribution, link, author,
   } = await getBody();
 
-  const prompt = createAnalysisVideoPromptBySource(source);
+  const prompt = createAnalysisVideoPromptBySource(source, `${title}${body}`);
   const response = await videoAnalysesByLink(prompt, document.URL);
 
   if (!body && !response.result) {
     alert('Can\'t process Video');
     return null;
   }
-  const query = createQuery({
-    subs: `${title} ${body} ${response.result}`, source,
-  });
 
-  const { result: postDraft, error } = await getGptAnswer(query);
-  if (!postDraft) {
-    // @ts-ignore
-    alert(`Gpt error ${error?.message ?? ''}`);
-    return null;
+  let postBody = response.result || '';
+
+  if (RECIPE_SOURCE_TYPES.includes(source)) {
+    const query = createQuery({
+      subs: `${title} ${postBody} ${response.result}`, source,
+    });
+
+    const { result: postDraft, error } = await getGptAnswer(query);
+    if (!postDraft) {
+      // @ts-ignore
+      alert(`Gpt error ${error?.message ?? ''}`);
+      return null;
+    }
+
+    const formattedText = formatGptAnswer({
+      answer: postDraft, link, attribution,
+    });
+
+    postBody = await getGptMarkdownFormat(formattedText, source || '');
   }
 
-  const draftBody = formatGptAnswer({
-    answer: postDraft, link, attribution,
-  });
-
-  const tags = formatHashTags(draftBody, author);
+  const tags = formatHashTags(postBody, author);
   const authorTag = makeValidTag(author);
-  const resultBody = await getGptMarkdownFormat(draftBody, source || '');
 
   return {
-    body: `${resultBody}\n#${authorTag}\n\n`,
+    body: `${postBody}\n#${authorTag}\n\n`,
     title,
     tags,
   };
@@ -377,7 +383,6 @@ const initialDeepAnalysis = async (source:string): Promise<Draft|null> => {
 
 export const createDraft = async (source:string): Promise<void> => {
   const userInfo = await getWaivioUserInfo();
-  console.log('userInfo');
   if (!userInfo) return;
   const { userName } = userInfo;
 

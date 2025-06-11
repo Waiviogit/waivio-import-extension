@@ -93,7 +93,7 @@ const CreatePostModal = ({
 
   const handleAnalysis = async () => {
     setIsAnalysisLoading(true);
-    const prompt = createAnalysisVideoPromptBySource(source);
+    const prompt = createAnalysisVideoPromptBySource(source, '');
     const response = await videoAnalysesByLink(prompt, document.URL);
     if (!response.result) {
       alert('Failed to upload the video. Please try again.');

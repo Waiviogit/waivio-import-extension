@@ -35,6 +35,7 @@ export const PRODUCT_FORM_FIELDS: FormFieldConfig[] = [
   { label: 'Manufacturer', name: 'manufacturer' },
   { label: 'Description', name: 'fieldDescription', type: 'textarea' },
   { label: 'Price amount', name: 'mostRecentPriceAmount' },
+  { label: 'Compare price amount', name: 'compareAtPriceAmount' },
   { label: 'Price currency', name: 'mostRecentPriceCurrency' },
   { label: 'Weight', name: 'weight' },
   { label: 'Rating', name: 'fieldRating' },

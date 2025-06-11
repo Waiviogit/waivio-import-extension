@@ -30,9 +30,40 @@ Note any important visual cues, such as color or texture changes indicating the 
 Provide the information clearly structured and organized under each heading. 
 Don't use phrases like “here's your answer” in your answer, don't repeat the assignment.`;
 
-const regularVideoPrompt = 'Analyze the video and provide a step-by-step scenario. No need for timestamps—summarize where possible, but retain key moments. List all products showed on the video e.g. macbook pro 16, coffee mug, ray ban glasses, e.t.c. also put products name in scenario as they appeared';
+const regularVideoPrompt = (content: string) => `
+You are an expert media analyst.
 
-export const createAnalysisVideoPromptBySource = (source:string): string => {
+You are given the video **title and description** below, which may provide useful context about the video’s content, people, places, or products:
+---
+${content}
+---
+
+Analyze the video and provide the following:
+
+1. **Step-by-step scenario:**  
+   - Describe the sequence of events and key actions.  
+   - Use details from the title/description to clarify or enrich your summary if relevant.  
+   - Summarize scenes where possible, but keep important moments detailed.  
+   - Do NOT include timestamps.
+
+2. **Products featured:**  
+   - List all visible products, devices, or branded items (e.g., MacBook Pro 16", coffee mug, Ray-Ban glasses).  
+   - For each, mention the context in which it appears, using hints from the title/description where possible.
+
+3. **Places shown:**  
+   - List all significant locations (e.g., Canary Islands, Egyptian Pyramids, Buenos Aires Airport).  
+   - If the place is not explicitly named, describe it briefly (e.g., "modern office," "beach at sunset") and use information from the title/description to improve accuracy.
+
+4. **People identified:**  
+   - List all people shown.  
+   - Use full names if recognized (e.g., Tom Cruise, Angelina Jolie).  
+   - If the title/description helps identify someone or clarify their role, mention that.  
+   - Otherwise, briefly describe (e.g., "young woman with red hair," "elderly man in uniform") and mention notable actions or roles.
+
+**Format your response in clearly separated, numbered sections as above. Be concise but informative. If any category is not present in the video, write "None."**
+`;
+
+export const createAnalysisVideoPromptBySource = (source:string, content: string): string => {
   if (RECIPE_SOURCE_TYPES.includes(source)) return recipeVideoPrompt;
-  return regularVideoPrompt;
+  return regularVideoPrompt(content);
 };

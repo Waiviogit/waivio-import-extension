@@ -26,6 +26,7 @@ export interface Product {
     manufacturer: string;
     merchants: Merchant[];
     mostRecentPriceAmount: string;
+    compareAtPriceAmount: string;
     mostRecentPriceCurrency: string;
     weight: string;
     fieldRating: string;
