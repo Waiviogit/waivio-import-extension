@@ -25,7 +25,7 @@ const validUrlRegEx = /^(?!http:\/\/localhost)(https?:\/\/(?:www\.)?([a-zA-Z0-9-
 
 export const Dashboard = () => {
   const [currentUrl, setUrl] = useState('');
-  const [timeoutId, setIntervalId] = useState<NodeJS.Timer | undefined>(undefined);
+  const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | undefined>();
   const [selectedValue, setSelectedValue] = useState('business');
   const [isLoading, setIsLoading] = useState(true);
 
@@ -38,7 +38,7 @@ export const Dashboard = () => {
     async function getUrl() {
       try {
         const tab = await getCurrentTab();
-        clearTimeout(timeoutId);
+        clearTimeout(timeoutId as NodeJS.Timeout);
 
         if (!tab?.url) {
           setUrl('');
@@ -49,7 +49,7 @@ export const Dashboard = () => {
         if (tab.status !== 'complete') {
           setIsLoading(true);
           const id = setTimeout(getUrl, 100);
-          setIntervalId(id);
+          setTimeoutId(id);
         } else {
           setUrl(tab.url);
           setIsLoading(false);
@@ -68,7 +68,7 @@ export const Dashboard = () => {
 
     return () => {
       if (timeoutId) {
-        clearTimeout(timeoutId);
+        clearTimeout(timeoutId as NodeJS.Timeout);
       }
     };
   }, []);

@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "manifest_version": 3,
   "compilerOptions": {
-    "target": "es5",
+    "target": "es2018",
     "lib": [
       "dom",
       "dom.iterable",
