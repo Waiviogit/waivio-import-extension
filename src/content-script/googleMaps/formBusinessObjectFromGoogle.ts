@@ -79,6 +79,20 @@ const checkOnTypes = ({ objectType, types }: checkOnTypesInterface): checkOnType
       };
   }
 
+  if (objectType === SUPPORTED_OBJECT_TYPES.PLACE) {
+    return match
+      ? {
+        inputType: objectType,
+        matchType: SUPPORTED_OBJECT_TYPES.RESTAURANT,
+        match: false,
+      }
+      : {
+        inputType: objectType,
+        matchType: objectType,
+        match: true,
+      };
+  }
+
   return {
     inputType: objectType,
     matchType: objectType,
