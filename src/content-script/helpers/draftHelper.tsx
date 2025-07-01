@@ -344,7 +344,9 @@ const initialDeepAnalysis = async (source:string): Promise<Draft|null> => {
     title, body, attribution, link, author,
   } = await getBody();
 
-  const prompt = createAnalysisVideoPromptBySource(source, `${title}${body}`);
+  const content = `${author ? `video author: ${author}` : ''} video description: ${title}${body}`;
+
+  const prompt = createAnalysisVideoPromptBySource(source, content);
   const response = await videoAnalysesByLink(prompt, document.URL);
   if (!body && !response.result) {
     alert('Can\'t process Video');

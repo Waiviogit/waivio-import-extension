@@ -61,7 +61,7 @@ Analyze the video and provide the following:
    - For each, mention the context in which it appears, using hints from the title/description where possible.
 
 3. **Places shown:**  
-   - List all significant locations (e.g., Canary Islands, Egyptian Pyramids, Buenos Aires Airport).  
+   - List all locations from video try name location if possible if it business, restaurant e.t.c (e.g., Canary Islands, Egyptian Pyramids, Buenos Aires Airport, McDonald's).  
    - If the place is not explicitly named, describe it briefly (e.g., "modern office," "beach at sunset") and use information from the title/description to improve accuracy.
 
 4. **People identified:**  
