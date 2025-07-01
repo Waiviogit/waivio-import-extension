@@ -344,17 +344,16 @@ const initialDeepAnalysis = async (source:string): Promise<Draft|null> => {
 
   const prompt = createAnalysisVideoPromptBySource(source, `${title}${body}`);
   const response = await videoAnalysesByLink(prompt, document.URL);
-
   if (!body && !response.result) {
     alert('Can\'t process Video');
     return null;
   }
 
-  let postBody = response.result || '';
+  let postBody = response.result || body;
 
   if (RECIPE_SOURCE_TYPES.includes(source)) {
     const query = createQuery({
-      subs: `${title} ${postBody} ${response.result}`, source,
+      subs: `${title} ${postBody}`, source,
     });
 
     const { result: postDraft, error } = await getGptAnswer(query);
