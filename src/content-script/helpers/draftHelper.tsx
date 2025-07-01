@@ -187,6 +187,8 @@ const getGptMarkdownFormat = async (body: string, source: string):Promise<string
    - Use a heading for the Ingredients section.
    - List each ingredient starting with an emoji, followed by the quantity and description, without bullet points.
    - Ensure there is a separator line (\`---\`) after the Ingredients section.
+   - Do not use parentheses for any information (such as quantity, preparation, or optional).
+   - Do not use phrases like "amount as needed" or "to taste" try to come up with precise quantity
 
 4. **Instructions Section:**
    - Use a heading for the Instructions section.
