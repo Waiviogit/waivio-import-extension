@@ -68,6 +68,7 @@ Analyze the video and provide the following:
    - List all people shown.  
    - Use full names if recognized (e.g., Tom Cruise, Angelina Jolie).  
    - If the title/description helps identify someone or clarify their role, mention that.  
+   - People on the video could be author of content mentioned earlier.
    - Otherwise, briefly describe (e.g., "young woman with red hair," "elderly man in uniform") and mention notable actions or roles.
 
 **Format your response in clearly separated, numbered sections as above. Be concise but informative. If any category is not present in the video, write "None."**
