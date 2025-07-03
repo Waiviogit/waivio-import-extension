@@ -119,3 +119,10 @@ export const getInstagramDownloadUrl = async (): Promise<string> => {
   console.log('data', data);
   return data.media[0].url || '';
 };
+
+export const getInstagramDataBlob = async (): Promise<Blob> => {
+  const downloadUrl = await getInstagramDownloadUrl();
+  if (!downloadUrl) throw new Error('Cant get instagram download url');
+  const blob = await fetch(downloadUrl).then((res) => res.blob());
+  return blob;
+};
