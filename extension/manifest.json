@@ -6,7 +6,7 @@
     "default_title": "Parse Waivio Product",
     "default_popup": "./index.html"
   },
-  "permissions": ["activeTab", "tabs", "cookies", "storage"],
+  "permissions": ["activeTab", "tabs", "cookies", "storage", "downloads"],
   "host_permissions": ["<all_urls>"],
   "content_scripts":  [
     {

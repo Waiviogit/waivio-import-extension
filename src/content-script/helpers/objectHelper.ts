@@ -259,7 +259,7 @@ export const generateObjectFromImage = async (
   }
 };
 
-const getIdFromUrl = (url:string) => {
+export const getIdFromUrl = (url:string) => {
   const patterns = [
     // YouTube Shorts: https://www.youtube.com/shorts/ID
     { regex: /youtube\.com\/shorts\/([^?\/]+)/, group: 1 },
@@ -267,6 +267,7 @@ const getIdFromUrl = (url:string) => {
     { regex: /youtube\.com\/watch\?v=([^&]+)/, group: 1 },
     // Instagram post: https://www.instagram.com/p/ID/
     { regex: /instagram\.com\/p\/([^\/]+)/, group: 1 },
+    { regex: /instagram\.com\/reels?\/([^\/]+)/, group: 1 },
     // TikTok video: https://www.tiktok.com/@user/video/ID
     { regex: /tiktok\.com\/@[^\/]+\/video\/(\d+)/, group: 1 },
   ];

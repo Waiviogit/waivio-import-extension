@@ -1,4 +1,5 @@
 import { EXTERNAL_URL } from '../constants';
+import { getInstagramDownloadUrl } from '../downloaders/instagramDownloader';
 
 type responseType = {
     result?: string
@@ -28,7 +29,24 @@ export const getGptAnswer = async (query: string): Promise<responseType> => {
 
 export const videoAnalysesByLink = async (prompt: string, url: string): Promise<responseType> => {
   try {
-    console.log('request sent');
+    if (url.includes('instagram.com')) {
+      const downloadUrl = await getInstagramDownloadUrl();
+      if (!downloadUrl) throw new Error('Cant get instagram download url');
+      const blob = await fetch(downloadUrl).then((res) => res.blob());
+      const formData = new FormData();
+      formData.append('file', blob, 'video.mp4');
+      formData.append('prompt', prompt);
+      formData.append('url', url);
+
+      const response = await fetch(EXTERNAL_URL.WAIVIO_IMPORT_VIDEO_ANALYSES_BLOB, {
+        method: 'POST',
+        body: formData,
+      });
+
+      const responseData = await response.json();
+      return { result: responseData.result };
+    }
+
     const response = await fetch(
       EXTERNAL_URL.WAIVIO_IMPORT_VIDEO_ANALYSES,
       {
