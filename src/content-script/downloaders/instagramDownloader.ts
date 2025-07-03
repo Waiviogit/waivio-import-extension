@@ -1,5 +1,7 @@
 import { getIdFromUrl } from '../helpers/objectHelper';
 
+// https://github.com/HOAIAN2/Instagram-Downloader
+
 const IG_BASE_URL = `${window.location.origin}/`;
 const IG_SHORTCODE_ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_';
 
@@ -103,7 +105,7 @@ const extractMediaData = (item: any): MediaItem => {
 
 export const getInstagramDownloadUrl = async (): Promise<string> => {
   const instagramId = getIdFromUrl(document.URL);
-  console.log('instagramId', instagramId);
+
   const json = await getPostPhotos(instagramId);
   const data: Data = {
     date: json.taken_at,
@@ -116,7 +118,6 @@ export const getInstagramDownloadUrl = async (): Promise<string> => {
   if (json.carousel_media) {
     data.media = json.carousel_media.map((item: any) => extractMediaData(item));
   } else data.media.push(extractMediaData(json));
-  console.log('data', data);
   return data.media[0].url || '';
 };
 
