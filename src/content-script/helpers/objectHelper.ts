@@ -4,6 +4,7 @@ import { downloadToWaivio } from './downloadWaivioHelper';
 import { EXTERNAL_URL } from '../constants';
 import Cookie = chrome.cookies.Cookie;
 import { Product } from '../types/product';
+import { getLinkById } from '../validation';
 
 type userImportResultType = {
     result: boolean
@@ -63,6 +64,11 @@ type createObjectType = {
 type objectForPostType = {
   name: string
   permlink: string
+}
+
+interface WObject {
+  name: string;
+  default_name: string
 }
 
 type validateUserImportType = userImportResultType|importProductErrorType;
@@ -281,10 +287,8 @@ export const getIdFromUrl = (url:string) => {
   return url.replace(/^https?:\/\//, '');
 };
 
-const getRecipeProductId = (name: string) => ([{
+const getRecipeProductId = () => ([{
   key: 'instacart',
-  // value: name.replace(/[.,%?+*|{}[\]()<>“”^'"\\\-_=!&$:]/g, '')
-  //   .replace(/ +/g, '-').trim().toLocaleLowerCase(),
   value: getIdFromUrl(document.URL),
 }]);
 
@@ -382,6 +386,30 @@ const createWaivioObject = async (
   }
 };
 
+const getWaivioObject = async (
+  authorPermlink:string,
+): Promise<WObject|null> => {
+  try {
+    const url = new URL(`${EXTERNAL_URL.WAIVIO_GET_OBJECT}${authorPermlink}`);
+
+    const response = await fetch(
+      url,
+      {
+        method: 'GET',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+      },
+    );
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    return null;
+  }
+};
+
 const createWaivioUpdate = async (
   body: object,
 ): Promise<createWaivioObjectType> => {
@@ -446,6 +474,20 @@ export const createObjectForPost = async (postBody: string)
     alert(`Validate import error: ${validateResponse.error}`);
     return;
   }
+  const productId = getRecipeProductId();
+
+  const existPermlink = await getLinkById(productId[0].value, productId[0].key);
+
+  if (existPermlink) {
+    const wobject = await getWaivioObject(existPermlink);
+    if (wobject) {
+      return {
+        name: wobject.name || wobject.default_name,
+        permlink: existPermlink,
+      };
+    }
+  }
+
   const generationResponse = await generateObjectFromDescription({
     description: postBody,
     user: userName,
@@ -462,7 +504,7 @@ export const createObjectForPost = async (postBody: string)
     return;
   }
   const recipe = generationResponse.result;
-  const productId = getRecipeProductId(recipe.name);
+
   const recipeCreateBody = await getRecipeCreateBody(recipe.name, userName);
 
   const createObjectResponse = await createWaivioObject(recipeCreateBody);

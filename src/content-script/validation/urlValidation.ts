@@ -90,7 +90,7 @@ const idTypeBySource = {
   [SOURCE_TYPES.GOOGLE_MAP]: 'googleMaps',
 };
 
-const getLinkById = async (id: string, idType: string): Promise<string> => {
+export const getLinkById = async (id: string, idType: string): Promise<string> => {
   try {
     const resp = await axios.post(
       EXTERNAL_URL.WAIVIO_PERMLINK_BY_ID,
