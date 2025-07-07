@@ -1,4 +1,4 @@
-import { RECIPE_SOURCE_TYPES } from '../../common/constants';
+import { RECIPE_SOURCE_TYPES, TUTORIAL_SOURCE_TYPES } from '../../common/constants';
 
 const recipeVideoPrompt = (content = '') => `
 You are given the video **title and description** below, which may provide useful context about the video’s content:
@@ -74,7 +74,26 @@ Analyze the video and provide the following:
 **Format your response in clearly separated, numbered sections as above. Be concise but informative. If any category is not present in the video, write "None."**
 `;
 
+const impersonalTutorialVideoPrompt = (content: string) => `
+You are an expert tutorial writer.
+
+You are given a video **title and description** below ${content}. Use this context to create a clear, impersonal tutorial post.
+
+**Requirements:**
+- Start directly with the tutorial title. Do not include any introduction, summary, or commentary before the title.
+- Write step-by-step instructions in the format "Step 1", "Step 2", etc.
+- Do not mention any people by name or refer to personal actions. Focus only on the process.
+- For each step, describe the action to be taken, mentioning any products, brands, or places naturally in the instructions.
+- Bold product names on first use, and add a brand hashtag after the product name (e.g., **Aerial Hammock** #TheMcFiveCircus).
+- Mention the environment/location if relevant (e.g., "in a spacious home with high ceilings").
+- At the end, add two sections:
+  1. **Products Used:** List each product mentioned with its brand tag.
+  2. **Author:** Attribute the tutorial to the original creator or channel as indicated in the title/description (e.g., "#isabellemcfive" or "@TheMcFiveCircus").
+- Do not include timestamps, personal names, or narrative.
+`;
+
 export const createAnalysisVideoPromptBySource = (source:string, content: string): string => {
   if (RECIPE_SOURCE_TYPES.includes(source)) return recipeVideoPrompt(content);
+  if (TUTORIAL_SOURCE_TYPES.includes(source)) return impersonalTutorialVideoPrompt(content);
   return regularVideoPrompt(content);
 };

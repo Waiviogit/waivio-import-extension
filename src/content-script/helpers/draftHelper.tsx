@@ -290,12 +290,15 @@ const draftBySiteHandler = {
   [SOURCE_TYPES.RECIPE_DRAFT_TIKTOK]: getTiktokDraft,
   [SOURCE_TYPES.DRAFT_TIKTOK]: getTiktokDraft,
   [SOURCE_TYPES.TIKTOK]: getTiktokDraft,
+  [SOURCE_TYPES.TUTORIAL_TIKTOK]: getTiktokDraft,
   [SOURCE_TYPES.RECIPE_DRAFT_INSTAGRAM]: getInstagramDraft,
   [SOURCE_TYPES.DRAFT_INSTAGRAM]: getInstagramDraft,
   [SOURCE_TYPES.INSTAGRAM]: getInstagramDraft,
+  [SOURCE_TYPES.TUTORIAL_INSTAGRAM]: getInstagramDraft,
   [SOURCE_TYPES.RECIPE_DRAFT]: getYoutubeDraft,
   [SOURCE_TYPES.DRAFT_YOUTUBE]: getYoutubeDraft,
   [SOURCE_TYPES.YOUTUBE]: getYoutubeDraft,
+  [SOURCE_TYPES.TUTORIAL_YOUTUBE]: getYoutubeDraft,
   default: getYoutubeDraft,
 };
 
@@ -385,6 +388,7 @@ const initialDeepAnalysis = async (source:string): Promise<Draft|null> => {
 };
 
 export const createDraft = async (source:string): Promise<void> => {
+  console.log('createDraft');
   const userInfo = await getWaivioUserInfo();
   if (!userInfo) return;
   const { userName } = userInfo;

@@ -287,6 +287,16 @@ export const youtubeButtonConfig = [
     id: generateUniqueId(),
   },
   {
+    text: BUTTON_TEXT.TUTORIAL_DRAFT,
+    onClick: async (event:Event): Promise<void> => (
+      sendMessageToContentScript(
+        event,
+        PARSE_COMMANDS.CREATE_DRAFT,
+        SOURCE_TYPES.TUTORIAL_YOUTUBE,
+      )),
+    id: generateUniqueId(),
+  },
+  {
     text: BUTTON_TEXT.CREATE_POST,
     onClick: async (event:Event): Promise<void> => (
       sendMessageToContentScript(
@@ -331,6 +341,16 @@ export const instagramButtonConfig = [
     id: generateUniqueId(),
   },
   {
+    text: BUTTON_TEXT.TUTORIAL_DRAFT,
+    onClick: async (event:Event): Promise<void> => (
+      sendMessageToContentScript(
+        event,
+        PARSE_COMMANDS.CREATE_DRAFT,
+        SOURCE_TYPES.TUTORIAL_INSTAGRAM,
+      )),
+    id: generateUniqueId(),
+  },
+  {
     text: BUTTON_TEXT.CREATE_POST,
     onClick: async (event:Event): Promise<void> => (
       sendMessageToContentScript(
@@ -371,6 +391,16 @@ export const tikTokConfig = [
         event,
         PARSE_COMMANDS.CREATE_DRAFT,
         SOURCE_TYPES.RECIPE_DRAFT_TIKTOK,
+      )),
+    id: generateUniqueId(),
+  },
+  {
+    text: BUTTON_TEXT.TUTORIAL_DRAFT,
+    onClick: async (event:Event): Promise<void> => (
+      sendMessageToContentScript(
+        event,
+        PARSE_COMMANDS.CREATE_DRAFT,
+        SOURCE_TYPES.TUTORIAL_TIKTOK,
       )),
     id: generateUniqueId(),
   },
