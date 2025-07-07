@@ -5,7 +5,7 @@ interface TilkyData {
     noWatermark: string
   }
 }
-//https://github.com/MRHRTZ/Tiktok-Scraper-Without-Watermark/blob/main/src/function/index.js
+// https://github.com/MRHRTZ/Tiktok-Scraper-Without-Watermark/blob/main/src/function/index.js
 
 function tiklydown(url: string): Promise<TilkyData> {
   return new Promise((resolve, reject) => {

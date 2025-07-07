@@ -6,12 +6,13 @@ import { getWaivioUserInfo } from './userHelper';
 import { getPostImportHost } from './downloadWaivioHelper';
 import CreatePostModal from '../components/createPostModal';
 import {
-  extractHashtags, formatHashTags, makeValidTag, tikTokInfoHandler,
+  formatHashTags, makeValidTag, tikTokInfoHandler,
 } from './postHelper';
 import { getGptAnswer, videoAnalysesByLink } from './gptHelper';
 import { getTikTokUsername } from './tikTokHelper';
 import { getInstagramDescription, getInstagramUsername } from './instaHelper';
 import { createAnalysisVideoPromptBySource } from './promptHelper';
+import { emitLoadingEvent } from '../emiters/loadingEmitter';
 
 interface createQueryInterface {
     subs: string
@@ -302,27 +303,63 @@ const draftBySiteHandler = {
   default: getYoutubeDraft,
 };
 
-export const getDraftBodyTitleTags = async (source:string, bodyFromEditor?:string): Promise<Draft|null> => {
+export const getDraftBodyTitleTags = async (
+  source: string,
+  bodyFromEditor?: string,
+): Promise<Draft|null> => {
+  emitLoadingEvent('draft-refresh-start', {
+    step: 'Starting draft refresh',
+    message: 'Refreshing draft content...',
+    progress: 0,
+  });
+
   const getBody = source ? draftBySiteHandler[source] : draftBySiteHandler.default;
+
+  emitLoadingEvent('draft-refresh-step', {
+    step: 'Extracting content',
+    message: 'Extracting video content...',
+    progress: 25,
+  });
 
   const {
     title, body, attribution, link, author,
   } = await getBody();
 
   if (!body) {
+    emitLoadingEvent('draft-refresh-error', {
+      step: 'Content extraction failed',
+      message: 'Parsing post body error',
+      progress: 100,
+    });
     alert('Parsing post body error');
     return null;
   }
+
+  emitLoadingEvent('draft-refresh-step', {
+    step: 'Generating content',
+    message: 'Generating new draft content...',
+    progress: 50,
+  });
 
   const query = createQuery({
     subs: bodyFromEditor || `${title} ${body}`, source,
   });
   const { result: postDraft, error } = await getGptAnswer(query);
   if (!postDraft) {
-    // @ts-ignore
-    alert(`Gpt error ${error?.message ?? ''}`);
+    emitLoadingEvent('draft-refresh-error', {
+      step: 'Content generation failed',
+      message: `Gpt error ${(error as Error)?.message ?? ''}`,
+      progress: 100,
+    });
+    alert(`Gpt error ${(error as Error)?.message ?? ''}`);
     return null;
   }
+
+  emitLoadingEvent('draft-refresh-step', {
+    step: 'Formatting content',
+    message: 'Formatting draft content...',
+    progress: 75,
+  });
 
   const draftBody = formatGptAnswer({
     answer: postDraft, link, attribution,
@@ -333,40 +370,104 @@ export const getDraftBodyTitleTags = async (source:string, bodyFromEditor?:strin
 
   const resultBody = await getGptMarkdownFormat(draftBody, source || '');
 
-  return {
+  const result = {
     body: `${resultBody}\n#${authorTag}\n\n`,
     title,
     tags,
   };
+
+  emitLoadingEvent('draft-refresh-complete', {
+    step: 'Draft refresh complete',
+    message: 'Draft content refreshed successfully',
+    progress: 100,
+    data: result,
+  });
+
+  return result;
 };
 
-const initialDeepAnalysis = async (source:string): Promise<Draft|null> => {
+export const initialDeepAnalysis = async (source:string): Promise<Draft|null> => {
+  emitLoadingEvent('deep-analysis-start', {
+    step: 'Starting deep analysis',
+    message: 'Initializing analysis process...',
+    progress: 0,
+  });
+
   const getBody = source ? draftBySiteHandler[source] : draftBySiteHandler.default;
+
+  emitLoadingEvent('deep-analysis-step', {
+    step: 'Extracting content',
+    message: 'Extracting video content and metadata...',
+    progress: 20,
+  });
 
   const {
     title, body, attribution, link, author,
   } = await getBody();
 
+  emitLoadingEvent('deep-analysis-step', {
+    step: 'Content extracted',
+    message: `Found content from ${author || 'unknown author'}`,
+    progress: 40,
+    data: { title, author },
+  });
+
   const content = `${author ? `video author: ${author}` : ''} video description: ${title}${body}`;
 
+  emitLoadingEvent('deep-analysis-step', {
+    step: 'Creating AI prompt',
+    message: 'Preparing AI analysis prompt...',
+    progress: 50,
+  });
+
   const prompt = createAnalysisVideoPromptBySource(source, content);
+
+  emitLoadingEvent('deep-analysis-step', {
+    step: 'AI analysis',
+    message: 'Analyzing content with AI...',
+    progress: 60,
+  });
+
   const response = await videoAnalysesByLink(prompt, document.URL);
+
   if (!body && !response.result) {
+    emitLoadingEvent('deep-analysis-error', {
+      step: 'Analysis failed',
+      message: 'Can\'t process Video',
+      progress: 100,
+    });
     alert('Can\'t process Video');
     return null;
   }
 
+  emitLoadingEvent('deep-analysis-step', {
+    step: 'AI analysis complete',
+    message: 'AI analysis completed successfully',
+    progress: 70,
+    data: response.result,
+  });
+
   let postBody = response.result || body;
 
   if (RECIPE_SOURCE_TYPES.includes(source)) {
+    emitLoadingEvent('deep-analysis-step', {
+      step: 'Recipe processing',
+      message: 'Processing recipe content...',
+      progress: 80,
+    });
+
     const query = createQuery({
       subs: `${title} ${postBody}`, source,
     });
 
     const { result: postDraft, error } = await getGptAnswer(query);
     if (!postDraft) {
-      // @ts-ignore
-      alert(`Gpt error ${error?.message ?? ''}`);
+      emitLoadingEvent('deep-analysis-error', {
+        step: 'Recipe processing failed',
+        message: `Gpt error ${(error as Error)?.message ?? ''}`,
+        progress: 100,
+      });
+      alert(`Gpt error ${(error as Error)?.message ?? ''}`);
       return null;
     }
 
@@ -377,26 +478,35 @@ const initialDeepAnalysis = async (source:string): Promise<Draft|null> => {
     postBody = await getGptMarkdownFormat(formattedText, source || '');
   }
 
+  emitLoadingEvent('deep-analysis-step', {
+    step: 'Finalizing',
+    message: 'Finalizing post content...',
+    progress: 90,
+  });
+
   const tags = formatHashTags(postBody, author);
   const authorTag = makeValidTag(author);
 
-  return {
+  const result = {
     body: `${postBody}\n#${authorTag}\n\n`,
     title,
     tags,
   };
+
+  emitLoadingEvent('deep-analysis-complete', {
+    step: 'Analysis complete',
+    message: 'Deep analysis completed successfully',
+    progress: 100,
+    data: result,
+  });
+
+  return result;
 };
 
-export const createDraft = async (source:string): Promise<void> => {
-  console.log('createDraft');
+export const createUnifiedModal = async (source: string, commandType: string): Promise<void> => {
   const userInfo = await getWaivioUserInfo();
   if (!userInfo) return;
   const { userName } = userInfo;
-
-  const draftData = await initialDeepAnalysis(source);
-
-  if (!draftData) return;
-  const { body, title, tags } = draftData;
 
   const host = await getPostImportHost(userName) || 'www.waivio.com';
 
@@ -406,15 +516,18 @@ export const createDraft = async (source:string): Promise<void> => {
   const rootModal = ReactDOM.createRoot(rootElement);
 
   rootModal.render(
-      // @ts-ignore
-      <CreatePostModal
-          title={title}
-          body={body}
-          tags={tags}
-          author={userName}
-          host={host}
-          source={source}
-      >
-      </CreatePostModal>,
+    <CreatePostModal
+      title=""
+      body=""
+      tags={[]}
+      author={userName}
+      host={host}
+      source={source}
+      commandType={commandType}
+    />,
   );
+};
+
+export const createDraft = async (source: string): Promise<void> => {
+  await createUnifiedModal(source, 'CREATE_DRAFT');
 };

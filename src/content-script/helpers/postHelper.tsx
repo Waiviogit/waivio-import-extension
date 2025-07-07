@@ -1,14 +1,9 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import CreatePostModal from '../components/createPostModal';
 import { SOURCE_TYPES } from '../../common/constants';
 import {
-  extractVideoId, fetchVideoContent, getChanelURL, getTitleAndBody,
+  extractVideoId, fetchVideoContent,  getTitleAndBody,
 } from './youtubeHelper';
-import { getWaivioUserInfo } from './userHelper';
 import { fetchTiktok, getTikTokDesc, getTikTokUsername } from './tikTokHelper';
-import { getPostImportHost } from './downloadWaivioHelper';
-import { Draft, extractInstagramVideoId } from './draftHelper';
+import { Draft, extractInstagramVideoId, createUnifiedModal } from './draftHelper';
 import { getInstagramDescription, getInstagramUsername } from './instaHelper';
 
 type parsedPostType = {
@@ -125,37 +120,7 @@ export const extractPostInfo = async (source: string): Promise<Draft|null> => {
   };
 };
 
-export const createPost = async (source?:string): Promise<void> => {
+export const createPost = async (source?: string): Promise<void> => {
   if (!source) return;
-
-  const draft = await extractPostInfo(source);
-  if (!draft) return;
-
-  const { body, title, tags } = draft;
-
-  const rootElement = document.createElement('div');
-  rootElement.id = 'react-chrome-modal';
-  document.body.appendChild(rootElement);
-  const rootModal = ReactDOM.createRoot(rootElement);
-
-  const userInfo = await getWaivioUserInfo();
-  if (!userInfo) return;
-  const {
-    userName,
-  } = userInfo;
-
-  const host = await getPostImportHost(userName) || 'www.waivio.com';
-
-  rootModal.render(
-        // @ts-ignore
-        <CreatePostModal
-            author={userName}
-            title={title}
-            body={body}
-            tags={tags}
-            host={host}
-            source={source}
-        >
-        </CreatePostModal>,
-  );
+  await createUnifiedModal(source, 'CREATE_POST');
 };
