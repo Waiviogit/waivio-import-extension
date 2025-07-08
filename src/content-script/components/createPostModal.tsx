@@ -282,6 +282,7 @@ const CreatePostModal = ({
               percent={analysisProgress}
               status={analysisProgress === 100 ? 'success' : 'active'}
               format={() => `${analysisStep}`}
+              strokeColor="#f87007"
             />
             {analysisMessage && (
               <div style={{ fontSize: '12px', color: '#666', marginTop: '5px' }}>
