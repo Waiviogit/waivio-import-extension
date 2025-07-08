@@ -178,9 +178,12 @@ const validateTiktok = (url: string):boolean => {
 const draftValidation = {
   [SOURCE_TYPES.RECIPE_DRAFT_TIKTOK]: validateTiktok,
   [SOURCE_TYPES.DRAFT_TIKTOK]: validateTiktok,
+  [SOURCE_TYPES.TUTORIAL_TIKTOK]: validateTiktok,
   [SOURCE_TYPES.DRAFT_INSTAGRAM]: isValidInstagramUrl,
   [SOURCE_TYPES.RECIPE_DRAFT_INSTAGRAM]: isValidInstagramUrl,
+  [SOURCE_TYPES.TUTORIAL_INSTAGRAM]: isValidInstagramUrl,
   [SOURCE_TYPES.RECIPE_DRAFT]: validatePageForYoutube,
+  [SOURCE_TYPES.TUTORIAL_YOUTUBE]: validatePageForYoutube,
   default: validatePageForYoutube,
 };
 
