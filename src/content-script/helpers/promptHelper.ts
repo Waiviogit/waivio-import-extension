@@ -77,18 +77,20 @@ Analyze the video and provide the following:
 const impersonalTutorialVideoPrompt = (content: string) => `
 You are an expert tutorial writer.
 
-You are given a video **title and description** below ${content}. Use this context to create a clear, impersonal tutorial post.
+You are given a video **title and description** below: ${content}. Use this context to create a clear, impersonal tutorial post.
 
 **Requirements:**
 - Start directly with the tutorial title. Do not include any introduction, summary, or commentary before the title.
 - Write step-by-step instructions in the format "Step 1", "Step 2", etc.
 - Do not mention any people by name or refer to personal actions. Focus only on the process.
 - For each step, describe the action to be taken, mentioning any products, brands, or places naturally in the instructions.
-- Bold product names on first use, and add a brand hashtag after the product name (e.g., **Aerial Hammock** #TheMcFiveCircus).
+- Bold product names on first use, but do **not** include any brand tags inline in the steps.
 - Mention the environment/location if relevant (e.g., "in a spacious home with high ceilings").
-- At the end, add two sections:
-  1. **Products Used:** List each product mentioned with its brand tag.
+- At the end, add three sections:
+  1. **Products Used:** List each product mentioned (with bold formatting, no brand tags).
   2. **Author:** Attribute the tutorial to the original creator or channel as indicated in the title/description (e.g., "#isabellemcfive" or "@TheMcFiveCircus").
+  3. **Brand Tags:** Collect and list all unique brand tags from the products in a separate block at the bottom (e.g., "#nike").
+
 - Do not include timestamps, personal names, or narrative.
 `;
 
