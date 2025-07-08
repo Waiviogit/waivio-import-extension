@@ -32,6 +32,10 @@ const WaivioTags = ({ setParentTags, initialTags }: waivioTagsProps) => {
   }, [tags, setParentTags]);
 
   useEffect(() => {
+    setTags(initialTags);
+  }, [initialTags]);
+
+  useEffect(() => {
     if (inputVisible) {
       inputRef.current?.focus();
     }

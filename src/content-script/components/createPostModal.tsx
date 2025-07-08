@@ -299,7 +299,7 @@ const CreatePostModal = ({
         />
         <WaivioTags
           setParentTags={setTags}
-          initialTags={tags}
+          initialTags={postTags}
         />
       </DraggableModal>
     </ConfigProvider>
