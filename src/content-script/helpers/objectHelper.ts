@@ -68,7 +68,15 @@ type objectForPostType = {
 
 interface WObject {
   name: string;
-  default_name: string
+  default_name: string;
+  departments?: {body:string}[];
+  description?: string;
+  calories?: string;
+  cookingTime?: string;
+  budget?: string;
+  recipeIngredients?: string;
+  nutrition?: string;
+  avatar?: string;
 }
 
 type validateUserImportType = userImportResultType|importProductErrorType;
@@ -449,6 +457,14 @@ const getUpdateBody = ({
   field,
 });
 
+const parseJsonStringArray = (str: string):string[] => {
+  try {
+    return JSON.parse(str) as string[];
+  } catch (error) {
+    return [];
+  }
+};
+
 /**
  * 1 validate user import
  * 2 create gpt object from description
@@ -481,6 +497,25 @@ export const createObjectForPost = async (postBody: string)
   if (existPermlink) {
     const wobject = await getWaivioObject(existPermlink);
     if (wobject) {
+      // recreate object field (to get like on each update)
+      if (window.confirm('This object already exists on Waivio. Do you want to proceed with uploading?')) {
+        await downloadToWaivio({
+          object: {
+            name: wobject.name || wobject.default_name,
+            categories: (wobject?.departments || []).map((el) => el.body),
+            fieldDescription: wobject?.description,
+            fieldCalories: wobject?.calories,
+            fieldCookingTime: wobject?.cookingTime,
+            fieldBudget: wobject?.budget,
+            fieldRecipeIngredients: parseJsonStringArray(wobject?.recipeIngredients || ''),
+            fieldNutrition: wobject?.nutrition,
+            ...wobject.avatar && { primaryImageURLs: [wobject?.avatar] },
+            waivio_product_ids: productId,
+          },
+          objectType: 'recipe',
+        });
+      }
+
       return {
         name: wobject.name || wobject.default_name,
         permlink: existPermlink,
