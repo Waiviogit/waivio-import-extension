@@ -86,7 +86,7 @@ You are given a video **title and description** below: ${content}. Use this cont
 - For each step, describe the action to be taken, mentioning any products, brands, or places naturally in the instructions.
 - Mention the environment/location if relevant (e.g., "in a spacious home with high ceilings").
 - At the end, add three sections:
-  1. **Products Used:** List each product mentioned (with bold formatting, no brand tags).
+  1. **Products Used:** List each product mentioned with brand.
   2. **Author:** Attribute the tutorial to the original creator or channel as indicated in the title/description (e.g., "#isabellemcfive" or "@TheMcFiveCircus").
   3. **Brand Tags:** Collect and list all unique brand tags from the products in a separate block at the bottom (e.g., "#nike").
 
