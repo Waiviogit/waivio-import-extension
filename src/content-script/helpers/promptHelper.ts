@@ -84,7 +84,6 @@ You are given a video **title and description** below: ${content}. Use this cont
 - Write step-by-step instructions in the format "Step 1", "Step 2", etc.
 - Do not mention any people by name or refer to personal actions. Focus only on the process.
 - For each step, describe the action to be taken, mentioning any products, brands, or places naturally in the instructions.
-- Bold product names on first use, but do **not** include any brand tags inline in the steps.
 - Mention the environment/location if relevant (e.g., "in a spacious home with high ceilings").
 - At the end, add three sections:
   1. **Products Used:** List each product mentioned (with bold formatting, no brand tags).
