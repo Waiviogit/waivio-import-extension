@@ -98,3 +98,22 @@ export const createAnalysisVideoPromptBySource = (source:string, content: string
   if (TUTORIAL_SOURCE_TYPES.includes(source)) return impersonalTutorialVideoPrompt(content);
   return regularVideoPrompt(content);
 };
+
+export const formatTutorialPrompt = (context: string) => `
+You are an expert tutorial writer.
+
+You are given context: ${context}. Use this context to create a clear, impersonal tutorial post.
+
+**Requirements:**
+- Start directly with the tutorial title. Do not include any introduction, summary, or commentary before the title.
+- Write step-by-step instructions in the format "Step 1", "Step 2", etc.
+- Do not mention any people by name or refer to personal actions. Focus only on the process.
+- For each step, describe the action to be taken, mentioning any products, brands, or places naturally in the instructions.
+- Mention the environment/location if relevant (e.g., "in a spacious home with high ceilings").
+- At the end, add three sections:
+  1. **Products Used:** List each product mentioned with brand.
+  2. **Author:** Attribute the tutorial to the original creator or channel as indicated in the title/description (e.g., "#isabellemcfive" or "@TheMcFiveCircus").
+  3. **Brand Tags:** Collect and list all unique brand tags from the products in a separate block at the bottom (e.g., "#nike").
+
+- Do not include timestamps, personal names, or narrative.
+`;

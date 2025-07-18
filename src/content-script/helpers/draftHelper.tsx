@@ -11,7 +11,7 @@ import {
 import { getGptAnswer, videoAnalysesByLink } from './gptHelper';
 import { getTikTokUsername } from './tikTokHelper';
 import { getInstagramDescription, getInstagramUsername } from './instaHelper';
-import { createAnalysisVideoPromptBySource } from './promptHelper';
+import { createAnalysisVideoPromptBySource, formatTutorialPrompt } from './promptHelper';
 import { emitLoadingEvent } from '../emiters/loadingEmitter';
 
 interface createQueryInterface {
@@ -448,6 +448,16 @@ export const initialDeepAnalysis = async (source:string): Promise<Draft|null> =>
   });
 
   let postBody = response.result || body;
+
+  if ([SOURCE_TYPES.TUTORIAL_INSTAGRAM, SOURCE_TYPES.TUTORIAL_TIKTOK].includes(source)) {
+    emitLoadingEvent('deep-analysis-step', {
+      step: 'Additional tutorial processing',
+      message: 'Formating video analyses response...',
+      progress: 80,
+    });
+    const { result: formattedResponse } = await getGptAnswer(formatTutorialPrompt(postBody));
+    if (formattedResponse) postBody = formattedResponse;
+  }
 
   if (RECIPE_SOURCE_TYPES.includes(source)) {
     emitLoadingEvent('deep-analysis-step', {
