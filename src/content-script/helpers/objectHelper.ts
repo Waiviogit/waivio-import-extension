@@ -281,6 +281,9 @@ export const getIdFromUrl = (url:string) => {
     { regex: /youtube\.com\/watch\?v=([^&]+)/, group: 1 },
     // Instagram post: https://www.instagram.com/p/ID/
     { regex: /instagram\.com\/p\/([^\/]+)/, group: 1 },
+    // Instagram reel with username: https://www.instagram.com/{username}/reel/ID/
+    { regex: /instagram\.com\/[^\/]+\/reel\/([^\/]+)/, group: 1 },
+    // Instagram reel or reels: https://www.instagram.com/reels/ID/ or /reel/ID/
     { regex: /instagram\.com\/reels?\/([^\/]+)/, group: 1 },
     // TikTok video: https://www.tiktok.com/@user/video/ID
     { regex: /tiktok\.com\/@[^\/]+\/video\/(\d+)/, group: 1 },
