@@ -6,39 +6,42 @@ You are given the video **title and description** below, which may provide usefu
 ${content}
 ---
 
-Analyze the provided cooking video thoroughly and extract as much information as possible the following. Include the following details:
-
+Analyze the provided cooking video thoroughly and extract as much information as possible in the following categories. For each, follow the specific instructions:
 
 1. Recipe Overview:
-Brief description or gist of the recipe.
+- Briefly describe the recipe.
+- State the type of cuisine and dish category (e.g., appetizer, main course, dessert).
 
-Type of cuisine and dish category (e.g., appetizer, main course, dessert).
+2. Key Ingredients and Brands:
+- List **all main ingredients** mentioned or visually shown, including quantities and measurements.
+- **For each ingredient, identify the brand or specific product shown, if visible or mentioned.**
 
-2. Key Ingredients:
-List all the main ingredients mentioned, including quantities and measurements.
+3. Equipment and Brands:
+- List **all cooking equipment, tools, or appliances** used or shown in the video.
+- **Specify the brand or model** for each, if it is visible, mentioned, or can be reasonably identified.
 
-3. Nutrition facts per serving:
-Calories, Proteins, fats and carbohydrates per serving.
+4. Nutrition Facts per Serving:
+- Provide calories, proteins, fats, and carbohydrates per serving.
 
-4. Preparation Time:
-Total preparation time mentioned or inferred from the video.
+5. Preparation Time:
+- State the total preparation time mentioned or inferred from the video.
+- Specify cooking and resting times separately, if applicable.
 
-Cooking and resting times separately, if applicable.
+6. Cooking Instructions:
+- Provide step-by-step cooking instructions in chronological order, clearly indicating each action taken.
 
-5. Cooking Instructions:
-Provide step-by-step cooking instructions in chronological order, clearly indicating each action taken.
+7. Special Techniques or Tips:
+- Highlight any special cooking techniques, chef's tips, or important notes mentioned.
 
-6. Special Techniques or Tips:
-Highlight any special cooking techniques, chef's tips, or important notes mentioned in the video.
+8. Serving Suggestions:
+- Describe recommended serving methods, garnishes, side dishes, or beverages suggested.
 
-7. Serving Suggestions:
-Describe recommended serving methods, garnishes, side dishes, or beverages suggested.
+9. Visual Observations:
+- Note any important visual cues, such as color or texture changes indicating the readiness of the dish.
 
-8. Visual Observations:
-Note any important visual cues, such as color or texture changes indicating the readiness of the dish.
+Ensure the information is clearly structured under each heading, and do **not** use phrases like “here's your answer” or repeat the assignment wording in your response.
+`;
 
-Provide the information clearly structured and organized under each heading. 
-Don't use phrases like “here's your answer” in your answer, don't repeat the assignment.`;
 
 const regularVideoPrompt = (content: string) => `
 You are an expert media analyst.

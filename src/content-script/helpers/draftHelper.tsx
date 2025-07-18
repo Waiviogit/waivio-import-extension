@@ -57,25 +57,27 @@ At the very end, add 3–5 relevant hashtags (one word, all lowercase, no specia
 If the original text is not in English, translate it into fluent English. 
 Here is the content to work with: ${subs}`;
 
-  const recipeQuery = `act as professional chef:
-  create a recipe from content I'll give you. Focus on the recipe itself and follow these steps:
-  - Create a title for the recipe.
-  - Write a short introduction.
-  - Provide a list of ingredients, each ingredient start with new line and corresponding emoji e.g. 🥚 2 eggs\n🫒 1 teaspoon olive oil.
-  - Write detailed instructions on how to cook the recipe.
-  - If it's relevant to the context of the recipe, add  
-    Prep Time: How long it takes to prepare the ingredients; 
-    Cook Time: How long it takes to cook or bake.
-    Total Time: Combined prep and cook times; 
-    Equipment; 
-    Cooking Tips; 
-    Servings;
-    Calories;
-    Proteins, fats and carbohydrates per serving.
-  - Add hashtags (composed of one word in lowercase) at the very end.
+  const recipeQuery = `act as a professional chef:
+create a recipe from the content I'll give you. Focus on the recipe itself and follow these steps:
+- Create a title for the recipe.
+- Write a short introduction.
+- Provide a list of ingredients; each ingredient should start on a new line and include a corresponding emoji (e.g. 🥚 2 eggs, 🫒 1 teaspoon olive oil).
+  - For every ingredient, **identify and specify the brand or product name if it is visible, mentioned, or can be reasonably determined from the content.**
+- Write detailed instructions on how to cook the recipe.
+- If relevant to the context of the recipe, also include:
+  Prep Time: How long it takes to prepare the ingredients;
+  Cook Time: How long it takes to cook or bake;
+  Total Time: Combined prep and cook times;
+  Equipment: List all equipment, tools, or appliances used or shown in the recipe.
+    - **Specify the brand or model of each piece of equipment if it is visible, mentioned, or can be reasonably determined.**
+  Cooking Tips;
+  Servings;
+  Calories;
+  Proteins, fats, and carbohydrates per serving.
+- Add hashtags (composed of one word in lowercase) at the very end.
 
-  If the following text is in a language other than English, translate it into English. content: ${subs}"
-  `;
+If the following text is in a language other than English, translate it into English. content: ${subs}
+`;
 
   const querySet = {
     [SOURCE_TYPES.RECIPE_DRAFT]: recipeQuery,
@@ -177,19 +179,21 @@ const getInstagramDraft = async (): Promise<BodyTitleType> => {
 const getGptMarkdownFormat = async (body: string, source: string):Promise<string> => {
   if (!RECIPE_SOURCE_TYPES.includes(source)) return body;
 
-  const query = `I have a recipe post that need formatting in Markdown. Please format recipe following these detailed guidelines:
+  const query = `I have a recipe post that needs formatting in Markdown. Please format the recipe following these detailed guidelines:
+
 1. **Introduction:**
    - Begin with a brief introduction about the recipe, describing its essence and unique attributes.
 
 2. **YouTube Link:**
-   - Include the YouTube link without formating  immediately after the introduction.
+   - Include the YouTube link without formatting immediately after the introduction.
 
 3. **Ingredients Section:**
    - Use a heading for the Ingredients section.
    - List each ingredient starting with an emoji, followed by the quantity and description, without bullet points.
+   - **For every ingredient, include the brand or specific product name if it is shown, mentioned, or can be reasonably identified.**
    - Ensure there is a separator line (\`---\`) after the Ingredients section.
    - Do not use parentheses for any information (such as quantity, preparation, or optional).
-   - Do not use phrases like "amount as needed" or "to taste" try to come up with precise quantity
+   - Do not use phrases like "amount as needed" or "to taste"—try to provide a precise quantity.
 
 4. **Instructions Section:**
    - Use a heading for the Instructions section.
@@ -199,7 +203,8 @@ const getGptMarkdownFormat = async (body: string, source: string):Promise<string
    - Use bullet points for each sub-step to enhance clarity and readability.
 
 5. **Time, Servings, and Equipment Section:**
-   - Combine the Prep Time, Cook Time, Total Time, Servings ,Calories, Proteins, fats and carbohydrates per serving, and Equipment into one section.
+   - Combine Prep Time, Cook Time, Total Time, Servings, Calories, Proteins, fats, and carbohydrates per serving, and Equipment into one section.
+   - **For every piece of equipment, tool, or appliance, include the brand or model if it is shown, mentioned, or can be reasonably identified.**
    - Ensure no separator lines break this combined section.
 
 6. **Cooking Tips:**
@@ -216,7 +221,7 @@ This is the Example Format in markdown:
 [YouTube link]
 
 #### Ingredients
-[Emoji] [Quantity] [Ingredient Description]  
+[Emoji] [Quantity] [Ingredient Description, **including brand if shown or mentioned**]  
 [Continue listing ingredients]
 
 ---
@@ -236,7 +241,7 @@ This is the Example Format in markdown:
 **Cook Time:** [Time]  
 **Total Time:** [Time]  
 **Servings:** [Number of servings]  
-**Equipment:** [List of equipment]  
+**Equipment:** [List of equipment, **including brand or model if shown or mentioned**]  
 
 ---
 
@@ -252,10 +257,9 @@ This is the Example Format in markdown:
 
 YouTube channel - [Channel Name]: [YouTube URL]
 
-
 ---
 
-I will give you the recipe next and you give me the edited text in markdown so I can copy and paste it-
+I will give you the recipe next and you give me the edited text in markdown so I can copy and paste it.
 Remember to put a separator after the instructions section and another separator before cooking tips.
 Please ensure the final output is in Markdown that can be copied and pasted directly, and do not use triple backticks or any wrapping code blocks.
 ${body}
