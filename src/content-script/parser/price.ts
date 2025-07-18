@@ -68,11 +68,40 @@ const priceFromSeparateSpan = (): priceType => {
   return price;
 };
 
+const extractAmountAndCurrency = (str: string) => {
+  // Sort prefixes by length (desc) to avoid partial matches
+  const prefixes = Object.keys(CURRENCY_PREFIX)
+    .filter((k) => k !== 'default')
+    .sort((a, b) => b.length - a.length);
+
+  // Try to match any known currency prefix and extract the amount after it
+  for (const prefix of prefixes) {
+    // Escape prefix for regex if needed
+    const escaped = prefix.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, '\\$1');
+    // Try to match prefix followed by optional space(s) and an amount
+    const re = new RegExp(`${escaped}\\s*([\\d,.]+)`);
+    const match = str.match(re);
+    if (match) {
+      return {
+        mostRecentPriceAmount: parseFloat(match[1].replace(/,/g, '')).toString(),
+        mostRecentPriceCurrency: CURRENCY_PREFIX[prefix as keyof typeof CURRENCY_PREFIX],
+      };
+    }
+  }
+
+  return {
+    mostRecentPriceCurrency: '', mostRecentPriceAmount: '',
+  };
+};
+
 export const getPriceAmazon = (): priceType => {
   const price = {
     mostRecentPriceCurrency: '',
     mostRecentPriceAmount: '',
   };
+  const newPriceSelector = document.querySelector<HTMLElement>('span #_price')?.innerText || '';
+  if (newPriceSelector) return extractAmountAndCurrency(newPriceSelector);
+
   const priceElement = document.querySelector<HTMLElement>(PRICE_SELECTOR.AMAZON);
   if (!priceElement) return priceFromSeparateSpan();
   const prefix = extractCurrency(priceElement.innerText) as keyof typeof CURRENCY_PREFIX;
