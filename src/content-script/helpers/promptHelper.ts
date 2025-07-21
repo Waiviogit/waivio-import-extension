@@ -42,7 +42,6 @@ Analyze the provided cooking video thoroughly and extract as much information as
 Ensure the information is clearly structured under each heading, and do **not** use phrases like “here's your answer” or repeat the assignment wording in your response.
 `;
 
-
 const regularVideoPrompt = (content: string) => `
 You are an expert media analyst.
 
@@ -78,6 +77,7 @@ Analyze the video and provide the following:
 `;
 
 const impersonalTutorialVideoPrompt = (content: string) => `
+I have a video that needs content analysis. 
 You are an expert tutorial writer.
 
 You are given a video **title and description** below: ${content}. Use this context to create a clear, impersonal tutorial post.
