@@ -95,12 +95,15 @@ const postInfoHandler = {
   [SOURCE_TYPES.YOUTUBE]: youtubeInfoHandler,
   [SOURCE_TYPES.DRAFT_YOUTUBE]: youtubeInfoHandler,
   [SOURCE_TYPES.RECIPE_DRAFT]: youtubeInfoHandler,
+  [SOURCE_TYPES.TUTORIAL_YOUTUBE]: youtubeInfoHandler,
   [SOURCE_TYPES.TIKTOK]: tikTokInfoHandler,
   [SOURCE_TYPES.DRAFT_TIKTOK]: tikTokInfoHandler,
   [SOURCE_TYPES.RECIPE_DRAFT_TIKTOK]: tikTokInfoHandler,
+  [SOURCE_TYPES.TUTORIAL_TIKTOK]: tikTokInfoHandler,
   [SOURCE_TYPES.INSTAGRAM]: instInfoHandler,
   [SOURCE_TYPES.DRAFT_INSTAGRAM]: instInfoHandler,
   [SOURCE_TYPES.RECIPE_DRAFT_INSTAGRAM]: instInfoHandler,
+  [SOURCE_TYPES.TUTORIAL_INSTAGRAM]: instInfoHandler,
 };
 
 export const extractPostInfo = async (source: string): Promise<Draft|null> => {
