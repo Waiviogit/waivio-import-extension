@@ -7,7 +7,7 @@ export const getInstagramDescription = (): string => {
     if (item.innerText) return item.innerText;
   }
 
-  const elements = Array.from(document.querySelectorAll<HTMLElement>('span[dir="auto"]')).slice(0, 10);
+  const elements = Array.from(document.querySelectorAll<HTMLElement>('span[dir="auto"]')).slice(4, 10);
 
   let content = '';
 
