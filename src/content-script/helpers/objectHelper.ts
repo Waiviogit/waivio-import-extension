@@ -598,6 +598,7 @@ export const createObjectForPost = async (postBody: string)
     object: {
       ...recipe,
       waivio_product_ids: productId,
+      recipeUrl: document.URL,
     },
     objectType: 'recipe',
   });
