@@ -5,6 +5,9 @@ import { EXTERNAL_URL } from '../constants';
 import Cookie = chrome.cookies.Cookie;
 import { Product } from '../types/product';
 import { getLinkById } from '../validation';
+import { getYoutubeThumbnail } from '../downloaders/youtubeDownloader';
+import { getInstagramThumbnail } from '../downloaders/instagramDownloader';
+import { getTicktockThumbnail } from '../downloaders/tikTokDownloader';
 
 type userImportResultType = {
     result: boolean
@@ -468,6 +471,23 @@ const parseJsonStringArray = (str: string):string[] => {
   }
 };
 
+export const getRecipeUrl = async () => {
+  const url = document.URL;
+  if (url.includes('youtube.com')) {
+    return getYoutubeThumbnail();
+  }
+
+  if (url.includes('instagram.com')) {
+    return getInstagramThumbnail();
+  }
+
+  if (url.includes('tiktok.com')) {
+    return getTicktockThumbnail();
+  }
+
+  return '';
+};
+
 /**
  * 1 validate user import
  * 2 create gpt object from description
@@ -594,11 +614,13 @@ export const createObjectForPost = async (postBody: string)
     alert(`socket subscribeTransactionId create update error ${createUpdateResponse.result.transactionId}`);
     return;
   }
+
+  const recipeUrl = await getRecipeUrl();
   await downloadToWaivio({
     object: {
       ...recipe,
       waivio_product_ids: productId,
-      recipeUrl: document.URL,
+      ...(recipeUrl && { recipeUrl }),
     },
     objectType: 'recipe',
   });

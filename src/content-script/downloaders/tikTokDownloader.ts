@@ -27,3 +27,15 @@ export const getTiktokDataBlob = async (): Promise<Blob> => {
   const blob = await fetch(downloadUrl).then((res) => res.blob());
   return blob;
 };
+
+export const getTicktockThumbnail = async (): Promise<string> => {
+  try {
+    const oembedUrl = `https://www.tiktok.com/oembed?url=${encodeURIComponent(document.URL)}`;
+    const response = await fetch(oembedUrl);
+    const data = await response.json();
+    return data.thumbnail_url || '';
+  } catch (error) {
+    console.error('Error fetching TikTok thumbnail:', error);
+    return '';
+  }
+};
