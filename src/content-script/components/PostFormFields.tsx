@@ -1,5 +1,6 @@
 import React from 'react';
 import { Input, Popover, Progress } from 'antd';
+import { Z_INDEX } from '../constants/styles';
 
 interface PostFormFieldsProps {
   author: string;
@@ -31,7 +32,7 @@ export const PostFormFields: React.FC<PostFormFieldsProps> = ({
   <>
     <Popover
       content={'Author of the post. Change by signing in to Waivio with different account.'}
-      styles={{ root: { zIndex: 9999 } }}
+      styles={{ root: { zIndex: Z_INDEX.TOOLTIP } }}
     >
       <Input
         value={author}
@@ -41,7 +42,7 @@ export const PostFormFields: React.FC<PostFormFieldsProps> = ({
 
     <Popover
       content={'Domain associated with a post, establishing it as its canonical source. Can be changed on Waivio.'}
-      styles={{ root: { zIndex: 9999 } }}
+      styles={{ root: { zIndex: Z_INDEX.TOOLTIP } }}
     >
       <Input
         value={host}

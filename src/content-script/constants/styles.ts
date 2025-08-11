@@ -32,6 +32,14 @@ export const MODAL_STYLES = {
   },
 };
 
+export const Z_INDEX = {
+  BASE: 1000,
+  MODAL: 9999,
+  UPLOAD_MODAL: 10000,
+  IMAGE_PREVIEW: 10001,
+  TOOLTIP: 9999,
+} as const;
+
 export const THEME_CONFIG = {
   token: {
     colorPrimary: '#f87007',

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { ConfigProvider, Modal, Button } from 'antd';
+import { Z_INDEX } from '../constants/styles';
 
 interface alertObjectProps {
     url: string,
@@ -41,7 +42,7 @@ const AlertObjectModal = ({ url }: alertObjectProps) => {
                     // cancelText="Cancel"
                     footer={null}
                     style={{ textAlign: 'center' }}
-                    zIndex={9999999}
+                    zIndex={Z_INDEX.IMAGE_PREVIEW}
                 >
                     <div>
                         <p style={{ fontWeight: 'bold', marginTop: '15px' }}>

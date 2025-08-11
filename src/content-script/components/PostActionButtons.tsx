@@ -2,6 +2,7 @@ import React from 'react';
 import { Button, Tooltip } from 'antd';
 import { ReloadOutlined, VideoCameraAddOutlined, PlusOutlined } from '@ant-design/icons';
 import { SOURCE_TYPES } from '../../common/constants';
+import { Z_INDEX } from '../constants/styles';
 
 interface PostActionButtonsProps {
   source: string;
@@ -38,7 +39,7 @@ export const PostActionButtons: React.FC<PostActionButtonsProps> = ({
     <>
       {isRecipeSource && (
         <>
-          <Tooltip title="Upload image from disk or clipboard" zIndex={9999}>
+          <Tooltip title="Upload image from disk or clipboard" zIndex={Z_INDEX.TOOLTIP}>
             <Button
               icon={<PlusOutlined />}
               onClick={onImageUpload}
@@ -54,7 +55,7 @@ export const PostActionButtons: React.FC<PostActionButtonsProps> = ({
         </>
       )}
 
-      <Tooltip title="Analyze video content with AI" zIndex={9999}>
+              <Tooltip title="Analyze video content with AI" zIndex={Z_INDEX.TOOLTIP}>
         <Button
           icon={<VideoCameraAddOutlined />}
           onClick={onAnalysis}
@@ -62,7 +63,7 @@ export const PostActionButtons: React.FC<PostActionButtonsProps> = ({
         />
       </Tooltip>
 
-      <Tooltip title="Regenerate draft" zIndex={9999}>
+              <Tooltip title="Regenerate draft" zIndex={Z_INDEX.TOOLTIP}>
         <Button
           icon={<ReloadOutlined />}
           onClick={onRefreshGpt}

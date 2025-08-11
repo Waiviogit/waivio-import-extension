@@ -3,6 +3,7 @@ import {
   Modal, Button, Input, message, Tabs,
 } from 'antd';
 import { UploadOutlined, LinkOutlined, CopyOutlined } from '@ant-design/icons';
+import { Z_INDEX } from '../constants/styles';
 
 const { TabPane } = Tabs;
 
@@ -110,7 +111,7 @@ export const ImageUploadModal: React.FC<ImageUploadModalProps> = ({
       footer={null}
       width={500}
       destroyOnClose
-      zIndex={10000}
+      zIndex={Z_INDEX.UPLOAD_MODAL}
     >
       <Tabs defaultActiveKey="file">
         <TabPane tab="Upload File" key="file">

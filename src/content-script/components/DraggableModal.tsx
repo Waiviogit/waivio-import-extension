@@ -2,7 +2,7 @@ import React, { useState, useRef } from 'react';
 import Draggable from 'react-draggable';
 import { Button } from 'antd';
 import { CloseOutlined } from '@ant-design/icons';
-import { MODAL_STYLES } from '../constants/styles';
+import { MODAL_STYLES, Z_INDEX } from '../constants/styles';
 
 interface DraggableModalProps {
     title: string;
@@ -62,7 +62,7 @@ export const DraggableModal: React.FC<DraggableModalProps> = ({
                 borderRadius: '8px',
                 top: '1%',
                 left: '30%',
-                zIndex: 9999,
+                zIndex: Z_INDEX.MODAL,
                 boxShadow: '0 4px 12px rgba(0,0,0,.15)',
                 pointerEvents: 'auto',
               }}
