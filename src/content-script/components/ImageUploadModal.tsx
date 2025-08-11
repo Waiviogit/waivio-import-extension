@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import {
-  Modal, Button, Input, Upload, message, Tabs,
+  Modal, Button, Input, message, Tabs,
 } from 'antd';
 import { UploadOutlined, LinkOutlined, CopyOutlined } from '@ant-design/icons';
 
@@ -42,7 +42,7 @@ export const ImageUploadModal: React.FC<ImageUploadModalProps> = ({
     }
   };
 
-  const handleUrlSubmit = () => {
+  const handleUrlSubmit = async () => {
     if (!imageUrl.trim()) {
       message.error('Please enter a valid image URL');
       return;
@@ -52,9 +52,11 @@ export const ImageUploadModal: React.FC<ImageUploadModalProps> = ({
     try {
       const url = new URL(imageUrl);
       if (url.protocol === 'http:' || url.protocol === 'https:') {
-        onImageUpload(imageUrl);
-        onCancel();
-        message.success('Image URL added successfully!');
+        // Convert URL to File object and use handleFileUpload
+        const response = await fetch(imageUrl);
+        const blob = await response.blob();
+        const file = new File([blob], 'image.jpg', { type: blob.type });
+        await handleFileUpload(file);
       } else {
         message.error('Please enter a valid HTTP/HTTPS URL');
       }
