@@ -11,7 +11,7 @@ import {
 import { getGptAnswer, videoAnalysesByLink } from './gptHelper';
 import { getTikTokUsername } from './tikTokHelper';
 import { getInstagramDescription, getInstagramUsername } from './instaHelper';
-import { createAnalysisVideoPromptBySource, formatTutorialPrompt } from './promptHelper';
+import { createAnalysisVideoPromptBySource, formatReviewPrompt, formatTutorialPrompt } from './promptHelper';
 import { emitLoadingEvent } from '../emiters/loadingEmitter';
 
 interface createQueryInterface {
@@ -463,6 +463,16 @@ export const initialDeepAnalysis = async (source:string): Promise<Draft|null> =>
     if (formattedResponse) postBody = formattedResponse;
   }
 
+  if ([SOURCE_TYPES.DRAFT_YOUTUBE, SOURCE_TYPES.DRAFT_INSTAGRAM, SOURCE_TYPES.DRAFT_TIKTOK].includes(source)) {
+    emitLoadingEvent('deep-analysis-step', {
+      step: 'Additional review processing',
+      message: 'Formating video analyses response...',
+      progress: 80,
+    });
+    const { result: formattedResponse } = await getGptAnswer(formatReviewPrompt(postBody));
+    if (formattedResponse) postBody = formattedResponse;
+  }
+
   if (RECIPE_SOURCE_TYPES.includes(source)) {
     emitLoadingEvent('deep-analysis-step', {
       step: 'Recipe processing',
@@ -475,6 +485,7 @@ export const initialDeepAnalysis = async (source:string): Promise<Draft|null> =>
     });
 
     const { result: postDraft, error } = await getGptAnswer(query);
+
     if (!postDraft) {
       emitLoadingEvent('deep-analysis-error', {
         step: 'Recipe processing failed',

@@ -120,3 +120,11 @@ You are given context: ${context}. Use this context to create a clear, impersona
 
 - Do not include timestamps, personal names, or narrative.
 `;
+
+export const formatReviewPrompt = (context:string) => `
+You are given context: ${context}. Use this context to:
+Write a friendly summary post for a product(s) review video from a third-party creator.
+Include the reviewer's name (if available) and their channel link (Product Reviews & Demos, https://www.youtube.com/@ReviewsDemos). 
+Summarize the main points of the review in a fun and engaging tone, and mention any products highlighted. 
+Make sure to credit the creator and invite readers to watch the full video on their channel. 
+Add a list of featured products, add appropriate hashtags, including #reviewsdemos`;

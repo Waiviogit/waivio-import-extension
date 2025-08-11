@@ -4,7 +4,7 @@ export const BUTTON_TEXT = {
   COPY_TO_CLIPBOARD: 'Copy to clipboard',
   SCAN_FOR_ASINS: 'Scan for ASINs',
   UPLOAD_TO_WAIVIO: 'Upload to Waivio',
-  CREATE_POST_DRAFT: 'Post draft',
+  CREATE_POST_DRAFT: 'Review draft',
   CREATE_RECIPE_DRAFT: 'Recipe draft',
   TUTORIAL_DRAFT: 'Tutorial draft',
   GET_GOOGLE_ID: 'Show Google ID',
