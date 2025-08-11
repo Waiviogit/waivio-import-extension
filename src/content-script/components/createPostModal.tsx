@@ -4,6 +4,8 @@ import WaivioTags from './WaivioTags';
 import { DraggableModal } from './DraggableModal';
 import { PostFormFields } from './PostFormFields';
 import { PostActionButtons } from './PostActionButtons';
+import { ImageUploadModal } from './ImageUploadModal';
+import { ImagePreview } from './ImagePreview';
 import { usePostData, usePostActions } from '../hooks';
 import { PostProvider } from '../context/PostContext';
 import { PostService } from '../services/PostService';
@@ -28,6 +30,7 @@ const CreatePostModalContent: React.FC<CreatePostProps> = ({
   commandType,
 }: CreatePostProps) => {
   const [isModalOpen, setIsModalOpen] = useState(true);
+  const [isImageUploadModalVisible, setIsImageUploadModalVisible] = useState(false);
 
   const {
     data, isLoading, analysisState, updateData,
@@ -43,6 +46,7 @@ const CreatePostModalContent: React.FC<CreatePostProps> = ({
     handleCreateObject,
     handleRefreshGpt,
     handleAnalysis,
+    handleImageUpload,
     isRecipeLoading,
     isRefreshLoading,
     isAnalysisLoading,
@@ -52,11 +56,13 @@ const CreatePostModalContent: React.FC<CreatePostProps> = ({
     host,
     tags: data.tags,
     source,
+    uploadedImage: data.uploadedImage,
     onDataUpdate: updateData,
     onClose: () => {
       setIsModalOpen(false);
       PostService.cleanupModal();
     },
+    onShowImageUploadModal: () => setIsImageUploadModalVisible(true),
   });
 
   const handleCancel = () => {
@@ -77,28 +83,38 @@ const CreatePostModalContent: React.FC<CreatePostProps> = ({
     updateData({ tags: newTags });
   };
 
+  const handleImageUploadComplete = (imageUrl: string) => {
+    updateData({ uploadedImage: imageUrl });
+  };
+
+  const handleImageRemove = () => {
+    updateData({ uploadedImage: undefined });
+  };
+
   return (
-    <DraggableModal
-      title="Create post"
-      open={isModalOpen}
-      onOk={handleSubmit}
-      onCancel={handleCancel}
-      okText="Publish"
-      cancelText="Cancel"
-      footerComponents={
-        <PostActionButtons
-          source={source}
-          isRecipeLoading={isRecipeLoading}
-          isRefreshLoading={isRefreshLoading}
-          isAnalysisLoading={isAnalysisLoading}
-          onCreateObject={handleCreateObject}
-          onRefreshGpt={handleRefreshGpt}
-          onAnalysis={handleAnalysis}
-          onCopy={handleCopy}
-        />
-      }
-      width={500}
-    >
+          <DraggableModal
+        title="Create post"
+        open={isModalOpen}
+        onOk={handleSubmit}
+        onCancel={handleCancel}
+        okText="Publish"
+        cancelText="Cancel"
+        footerComponents={
+          <PostActionButtons
+            source={source}
+            isRecipeLoading={isRecipeLoading}
+            isRefreshLoading={isRefreshLoading}
+            isAnalysisLoading={isAnalysisLoading}
+            onCreateObject={handleCreateObject}
+            onRefreshGpt={handleRefreshGpt}
+            onAnalysis={handleAnalysis}
+            onCopy={handleCopy}
+            onImageUpload={handleImageUpload}
+          />
+        }
+        width={500}
+      >
+        <div style={{ height: '600px', display: 'flex', flexDirection: 'column' }}>
       <PostFormFields
         author={author}
         host={host}
@@ -109,11 +125,23 @@ const CreatePostModalContent: React.FC<CreatePostProps> = ({
         onTitleChange={handleTitleChange}
         onBodyChange={handleBodyChange}
       />
+      {data.uploadedImage && (
+        <ImagePreview
+          imageUrl={data.uploadedImage}
+          onRemove={handleImageRemove}
+        />
+      )}
       <WaivioTags
         setParentTags={handleTagsChange}
         initialTags={data.tags}
       />
-    </DraggableModal>
+      <ImageUploadModal
+        visible={isImageUploadModalVisible}
+        onCancel={() => setIsImageUploadModalVisible(false)}
+        onImageUpload={handleImageUploadComplete}
+      />
+        </div>
+      </DraggableModal>
   );
 };
 

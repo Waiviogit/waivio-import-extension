@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button, Tooltip } from 'antd';
-import { ReloadOutlined, VideoCameraAddOutlined } from '@ant-design/icons';
+import { ReloadOutlined, VideoCameraAddOutlined, PlusOutlined } from '@ant-design/icons';
 import { SOURCE_TYPES } from '../../common/constants';
 
 interface PostActionButtonsProps {
@@ -12,6 +12,7 @@ interface PostActionButtonsProps {
   onRefreshGpt: () => void;
   onAnalysis: () => void;
   onCopy: () => void;
+  onImageUpload: () => void;
 }
 
 const RECIPE_SOURCES = [
@@ -29,18 +30,28 @@ export const PostActionButtons: React.FC<PostActionButtonsProps> = ({
   onRefreshGpt,
   onAnalysis,
   onCopy,
+  onImageUpload,
 }) => {
   const isRecipeSource = RECIPE_SOURCES.includes(source || '');
 
   return (
     <>
       {isRecipeSource && (
-        <Button
-          onClick={onCreateObject}
-          loading={isRecipeLoading}
-        >
-          Create object
-        </Button>
+        <>
+          <Tooltip title="Upload image from disk or clipboard" zIndex={9999}>
+            <Button
+              icon={<PlusOutlined />}
+              onClick={onImageUpload}
+              style={{ marginRight: '8px' }}
+            />
+          </Tooltip>
+          <Button
+            onClick={onCreateObject}
+            loading={isRecipeLoading}
+          >
+            Create object
+          </Button>
+        </>
       )}
 
       <Tooltip title="Analyze video content with AI" zIndex={9999}>

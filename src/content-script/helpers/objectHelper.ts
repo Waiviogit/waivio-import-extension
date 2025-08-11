@@ -498,7 +498,7 @@ export const getRecipeUrl = async () => {
  * check success socket
  * 6 start import
  */
-export const createObjectForPost = async (postBody: string)
+export const createObjectForPost = async (postBody: string, imageUrl?: string)
     : Promise<objectForPostType| undefined> => {
   const userInfo = await getWaivioUserInfo();
   if (!userInfo) {
@@ -615,7 +615,7 @@ export const createObjectForPost = async (postBody: string)
     return;
   }
 
-  const recipeUrl = await getRecipeUrl();
+  const recipeUrl = imageUrl || await getRecipeUrl();
   await downloadToWaivio({
     object: {
       ...recipe,

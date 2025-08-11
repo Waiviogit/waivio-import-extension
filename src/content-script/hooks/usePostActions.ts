@@ -13,8 +13,15 @@ interface PostActionsProps {
   host: string;
   tags: string[];
   source: string;
-  onDataUpdate: (updates: { title?: string; body?: string; tags?: string[] }) => void;
+  uploadedImage?: string;
+  onDataUpdate: (updates: {
+    title?: string;
+    body?: string;
+    tags?: string[];
+    uploadedImage?: string;
+  }) => void;
   onClose: () => void;
+  onShowImageUploadModal: () => void;
 }
 
 export const usePostActions = ({
@@ -23,8 +30,10 @@ export const usePostActions = ({
   host,
   tags,
   source,
+  uploadedImage,
   onDataUpdate,
   onClose,
+  onShowImageUploadModal,
 }: PostActionsProps) => {
   const [isRecipeLoading, setIsRecipeLoading] = useState(false);
   const [isRefreshLoading, setIsRefreshLoading] = useState(false);
@@ -51,7 +60,7 @@ export const usePostActions = ({
   const handleCreateObject = async () => {
     setIsRecipeLoading(true);
     try {
-      const objectForPost = await createObjectForPost(body);
+      const objectForPost = await createObjectForPost(body, uploadedImage);
       if (objectForPost) {
         const updatedBody = `${body}\n[${objectForPost.name}](https://${host}/object/${objectForPost.permlink})`;
         onDataUpdate({ body: updatedBody });
@@ -95,14 +104,20 @@ export const usePostActions = ({
     }
   };
 
+  const handleImageUpload = () => {
+    onShowImageUploadModal();
+  };
+
   return {
     handleSubmit,
     handleCopy,
     handleCreateObject,
     handleRefreshGpt,
     handleAnalysis,
+    handleImageUpload,
     isRecipeLoading,
     isRefreshLoading,
     isAnalysisLoading,
+    uploadedImage,
   };
 };
