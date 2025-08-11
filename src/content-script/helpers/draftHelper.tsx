@@ -469,7 +469,9 @@ export const initialDeepAnalysis = async (source:string): Promise<Draft|null> =>
       message: 'Formating video analyses response...',
       progress: 80,
     });
-    const { result: formattedResponse } = await getGptAnswer(formatReviewPrompt(postBody));
+
+    const context = `attribution: ${attribution}, link: ${link}, author: ${author}, content: ${postBody}`;
+    const { result: formattedResponse } = await getGptAnswer(formatReviewPrompt(context));
     if (formattedResponse) postBody = formattedResponse;
   }
 
