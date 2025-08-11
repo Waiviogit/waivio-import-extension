@@ -81,20 +81,22 @@ export const usePostData = (
         if (commandType === 'CREATE_DRAFT') {
           const draftData = await initialDeepAnalysis(source);
           if (draftData) {
-            setData({
+            setData((prev) => ({
               title: draftData.title,
               body: draftData.body,
               tags: draftData.tags,
-            });
+              uploadedImage: prev.uploadedImage, // Preserve uploaded image
+            }));
           }
         } else if (commandType === 'CREATE_POST') {
           const postData = await extractPostInfo(source);
           if (postData) {
-            setData({
+            setData((prev) => ({
               title: postData.title,
               body: postData.body,
               tags: postData.tags,
-            });
+              uploadedImage: prev.uploadedImage, // Preserve uploaded image
+            }));
           }
         }
       } catch (error) {
