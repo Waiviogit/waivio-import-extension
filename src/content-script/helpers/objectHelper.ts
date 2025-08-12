@@ -615,12 +615,11 @@ export const createObjectForPost = async (postBody: string, imageUrl?: string)
     return;
   }
 
-  const recipeUrl = imageUrl || await getRecipeUrl();
   await downloadToWaivio({
     object: {
       ...recipe,
       waivio_product_ids: productId,
-      ...(recipeUrl && { recipeUrl }),
+      ...(imageUrl && { recipeUrl: imageUrl }),
     },
     objectType: 'recipe',
   });
