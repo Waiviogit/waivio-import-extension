@@ -28,10 +28,6 @@ const WaivioTags = ({ setParentTags, initialTags }: waivioTagsProps) => {
   const editInputRef = useRef<InputRef>(null);
 
   useEffect(() => {
-    setParentTags(tags);
-  }, [tags, setParentTags]);
-
-  useEffect(() => {
     setTags(initialTags);
   }, [initialTags]);
 
@@ -48,6 +44,7 @@ const WaivioTags = ({ setParentTags, initialTags }: waivioTagsProps) => {
   const handleClose = (removedTag: string) => {
     const newTags = tags.filter((tag) => tag !== removedTag);
     setTags(newTags);
+    setParentTags(newTags);
   };
 
   const showInput = () => {
@@ -60,7 +57,9 @@ const WaivioTags = ({ setParentTags, initialTags }: waivioTagsProps) => {
 
   const handleInputConfirm = () => {
     if (inputValue && !tags.includes(inputValue)) {
-      setTags([...tags, inputValue]);
+      const newTags = [...tags, inputValue];
+      setTags(newTags);
+      setParentTags(newTags);
     }
     setInputVisible(false);
     setInputValue('');
@@ -74,6 +73,7 @@ const WaivioTags = ({ setParentTags, initialTags }: waivioTagsProps) => {
     const newTags = [...tags];
     newTags[editInputIndex] = editInputValue;
     setTags(newTags);
+    setParentTags(newTags);
     setEditInputIndex(-1);
     setEditInputValue('');
   };
