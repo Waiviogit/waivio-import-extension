@@ -54,15 +54,13 @@ export const makeBlobFromHtmlPage = async (cropHeight = true):Promise<Blob |null
     if (!body) return null;
 
     const width = Math.max(1, window.innerWidth);
-    const height = cropHeight
-      ? Math.max(1, window.innerWidth > window.innerHeight ? window.innerHeight : window.innerWidth)
-      : Math.max(1, window.innerHeight);
+    const height = Math.max(1, window.innerWidth > window.innerHeight ? window.innerHeight : window.innerWidth);
 
     // Use a Promise to handle the asynchronous nature of html2canvas
     const canvas = await html2canvas(body, {
       useCORS: true,
       width,
-      height,
+      ...(cropHeight && { height }),
       scale: 1,
       allowTaint: true,
       foreignObjectRendering: false,
