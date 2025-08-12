@@ -472,7 +472,12 @@ export const initialDeepAnalysis = async (source:string): Promise<Draft|null> =>
 
     const context = `attribution: ${attribution}, link: ${link}, author: ${author}, content: ${postBody}`;
     const { result: formattedResponse } = await getGptAnswer(formatReviewPrompt(context));
-    if (formattedResponse) postBody = formattedResponse;
+
+    if (formattedResponse) {
+      postBody = formatGptAnswer({
+        answer: formattedResponse, link, attribution,
+      });
+    }
   }
 
   if (RECIPE_SOURCE_TYPES.includes(source)) {
