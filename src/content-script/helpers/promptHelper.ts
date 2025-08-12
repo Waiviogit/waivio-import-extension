@@ -13,7 +13,7 @@ Analyze the provided cooking video thoroughly and extract as much information as
 - State the type of cuisine and dish category (e.g., appetizer, main course, dessert).
 
 2. Key Ingredients and Brands:
-- List **all main ingredients** mentioned or visually shown, including quantities and measurements.
+- List **all main ingredients** mentioned or visually shown, including quantities and measurements(dont use words as generic, to taste etc, try predict).
 - **For each ingredient, identify the brand or specific product shown, if visible or mentioned.**
 
 3. Equipment and Brands:
