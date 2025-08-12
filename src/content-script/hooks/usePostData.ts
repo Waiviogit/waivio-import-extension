@@ -93,9 +93,6 @@ export const usePostData = (
             }));
           }
         } else if (commandType === 'CREATE_POST') {
-          const uploadedImage = await getRecipeUrl();
-          if (uploadedImage) setData((prev) => ({ ...prev, uploadedImage }));
-
           const postData = await extractPostInfo(source);
           if (postData) {
             setData((prev) => ({
