@@ -453,13 +453,18 @@ export const initialDeepAnalysis = async (source:string): Promise<Draft|null> =>
 
   let postBody = response.result || body;
 
-  if ([SOURCE_TYPES.TUTORIAL_INSTAGRAM, SOURCE_TYPES.TUTORIAL_TIKTOK].includes(source)) {
+  if ([SOURCE_TYPES.TUTORIAL_INSTAGRAM, SOURCE_TYPES.TUTORIAL_TIKTOK, SOURCE_TYPES.TUTORIAL_YOUTUBE].includes(source)) {
     emitLoadingEvent('deep-analysis-step', {
       step: 'Additional tutorial processing',
       message: 'Formating video analyses response...',
       progress: 80,
     });
-    const { result: formattedResponse } = await getGptAnswer(formatTutorialPrompt(postBody));
+    postBody = formatGptAnswer({
+      answer: postBody, link, attribution,
+    });
+
+    const context = `attribution: ${attribution}, link: ${link}, author: ${author}, content: ${postBody}`;
+    const { result: formattedResponse } = await getGptAnswer(formatTutorialPrompt(context));
     if (formattedResponse) postBody = formattedResponse;
   }
 
@@ -469,15 +474,14 @@ export const initialDeepAnalysis = async (source:string): Promise<Draft|null> =>
       message: 'Formating video analyses response...',
       progress: 80,
     });
+    postBody = formatGptAnswer({
+      answer: postBody, link, attribution,
+    });
 
     const context = `attribution: ${attribution}, link: ${link}, author: ${author}, content: ${postBody}`;
     const { result: formattedResponse } = await getGptAnswer(formatReviewPrompt(context));
 
-    if (formattedResponse) {
-      postBody = formatGptAnswer({
-        answer: formattedResponse, link, attribution,
-      });
-    }
+    if (formattedResponse) postBody = formattedResponse;
   }
 
   if (RECIPE_SOURCE_TYPES.includes(source)) {

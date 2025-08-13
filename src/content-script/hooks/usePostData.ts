@@ -3,6 +3,7 @@ import { initialDeepAnalysis } from '../helpers/draftHelper';
 import { extractPostInfo } from '../helpers/postHelper';
 import loadingEmitter from '../emiters/loadingEmitter';
 import { getRecipeUrl } from '../helpers/objectHelper';
+import { RECIPE_SOURCE_TYPES } from '../../common/constants';
 
 interface PostData {
   title: string;
@@ -80,26 +81,28 @@ export const usePostData = (
 
       try {
         if (commandType === 'CREATE_DRAFT') {
-          const uploadedImage = await getRecipeUrl();
-          if (uploadedImage) setData((prev) => ({ ...prev, uploadedImage }));
+          if (RECIPE_SOURCE_TYPES.includes(source)) {
+            const uploadedImage = await getRecipeUrl();
+            if (uploadedImage) setData((prev) => ({ ...prev, uploadedImage }));
+          }
 
           const draftData = await initialDeepAnalysis(source);
           if (draftData) {
             setData((prev) => ({
+              ...prev,
               title: draftData.title,
               body: draftData.body,
               tags: draftData.tags,
-              uploadedImage: prev.uploadedImage,
             }));
           }
         } else if (commandType === 'CREATE_POST') {
           const postData = await extractPostInfo(source);
           if (postData) {
             setData((prev) => ({
+              ...prev,
               title: postData.title,
               body: postData.body,
               tags: postData.tags,
-              uploadedImage: prev.uploadedImage,
             }));
           }
         }
