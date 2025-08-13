@@ -1,6 +1,7 @@
 import { EXTERNAL_URL } from '../constants';
 import { getInstagramDataBlob } from '../downloaders/instagramDownloader';
 import { getTiktokDataBlob } from '../downloaders/tikTokDownloader';
+import { shortenYoutubeUrl } from './youtubeHelper';
 
 type responseType = {
     result?: string
@@ -75,7 +76,7 @@ export const videoAnalysesByLink = async (prompt: string, url: string): Promise<
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          prompt, url,
+          prompt, url: shortenYoutubeUrl(url),
         }),
       },
     );

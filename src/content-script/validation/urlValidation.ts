@@ -154,12 +154,12 @@ const validatePageForAsin = (url: string):boolean => {
   return result;
 };
 
-const validatePageForYoutube = (url: string):boolean => {
-  const regex = /^https?:\/\/(?:www\.)?youtube\.com\/watch\?v=|^https?:\/\/(?:www\.)?youtube\.com\/shorts/;
+const validatePageForYoutube = (url: string): boolean => {
+  const regex = /^https?:\/\/(?:www\.)?youtube\.com\/(?:(?:watch\?(?:.*&)?v=[\w-]+)|shorts\/[\w-]+)/;
 
   const result = regex.test(url);
   if (!result) {
-    alert('The URL must be youtube video example: https://www.youtube.com/watch?v=AVCOKbYKQm8');
+    alert('The URL must be a YouTube video, e.g.: https://www.youtube.com/watch?v=AVCOKbYKQm8');
   }
   return result;
 };

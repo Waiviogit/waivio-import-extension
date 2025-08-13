@@ -94,12 +94,29 @@ export const getChanelURL = (content: string): authorLinkType => {
 };
 
 export const extractVideoId = (url: string): string => {
-  const regex = /(?:watch\?v=|\/shorts\/)([^&/]+)/;
+  const regex = /(?:watch\?(?:.*&)?v=|\/shorts\/)([^&?/]+)/;
   const match = url.match(regex);
-  if (match && match[1]) {
-    return match[1];
+  return match?.[1] ?? '';
+};
+
+export const shortenYoutubeUrl = (url: string): string => {
+  try {
+    const parsed = new URL(url);
+    if (
+      parsed.hostname.includes('youtube.com')
+        && parsed.pathname === '/watch'
+        && parsed.searchParams.has('v')
+        && parsed.searchParams.has('ab_channel')
+    ) {
+      const v = parsed.searchParams.get('v');
+      const channel = parsed.searchParams.get('ab_channel');
+      return `https://www.youtube.com/watch?v=${encodeURIComponent(v!)}&ab_channel=${encodeURIComponent(channel!)}`;
+    }
+
+    return url;
+  } catch {
+    return url;
   }
-  return '';
 };
 
 export const getTitleAndBody = (content:string): titleBodyType => {
