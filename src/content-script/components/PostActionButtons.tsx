@@ -43,7 +43,7 @@ export const PostActionButtons: React.FC<PostActionButtonsProps> = ({
             <Button
               icon={<PlusOutlined />}
               onClick={onImageUpload}
-              style={{ marginRight: '8px' }}
+              style={{ margin: '0 8px' }}
             />
           </Tooltip>
           <Button

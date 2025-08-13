@@ -24,7 +24,7 @@ export const MODAL_STYLES = {
   },
   footer: {
     width: '100%',
-    padding: '10px',
+    padding: '10px 0',
     boxShadow: '0 4px 12px rgba(0,0,0,.15)',
     display: 'flex',
     justifyContent: 'flex-end',

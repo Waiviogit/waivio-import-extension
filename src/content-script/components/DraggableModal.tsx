@@ -79,7 +79,7 @@ export const DraggableModal: React.FC<DraggableModalProps> = ({
               <div style={MODAL_STYLES.footer}>
                   {footerComponents}
                   <Button onClick={onCancel}>{cancelText}</Button>
-                  <Button style={{ marginRight: '20px' }} type={'primary'} onClick={onOk}>{okText}</Button>
+                  <Button style={{ marginRight: '10px' }} type={'primary'} onClick={onOk}>{okText}</Button>
               </div>
           </div>
       </Draggable>);
