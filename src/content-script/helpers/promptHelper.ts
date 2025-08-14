@@ -119,13 +119,14 @@ You are given context: ${context}. Use this context to create a clear, impersona
   3. **Brand Tags:** Collect and list all unique brand tags from the products in a separate block at the bottom (e.g., "#nike").
 
 - Do not include timestamps, personal names, or narrative.
-Include the reviewer's name (if available) and their channel link, link to the video.
+At the end include the reviewer's name (if available) and their channel link, link to the video (Do not wrap link to video in []() or (). Just print them directly like: https://example.com.
 `;
 
 export const formatReviewPrompt = (context:string) => `
 You are given context: ${context}. Use this context to:
 Write a friendly summary post for a product(s) review video from a third-party creator.
-Include the reviewer's name (if available) and their channel link, link to the video. 
 Summarize the main points of the review in a fun and engaging tone, and mention any products highlighted. 
 Make sure to credit the creator and invite readers to watch the full video on their channel. 
-Add a list of featured products, add appropriate hashtags.`;
+Add a list of featured products, add appropriate hashtags.
+At the end include the reviewer's name (if available) and their channel link, link to the video (Do not wrap link to video in []() or (). Just print them directly like: https://example.com. 
+`;
