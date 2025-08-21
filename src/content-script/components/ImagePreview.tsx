@@ -53,6 +53,7 @@ export const ImagePreview: React.FC<ImagePreviewProps> = ({
           marginBottom: '10px',
           border: '1px solid #d9d9d9',
           borderRadius: '8px',
+          flex: 1,
         }}
         bodyStyle={{ padding: '12px' }}
       >

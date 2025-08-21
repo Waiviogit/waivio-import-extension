@@ -124,7 +124,7 @@ At the end include the reviewer's name (if available) and their channel link, li
 
 export const formatReviewPrompt = (context:string) => `
 You are given context: ${context}. Use this context to:
-Write a friendly summary post for a product(s) review video from a third-party creator.
+Write a friendly summary post for a product(s) review video from a third-party creator, make it sound like a human.
 Summarize the main points of the review in a fun and engaging tone, and mention any products highlighted. 
 Make sure to credit the creator and invite readers to watch the full video on their channel. 
 Add a list of featured products, add appropriate hashtags.

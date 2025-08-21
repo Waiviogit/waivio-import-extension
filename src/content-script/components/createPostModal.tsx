@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { ConfigProvider } from 'antd';
+import { Button, ConfigProvider, Tooltip } from 'antd';
+import { PlusOutlined } from '@ant-design/icons';
 import WaivioTags from './WaivioTags';
 import { DraggableModal } from './DraggableModal';
 import { PostFormFields } from './PostFormFields';
@@ -9,15 +10,17 @@ import { ImagePreview } from './ImagePreview';
 import { usePostData, usePostActions } from '../hooks';
 import { PostProvider } from '../context/PostContext';
 import { PostService } from '../services/PostService';
+import { Z_INDEX } from '../constants';
+import { RECIPE_SOURCE_TYPES } from '../../common/constants';
 
 interface CreatePostProps {
-  author: string;
-  body: string;
-  title?: string;
-  host: string;
-  tags: string[];
-  source: string;
-  commandType?: string;
+    author: string;
+    body: string;
+    title?: string;
+    host: string;
+    tags: string[];
+    source: string;
+    commandType?: string;
 }
 
 const CreatePostModalContent: React.FC<CreatePostProps> = ({
@@ -91,79 +94,94 @@ const CreatePostModalContent: React.FC<CreatePostProps> = ({
     updateData({ uploadedImage: undefined });
   };
 
+  const isRecipeSource = RECIPE_SOURCE_TYPES.includes(source || '');
+
   return (
-          <DraggableModal
-        title="Create post"
-        open={isModalOpen}
-        onOk={handleSubmit}
-        onCancel={handleCancel}
-        okText="Publish"
-        cancelText="Cancel"
-        footerComponents={
-          <PostActionButtons
-            source={source}
-            isRecipeLoading={isRecipeLoading}
-            isRefreshLoading={isRefreshLoading}
-            isAnalysisLoading={isAnalysisLoading}
-            onCreateObject={handleCreateObject}
-            onRefreshGpt={handleRefreshGpt}
-            onAnalysis={handleAnalysis}
-            onCopy={handleCopy}
-            onImageUpload={handleImageUpload}
-          />
-        }
-        width={500}
-      >
-        <div style={{ height: '600px', display: 'flex', flexDirection: 'column' }}>
-      <PostFormFields
-        author={author}
-        host={host}
-        title={data.title}
-        body={data.body}
-        isLoading={isLoading}
-        analysisState={analysisState}
-        onTitleChange={handleTitleChange}
-        onBodyChange={handleBodyChange}
-      />
-      {data.uploadedImage && (
-        <ImagePreview
-          imageUrl={data.uploadedImage}
-          onRemove={handleImageRemove}
-        />
-      )}
-      <WaivioTags
-        setParentTags={handleTagsChange}
-        initialTags={data.tags}
-      />
-      <ImageUploadModal
-        visible={isImageUploadModalVisible}
-        onCancel={() => setIsImageUploadModalVisible(false)}
-        onImageUpload={handleImageUploadComplete}
-      />
-        </div>
-      </DraggableModal>
+        <DraggableModal
+            title="Create post"
+            open={isModalOpen}
+            onOk={handleSubmit}
+            onCancel={handleCancel}
+            okText="Publish"
+            cancelText="Cancel"
+            footerComponents={
+                <PostActionButtons
+                    source={source}
+                    isRecipeLoading={isRecipeLoading}
+                    isRefreshLoading={isRefreshLoading}
+                    isAnalysisLoading={isAnalysisLoading}
+                    onCreateObject={handleCreateObject}
+                    onRefreshGpt={handleRefreshGpt}
+                    onAnalysis={handleAnalysis}
+                    onCopy={handleCopy}
+                />
+            }
+            width={500}
+        >
+            <div style={{ height: '600px', display: 'flex', flexDirection: 'column' }}>
+                <PostFormFields
+                    author={author}
+                    host={host}
+                    title={data.title}
+                    body={data.body}
+                    isLoading={isLoading}
+                    analysisState={analysisState}
+                    onTitleChange={handleTitleChange}
+                    onBodyChange={handleBodyChange}
+                />
+                <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+
+                    {isRecipeSource && (
+                        <Tooltip title="Upload image from disk or clipboard" zIndex={Z_INDEX.TOOLTIP}>
+                            <Button
+                                icon={<PlusOutlined/>}
+                                onClick={handleImageUpload}
+                                style={{ margin: '0 8px 0 0', height: '85px' }}
+                            />
+                        </Tooltip>
+                    )}
+                    {data.uploadedImage && (
+                        <ImagePreview
+                            imageUrl={data.uploadedImage}
+                            onRemove={handleImageRemove}
+                        />
+                    )}
+                </div>
+
+                <ImageUploadModal
+                    visible={isImageUploadModalVisible}
+                    onCancel={() => setIsImageUploadModalVisible(false)}
+                    onImageUpload={handleImageUploadComplete}
+                />
+
+                <WaivioTags
+                    setParentTags={handleTagsChange}
+                    initialTags={data.tags}
+                />
+            </div>
+        </DraggableModal>
   );
 };
 
 const CreatePostModal: React.FC<CreatePostProps> = (props) => (
-  <ConfigProvider
-    theme={{
-      token: {
-        colorPrimary: '#f87007',
-      },
-    }}
-  >
-    <PostProvider
-      value={{
-        author: props.author,
-        host: props.host,
-        source: props.source,
-        commandType: props.commandType,
-      }}
+    <ConfigProvider
+        theme={{
+          token: {
+            colorPrimary: '#f87007',
+          },
+        }}
     >
-      <CreatePostModalContent {...props} />
-    </PostProvider>
-  </ConfigProvider>
+        <PostProvider
+            value={{
+              author: props.author,
+              host: props.host,
+              source: props.source,
+              commandType: props.commandType,
+            }}
+        >
+            <CreatePostModalContent {...props} />
+        </PostProvider>
+    </ConfigProvider>
 );
 
 export default CreatePostModal;
