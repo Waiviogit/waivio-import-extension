@@ -13,7 +13,7 @@ const AlertObjectModal = ({ url, onResolve }: AlertObjectProps) => {
   const [isModalOpen, setIsModalOpen] = useState(true);
 
   const cleanup = () => {
-    const nested = document.getElementById('react-chrome-modal');
+    const nested = document.getElementById('react-chrome-modal-alert');
     if (nested) {
       document.body.removeChild(nested);
     }
@@ -69,14 +69,11 @@ const AlertObjectModal = ({ url, onResolve }: AlertObjectProps) => {
                       marginTop: '20px',
                     }}
                 >
-                    <Button onClick={handleCancel}>
-                        Cancel
-                    </Button>
                     <Button
                         onClick={handleCopyLinkToClipboard}
                         style={{ backgroundColor: 'rgb(248, 112, 7)', color: 'white' }}
                     >
-                        Copy link to clipboard
+                        Copy
                     </Button>
                     <Button
                         onClick={handleConfirm}
@@ -94,7 +91,7 @@ const AlertObjectModal = ({ url, onResolve }: AlertObjectProps) => {
 // Helper function to create a confirm-like modal
 export const showAlertObjectModal = (url: string): Promise<boolean> => new Promise((resolve) => {
   const modalContainer = document.createElement('div');
-  modalContainer.id = 'react-chrome-modal';
+  modalContainer.id = 'react-chrome-modal-alert';
   document.body.appendChild(modalContainer);
 
   const handleResolve = (result: boolean) => {

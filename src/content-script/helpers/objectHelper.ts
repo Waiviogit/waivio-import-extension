@@ -523,22 +523,21 @@ export const createObjectForPost = async (postBody: string, imageUrl?: string)
     if (wobject) {
       // recreate object field (to get like on each update)
       if (await showAlertObjectModal(existPermlink)) {
-        console.log('DOWNLOAD to WAIVIO');
-        // await downloadToWaivio({
-        //   object: {
-        //     name: wobject.name || wobject.default_name,
-        //     categories: (wobject?.departments || []).map((el) => el.body),
-        //     fieldDescription: wobject?.description,
-        //     fieldCalories: wobject?.calories,
-        //     fieldCookingTime: wobject?.cookingTime,
-        //     fieldBudget: wobject?.budget,
-        //     fieldRecipeIngredients: parseJsonStringArray(wobject?.recipeIngredients || ''),
-        //     fieldNutrition: wobject?.nutrition,
-        //     ...wobject.avatar && { primaryImageURLs: [wobject?.avatar] },
-        //     waivio_product_ids: productId,
-        //   },
-        //   objectType: 'recipe',
-        // });
+        await downloadToWaivio({
+          object: {
+            name: wobject.name || wobject.default_name,
+            categories: (wobject?.departments || []).map((el) => el.body),
+            fieldDescription: wobject?.description,
+            fieldCalories: wobject?.calories,
+            fieldCookingTime: wobject?.cookingTime,
+            fieldBudget: wobject?.budget,
+            fieldRecipeIngredients: parseJsonStringArray(wobject?.recipeIngredients || ''),
+            fieldNutrition: wobject?.nutrition,
+            ...wobject.avatar && { primaryImageURLs: [wobject?.avatar] },
+            waivio_product_ids: productId,
+          },
+          objectType: 'recipe',
+        });
       }
 
       return {
