@@ -8,6 +8,7 @@ import { getLinkById } from '../validation';
 import { getYoutubeThumbnail } from '../downloaders/youtubeDownloader';
 import { getInstagramThumbnail } from '../downloaders/instagramDownloader';
 import { getTicktockThumbnail } from '../downloaders/tikTokDownloader';
+import { showAlertObjectModal } from '../components/AlertObjectModal';
 
 type userImportResultType = {
     result: boolean
@@ -521,22 +522,23 @@ export const createObjectForPost = async (postBody: string, imageUrl?: string)
     const wobject = await getWaivioObject(existPermlink);
     if (wobject) {
       // recreate object field (to get like on each update)
-      if (window.confirm('This object already exists on Waivio. Do you want to proceed with uploading?')) {
-        await downloadToWaivio({
-          object: {
-            name: wobject.name || wobject.default_name,
-            categories: (wobject?.departments || []).map((el) => el.body),
-            fieldDescription: wobject?.description,
-            fieldCalories: wobject?.calories,
-            fieldCookingTime: wobject?.cookingTime,
-            fieldBudget: wobject?.budget,
-            fieldRecipeIngredients: parseJsonStringArray(wobject?.recipeIngredients || ''),
-            fieldNutrition: wobject?.nutrition,
-            ...wobject.avatar && { primaryImageURLs: [wobject?.avatar] },
-            waivio_product_ids: productId,
-          },
-          objectType: 'recipe',
-        });
+      if (await showAlertObjectModal(existPermlink)) {
+        console.log('DOWNLOAD to WAIVIO');
+        // await downloadToWaivio({
+        //   object: {
+        //     name: wobject.name || wobject.default_name,
+        //     categories: (wobject?.departments || []).map((el) => el.body),
+        //     fieldDescription: wobject?.description,
+        //     fieldCalories: wobject?.calories,
+        //     fieldCookingTime: wobject?.cookingTime,
+        //     fieldBudget: wobject?.budget,
+        //     fieldRecipeIngredients: parseJsonStringArray(wobject?.recipeIngredients || ''),
+        //     fieldNutrition: wobject?.nutrition,
+        //     ...wobject.avatar && { primaryImageURLs: [wobject?.avatar] },
+        //     waivio_product_ids: productId,
+        //   },
+        //   objectType: 'recipe',
+        // });
       }
 
       return {
