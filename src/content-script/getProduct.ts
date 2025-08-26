@@ -47,6 +47,7 @@ import {
   productTitleInstacart,
   getDescriptionInstacart,
   getProductIdInstacart,
+  getComparedPriceAmazon,
 } from './parser';
 import { productSchema } from './validation';
 import { SOURCE_TYPES } from '../common/constants';
@@ -74,6 +75,7 @@ export type parsedObjectType = {
   weight?: string
   imageURLs?: string[]
   merchants?: string[]
+  compareAtPriceAmount?: string
   // gallery items
 }
 
@@ -95,6 +97,7 @@ export type exportJsonType = {
   groupId?: string
   mostRecentPriceCurrency?: string
   mostRecentPriceAmount?: string
+  compareAtPriceAmount?: string
   features: featuresType[]
   weight?: string
   imageURLs?: string[]
@@ -145,6 +148,7 @@ const getProductFromAmazon = (): getProductReturnedType => {
     description: getDescriptionAmazon(),
     options: getOptions(),
     price: getPriceAmazon(),
+    compareAtPriceAmount: getComparedPriceAmazon(),
     productId: getProductIdAmazon(),
     features: getFeaturesAmazon(),
     ...getProductDetailsAmazon(),
@@ -357,6 +361,9 @@ export const formatToJsonObject = (object: parsedObjectType):exportJsonType => {
     const { mostRecentPriceAmount, mostRecentPriceCurrency } = object.price;
     exportObject.mostRecentPriceAmount = mostRecentPriceAmount;
     exportObject.mostRecentPriceCurrency = mostRecentPriceCurrency;
+  }
+  if (object.compareAtPriceAmount) {
+    exportObject.compareAtPriceAmount = object.compareAtPriceAmount;
   }
   if (object?.merchants?.length) {
     exportObject.merchants = object.merchants.map((el) => ({ name: el }));

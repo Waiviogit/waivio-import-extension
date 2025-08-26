@@ -111,6 +111,15 @@ export const getPriceAmazon = (): priceType => {
   price.mostRecentPriceAmount = mostRecentPriceAmount;
   return price;
 };
+const extractNumber = (str: string) => str.replace(/[^0-9.]/g, '');
+
+export const getComparedPriceAmazon = () => {
+  const comparedPrice = document.querySelector<HTMLElement>(
+    'span.a-price.a-text-price[data-a-size="s"][data-a-strike="true"][data-a-color="secondary"] span',
+  )?.innerText || '';
+
+  return extractNumber(comparedPrice);
+};
 
 export const getPriceSephora = (): priceType => {
   const price = {
