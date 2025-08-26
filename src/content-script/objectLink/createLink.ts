@@ -1,5 +1,6 @@
 import html2canvas from 'html2canvas';
 import { downloadToWaivio, getLinkByBody, loadImageBase64 } from '../helpers/downloadWaivioHelper';
+import { captureVisibleTab } from '../../services/chromeHelper';
 
 const extractName = (url: string): string => url
   .replace(/^(https?:\/\/)?(www\.)?/, '')
@@ -20,6 +21,27 @@ const extractAvatarFromDocument = ():string => {
   const el = document.querySelector<HTMLMetaElement>('meta[property="og:image"]');
   if (!el) return '';
   return el.content;
+};
+
+const dataUrlToBlob = async (dataUrl: string): Promise<Blob | null> => {
+  try {
+    const res = await fetch(dataUrl);
+    return await res.blob();
+  } catch (e) {
+    try {
+      const parts = dataUrl.split(',');
+      const byteString = atob(parts[1]);
+      const mimeString = parts[0].split(':')[1].split(';')[0];
+      const ab = new ArrayBuffer(byteString.length);
+      const ia = new Uint8Array(ab);
+      for (let i = 0; i < byteString.length; i += 1) {
+        ia[i] = byteString.charCodeAt(i);
+      }
+      return new Blob([ab], { type: mimeString });
+    } catch (err) {
+      return null;
+    }
+  }
 };
 
 const createMinimalScreenshot = async (cropHeight = true): Promise<Blob | null> => {
@@ -244,11 +266,21 @@ export const makeBlobFromHtmlPage = async (cropHeight = true):Promise<Blob |null
       }, 'image/png');
     });
   } catch (error) {
-    // Fallback: try with more aggressive CSP bypass
+    // Fallback 1: background captureVisibleTab
+    const dataUrl = await captureVisibleTab();
+    if (dataUrl) {
+      const blob = await dataUrlToBlob(dataUrl);
+      if (blob) {
+        console.log('captureVisibleTab successfully');
+        return blob;
+      }
+    }
+
+    // Fallback 2: try with more aggressive DOM clone + html2canvas
     const fallbackResult = await makeBlobFromHtmlPageFallback(cropHeight);
     if (fallbackResult) return fallbackResult;
 
-    // Final fallback: create a minimal screenshot with just text content
+    // Fallback 3: create a minimal screenshot with just text content
     return createMinimalScreenshot(cropHeight);
   }
 };

@@ -81,3 +81,15 @@ export const getStorageKey = async (key = 'googleApiKey'): Promise<string> => {
   const object = await chrome.storage.local.get('googleApiKey');
   return object[key];
 };
+
+export const captureVisibleTab = async (): Promise<string | undefined> => {
+  try {
+    const response = await chrome.runtime.sendMessage({ action: EXTENSION_COMMANDS.CAPTURE_VISIBLE_TAB });
+    if (response && response.dataUrl) return response.dataUrl as string;
+    if (response && response.error) {
+      console.error('captureVisibleTab error:', response.error);
+    }
+  } catch (error) {
+    console.error(error);
+  }
+};

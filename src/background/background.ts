@@ -6,6 +6,21 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
     return true; // Indicates that the response will be sent asynchronously
   }
+
+  if (message.action === 'CAPTURE_VISIBLE_TAB') {
+    try {
+      chrome.tabs.captureVisibleTab({ format: 'png' }, (dataUrl) => {
+        if (chrome.runtime.lastError) {
+          sendResponse({ error: chrome.runtime.lastError.message });
+          return;
+        }
+        sendResponse({ dataUrl });
+      });
+    } catch (e) {
+      sendResponse({ error: (e as Error).message });
+    }
+    return true;
+  }
 });
 
 export {};
