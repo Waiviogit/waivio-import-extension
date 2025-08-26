@@ -6,6 +6,7 @@ export interface ProductFeature {
 export interface WaivioOption {
     category: string;
     value: string;
+    image?: string;
 }
 
 export interface Merchant {
