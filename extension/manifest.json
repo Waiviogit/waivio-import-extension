@@ -7,6 +7,9 @@
     "default_popup": "./index.html"
   },
   "permissions": ["activeTab", "tabs", "cookies", "storage", "downloads"],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'"
+  },
   "host_permissions": ["<all_urls>"],
   "content_scripts":  [
     {

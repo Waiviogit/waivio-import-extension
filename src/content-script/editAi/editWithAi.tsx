@@ -188,7 +188,13 @@ export const editWithAi = async () => {
   });
 
   if ('error' in response) {
-    alert(response.error?.message);
+    alert(response.error?.message || 'Failed to generate object from image');
+    return;
+  }
+
+  // Ensure response.result exists and has required properties
+  if (!response.result) {
+    alert('No result received from AI service');
     return;
   }
 
@@ -196,36 +202,41 @@ export const editWithAi = async () => {
     ? (response.result?.galleryLength || 0) - 1
     : response.result?.galleryLength || 1;
 
-  const [waivioProductIds, { primaryImageURLs, imageURLs }] = await Promise.all([
-    getWaivioProductIds({
-      user: userName,
-      auth,
-      accessToken,
-      guestName,
-    }),
-    getAvatarAndGallery({
-      user: userName,
-      auth,
-      accessToken,
-      guestName,
-      galleryLength,
-    }),
-  ]);
+  try {
+    const [waivioProductIds, { primaryImageURLs, imageURLs }] = await Promise.all([
+      getWaivioProductIds({
+        user: userName,
+        auth,
+        accessToken,
+        guestName,
+      }),
+      getAvatarAndGallery({
+        user: userName,
+        auth,
+        accessToken,
+        guestName,
+        galleryLength,
+      }),
+    ]);
 
-  const product = {
-    ...response.result,
-    primaryImageURLs,
-    imageURLs,
-    waivio_product_ids: waivioProductIds,
-    websites: [document.URL],
-  };
+    const product = {
+      ...response.result,
+      primaryImageURLs: primaryImageURLs || [],
+      imageURLs: imageURLs || [],
+      waivio_product_ids: waivioProductIds || [],
+      websites: [document.URL],
+    };
 
-  const rootElement = document.createElement('div');
-  rootElement.id = 'react-chrome-modal';
-  document.body.appendChild(rootElement);
-  const rootModal = ReactDOM.createRoot(rootElement);
+    const rootElement = document.createElement('div');
+    rootElement.id = 'react-chrome-modal';
+    document.body.appendChild(rootElement);
+    const rootModal = ReactDOM.createRoot(rootElement);
 
-  rootModal.render(<EditAiModal
-      product={product}
-  />);
+    rootModal.render(<EditAiModal
+        product={product}
+    />);
+  } catch (error) {
+    console.error('Error setting up AI modal:', error);
+    alert('Failed to setup AI editing modal');
+  }
 };

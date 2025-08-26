@@ -22,6 +22,164 @@ const extractAvatarFromDocument = ():string => {
   return el.content;
 };
 
+const createMinimalScreenshot = async (cropHeight = true): Promise<Blob | null> => {
+  try {
+    const width = Math.max(1, window.innerWidth);
+    const height = Math.max(1, window.innerWidth > window.innerHeight ? window.innerHeight : window.innerWidth);
+
+    // Create a canvas with basic page info
+    const canvas = document.createElement('canvas');
+    canvas.width = width;
+    canvas.height = cropHeight ? height : width;
+    const ctx = canvas.getContext('2d');
+
+    if (!ctx) return null;
+
+    // Fill with white background
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, width, cropHeight ? height : width);
+
+    // Add page title
+    const title = document.title || 'Page Screenshot';
+    ctx.fillStyle = '#000000';
+    ctx.font = '16px Arial';
+    ctx.fillText(title, 20, 30);
+
+    // Add URL
+    ctx.font = '12px Arial';
+    ctx.fillStyle = '#666666';
+    const url = document.URL;
+    ctx.fillText(url, 20, 50);
+
+    // Add timestamp
+    const timestamp = new Date().toLocaleString();
+    ctx.fillText(`Screenshot taken: ${timestamp}`, 20, 70);
+
+    return new Promise((resolve) => {
+      canvas.toBlob((blob) => {
+        resolve(blob);
+      }, 'image/png');
+    });
+  } catch (error) {
+    console.error('Minimal screenshot failed:', error);
+    return null;
+  }
+};
+
+const makeBlobFromHtmlPageFallback = async (cropHeight = true): Promise<Blob | null> => {
+  try {
+    const body = document.querySelector('body');
+    if (!body) return null;
+
+    const width = Math.max(1, window.innerWidth);
+    const height = Math.max(1, window.innerWidth > window.innerHeight ? window.innerHeight : window.innerWidth);
+
+    // Create a temporary container in the current document
+    const tempContainer = document.createElement('div');
+    tempContainer.style.position = 'absolute';
+    tempContainer.style.left = '-9999px';
+    tempContainer.style.top = '-9999px';
+    tempContainer.style.width = `${width}px`;
+    tempContainer.style.height = `${height}px`;
+    tempContainer.style.overflow = 'hidden';
+    tempContainer.style.backgroundColor = '#ffffff';
+
+    // Clone the body content
+    const clonedContent = body.cloneNode(true) as HTMLElement;
+
+    // Remove all problematic elements from the clone
+    const scripts = clonedContent.querySelectorAll('script');
+    scripts.forEach((script) => script.remove());
+
+    const iframes = clonedContent.querySelectorAll('iframe');
+    iframes.forEach((iframe) => iframe.remove());
+
+    const externalLinks = clonedContent.querySelectorAll('link[rel="stylesheet"][href^="http"]');
+    externalLinks.forEach((link) => link.remove());
+
+    // Remove elements with external sources that might cause CORS issues
+    const externalElements = clonedContent.querySelectorAll('[src^="http"], [href^="http"]');
+    externalElements.forEach((element) => {
+      const el = element as HTMLElement;
+      if (el.tagName === 'IMG' || el.tagName === 'VIDEO' || el.tagName === 'AUDIO') {
+        el.remove();
+      }
+    });
+
+    // Remove elements that might cause addEventListener errors
+    const interactiveElements = clonedContent.querySelectorAll('[data-js], [class*="js-"], [id*="js-"]');
+    interactiveElements.forEach((element) => {
+      const el = element as HTMLElement;
+      // Remove event listeners by cloning the element
+      const newEl = el.cloneNode(false) as HTMLElement;
+      newEl.innerHTML = el.innerHTML;
+      el.parentNode?.replaceChild(newEl, el);
+    });
+
+    // Clean up problematic CSS that might cause parsing errors
+    const allElements = clonedContent.querySelectorAll('*');
+    allElements.forEach((element) => {
+      const el = element as HTMLElement;
+      if (el.style) {
+        try {
+          // Replace problematic color functions with safe values
+          const style = el.style.cssText;
+          const cleanStyle = style
+            .replace(/color\([^)]*\)/g, '#000000')
+            .replace(/rgb\([^)]*\)/g, '#000000')
+            .replace(/hsl\([^)]*\)/g, '#000000')
+            .replace(/rgba\([^)]*\)/g, '#000000')
+            .replace(/hsla\([^)]*\)/g, '#000000');
+          el.style.cssText = cleanStyle;
+        } catch (e) {
+          // If style manipulation fails, remove the style attribute
+          el.removeAttribute('style');
+        }
+      }
+    });
+
+    // Add the cleaned content to the temporary container
+    tempContainer.appendChild(clonedContent);
+    document.body.appendChild(tempContainer);
+
+    try {
+      const canvas = await html2canvas(tempContainer, {
+        useCORS: false,
+        width,
+        ...(cropHeight && { height }),
+        scale: 1,
+        allowTaint: true,
+        foreignObjectRendering: false,
+        removeContainer: true,
+        backgroundColor: '#ffffff',
+        logging: false,
+        ignoreElements: (element) => {
+          // Ignore any remaining problematic elements
+          const tagName = element.tagName?.toLowerCase();
+          if (tagName === 'script' || tagName === 'iframe') {
+            return true;
+          }
+          return false;
+        },
+      });
+
+      return new Promise((resolve) => {
+        canvas.toBlob((blob) => {
+          resolve(blob);
+        }, 'image/png');
+      });
+    } finally {
+      // Clean up the temporary container
+      if (tempContainer.parentNode) {
+        tempContainer.parentNode.removeChild(tempContainer);
+      }
+    }
+  } catch (error) {
+    console.error('Screenshot fallback failed:', error);
+    return null;
+  }
+};
+
 const takeScreenshot = () => {
   const body = document.querySelector('body');
   if (!body) return;
@@ -86,7 +244,12 @@ export const makeBlobFromHtmlPage = async (cropHeight = true):Promise<Blob |null
       }, 'image/png');
     });
   } catch (error) {
-    return null;
+    // Fallback: try with more aggressive CSP bypass
+    const fallbackResult = await makeBlobFromHtmlPageFallback(cropHeight);
+    if (fallbackResult) return fallbackResult;
+
+    // Final fallback: create a minimal screenshot with just text content
+    return createMinimalScreenshot(cropHeight);
   }
 };
 
