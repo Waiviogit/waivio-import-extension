@@ -2,6 +2,7 @@ import { EXTERNAL_URL } from '../constants';
 import { getInstagramDataBlob } from '../downloaders/instagramDownloader';
 import { getTiktokDataBlob } from '../downloaders/tikTokDownloader';
 import { shortenYoutubeUrl } from './youtubeHelper';
+import { getThreeSpeakDataBlob } from '../downloaders/threeSpeakDownloader';
 
 type responseType = {
     result?: string
@@ -32,6 +33,8 @@ export const getGptAnswer = async (query: string): Promise<responseType> => {
 const blobGetters: Record<string, () => Promise<Blob>> = {
   'tiktok.com': getTiktokDataBlob,
   'instagram.com': getInstagramDataBlob,
+  '3speak.tv': getThreeSpeakDataBlob,
+  'waivio.com': getThreeSpeakDataBlob,
 };
 
 const getBlobForUrl = async (url: string) => {

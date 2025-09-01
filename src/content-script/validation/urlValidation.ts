@@ -184,7 +184,7 @@ const draftValidation = {
   [SOURCE_TYPES.TUTORIAL_INSTAGRAM]: isValidInstagramUrl,
   [SOURCE_TYPES.RECIPE_DRAFT]: validatePageForYoutube,
   [SOURCE_TYPES.TUTORIAL_YOUTUBE]: validatePageForYoutube,
-  default: validatePageForYoutube,
+  default: () => true,
 };
 
 const draftUrlValidation = (url: string, source: string):boolean => {

@@ -11,12 +11,13 @@ import {
   walmartButtonsConfig,
   youtubeButtonConfig,
   instacartButtonsConfig,
+  hiveConfig,
 } from '../common/helper';
 import { getCurrentTab } from '../services/chromeHelper';
 import { DashboardSelect } from './DashboardSelect';
 import { SELECT_MAP_VALUES } from '../common/constants/components';
 import { BUTTON_TEXT, PARSE_COMMANDS, SOURCE_TYPES } from '../common/constants';
-import { sendMessageToContentScript, sendMessageToContentScriptNoEvent } from '../services/pageParser';
+import { sendMessageToContentScript } from '../services/pageParser';
 import { generateUniqueId } from '../common/helper/commonHelper';
 import { DashboardInputKey } from './DashboardInputKey';
 import { isValidGoogleMapsUrl } from '../common/helper/googleHelper';
@@ -115,6 +116,18 @@ export const Dashboard = () => {
               />)
       );
     }
+    if (currentUrl.includes('3speak.tv') || currentUrl.includes('waivio.com')) {
+      return (
+        hiveConfig
+          .map((button) => <DashboardButton
+                  text={button.text}
+                  onClick={button.onClick}
+                  id={button.id}
+                  key={button.id}
+              />)
+      );
+    }
+
     if (currentUrl.includes('amazon')) {
       return (
         mainButtonsConfig

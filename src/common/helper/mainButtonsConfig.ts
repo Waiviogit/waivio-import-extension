@@ -1,8 +1,6 @@
-import React from 'react';
 import { sendMessageToContentScript } from '../../services/pageParser';
 import { BUTTON_TEXT, PARSE_COMMANDS, SOURCE_TYPES } from '../constants';
 import { generateUniqueId } from './commonHelper';
-import { DashboardButton } from '../../components/DasboardButton';
 
 const editWithAi = {
   text: BUTTON_TEXT.EDIT_WITH_AI,
@@ -423,6 +421,39 @@ export const tikTokConfig = [
         SOURCE_TYPES.LINK_ALL,
       )
     ),
+    id: generateUniqueId(),
+  },
+];
+
+export const hiveConfig = [
+  {
+    text: BUTTON_TEXT.CREATE_POST_DRAFT,
+    onClick: async (event:Event): Promise<void> => (
+      sendMessageToContentScript(
+        event,
+        PARSE_COMMANDS.CREATE_DRAFT,
+        SOURCE_TYPES.REVIEW_DRAFT_HIVE,
+      )),
+    id: generateUniqueId(),
+  },
+  {
+    text: BUTTON_TEXT.CREATE_RECIPE_DRAFT,
+    onClick: async (event:Event): Promise<void> => (
+      sendMessageToContentScript(
+        event,
+        PARSE_COMMANDS.CREATE_DRAFT,
+        SOURCE_TYPES.RECIPE_DRAFT_HIVE,
+      )),
+    id: generateUniqueId(),
+  },
+  {
+    text: BUTTON_TEXT.TUTORIAL_DRAFT,
+    onClick: async (event:Event): Promise<void> => (
+      sendMessageToContentScript(
+        event,
+        PARSE_COMMANDS.CREATE_DRAFT,
+        SOURCE_TYPES.TUTORIAL_DRAFT_HIVE,
+      )),
     id: generateUniqueId(),
   },
 ];

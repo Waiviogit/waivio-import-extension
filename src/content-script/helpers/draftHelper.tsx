@@ -13,6 +13,7 @@ import { getTikTokUsername } from './tikTokHelper';
 import { getInstagramDescription, getInstagramUsername } from './instaHelper';
 import { createAnalysisVideoPromptBySource, formatReviewPrompt, formatTutorialPrompt } from './promptHelper';
 import { emitLoadingEvent } from '../emiters/loadingEmitter';
+import { getHivePostFromDocUrl } from './hivePostHelper';
 
 interface createQueryInterface {
     subs: string
@@ -151,6 +152,21 @@ const getYoutubeDraft = async (): Promise<BodyTitleType> => {
     attribution: linkToAuthorAndChannel,
     link,
     author: account,
+  };
+};
+
+const getHiveDraft = async (): Promise<BodyTitleType> => {
+  const post = await getHivePostFromDocUrl();
+  if (!post) return EMPTY_BODY_RESPONSE;
+
+  const attribution = `Hive profile - ${post.author}: https://www.waivio.com/@${post.author}`;
+
+  return {
+    title: post.title,
+    body: post.body,
+    attribution,
+    link: document.URL,
+    author: post.author,
   };
 };
 
@@ -304,6 +320,9 @@ const draftBySiteHandler = {
   [SOURCE_TYPES.DRAFT_YOUTUBE]: getYoutubeDraft,
   [SOURCE_TYPES.YOUTUBE]: getYoutubeDraft,
   [SOURCE_TYPES.TUTORIAL_YOUTUBE]: getYoutubeDraft,
+  [SOURCE_TYPES.RECIPE_DRAFT_HIVE]: getHiveDraft,
+  [SOURCE_TYPES.TUTORIAL_DRAFT_HIVE]: getHiveDraft,
+  [SOURCE_TYPES.REVIEW_DRAFT_HIVE]: getHiveDraft,
   default: getYoutubeDraft,
 };
 
