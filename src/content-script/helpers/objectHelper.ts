@@ -529,7 +529,7 @@ export const createObjectForPost = async (postBody: string, imageUrl?: string)
     const wobject = await getWaivioObject(existPermlink);
     if (wobject) {
       // recreate object field (to get like on each update)
-      if (await showAlertObjectModal(existPermlink)) {
+      if (await showAlertObjectModal(`The object already exists on Waivio. Here is the link: https://www.waivio.com/object/${existPermlink}`, 'Import', existPermlink)) {
         await downloadToWaivio({
           object: {
             name: wobject.name || wobject.default_name,
@@ -543,6 +543,7 @@ export const createObjectForPost = async (postBody: string, imageUrl?: string)
             ...wobject.avatar && { primaryImageURLs: [wobject?.avatar] },
             waivio_product_ids: productId,
           },
+          objectPermlink: existPermlink,
           objectType: 'recipe',
         });
       }
@@ -630,6 +631,7 @@ export const createObjectForPost = async (postBody: string, imageUrl?: string)
       ...(imageUrl && { recipeUrl: imageUrl }),
     },
     objectType: 'recipe',
+    objectPermlink: createObjectResponse.result.permlink,
   });
 
   return {

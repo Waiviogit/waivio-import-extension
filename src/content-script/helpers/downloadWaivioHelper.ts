@@ -5,6 +5,7 @@ import { EXTERNAL_URL } from '../constants';
 import { randomNameGenerator } from './commonHelper';
 import { detectLanguage } from './detectLanguageHelper';
 import { getWaivioUserInfo } from './userHelper';
+import { showAlertObjectModal } from '../components/AlertObjectModal';
 
 type userType = {
   _id: string
@@ -49,6 +50,7 @@ interface downloadToWaivioInterface {
   objectType: string
   language?: string
   addDatafinityData?: boolean
+  objectPermlink?: string
 }
 
 type validateUserImportType = {
@@ -104,7 +106,7 @@ export const getLinkByBody = async (body: string, objectType?: string): Promise<
 };
 
 export const downloadToWaivio = async ({
-  object, objectType, addDatafinityData, language,
+  object, objectType, addDatafinityData, language, objectPermlink,
 }:downloadToWaivioInterface): Promise<void> => {
   const exportName = randomNameGenerator(8);
 
@@ -148,7 +150,7 @@ export const downloadToWaivio = async ({
         alert(result.message);
         return;
       }
-      alert(`Import successfully started by ${userName}!`);
+      showAlertObjectModal(`Import successfully started by ${userName}!`, 'Ok', objectPermlink);
     })
     .catch((error) => {
       alert(error.message);

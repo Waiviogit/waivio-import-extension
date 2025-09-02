@@ -5,11 +5,18 @@ import { Z_INDEX } from '../constants';
 import { copyContent } from '../helpers/commonHelper';
 
 interface AlertObjectProps {
-    url: string;
+    url?: string;
+    alertMessage: string;
+    confirmText: string;
     onResolve: (result: boolean) => void;
 }
 
-const AlertObjectModal = ({ url, onResolve }: AlertObjectProps) => {
+const AlertObjectModal = ({
+  url,
+  onResolve,
+  alertMessage,
+  confirmText,
+}: AlertObjectProps) => {
   const [isModalOpen, setIsModalOpen] = useState(true);
 
   const cleanup = () => {
@@ -32,7 +39,7 @@ const AlertObjectModal = ({ url, onResolve }: AlertObjectProps) => {
   };
 
   const handleCopyLinkToClipboard = async () => {
-    await copyContent(` https://www.waivio.com/object/${url}`);
+    await copyContent(`https://www.waivio.com/object/${url}`);
   };
 
   // Cleanup on unmount
@@ -57,7 +64,7 @@ const AlertObjectModal = ({ url, onResolve }: AlertObjectProps) => {
             >
                 <div>
                     <p style={{ fontWeight: 'bold', marginTop: '15px' }}>
-                        The object already exists on Waivio. Here is the link: https://www.waivio.com/object/{url}
+                        {alertMessage}
                     </p>
                 </div>
 
@@ -68,18 +75,20 @@ const AlertObjectModal = ({ url, onResolve }: AlertObjectProps) => {
                       justifyContent: 'center',
                       marginTop: '20px',
                     }}
-                >
+                >   {url && (
                     <Button
                         onClick={handleCopyLinkToClipboard}
                         style={{ backgroundColor: 'rgb(248, 112, 7)', color: 'white' }}
                     >
                         Copy
                     </Button>
+                )}
+
                     <Button
                         onClick={handleConfirm}
                         style={{ backgroundColor: 'rgb(248, 112, 7)', color: 'white' }}
                     >
-                        Import
+                        {confirmText}
                     </Button>
 
                 </div>
@@ -89,7 +98,7 @@ const AlertObjectModal = ({ url, onResolve }: AlertObjectProps) => {
 };
 
 // Helper function to create a confirm-like modal
-export const showAlertObjectModal = (url: string): Promise<boolean> => new Promise((resolve) => {
+export const showAlertObjectModal = (alertMessage: string, confirmText: string, url?: string): Promise<boolean> => new Promise((resolve) => {
   const modalContainer = document.createElement('div');
   modalContainer.id = 'react-chrome-modal-alert';
   document.body.appendChild(modalContainer);
@@ -100,7 +109,11 @@ export const showAlertObjectModal = (url: string): Promise<boolean> => new Promi
 
   // Render the React component
   const root = createRoot(modalContainer);
-  root.render(<AlertObjectModal url={url} onResolve={handleResolve}/>);
+  root.render(<AlertObjectModal
+        url={url}
+        alertMessage={alertMessage}
+        confirmText={confirmText}
+        onResolve={handleResolve}/>);
 });
 
 export default AlertObjectModal;
