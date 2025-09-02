@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import { StyleProvider } from '@ant-design/cssinjs';
 import getVideoCaptions, { captionType, extractVideoId } from './youtubeHelper';
 import {
   RECIPE_SOURCE_TYPES, REVIEW_SOURCE_TYPES, SOURCE_TYPES, TUTORIAL_SOURCE_TYPES,
@@ -569,21 +570,37 @@ export const createUnifiedModal = async (source: string, commandType: string): P
 
   const host = await getPostImportHost(userName) || 'www.waivio.com';
 
-  const rootElement = document.createElement('div');
-  rootElement.id = 'react-chrome-modal';
-  document.body.appendChild(rootElement);
-  const rootModal = ReactDOM.createRoot(rootElement);
+  // Create isolated Shadow DOM to avoid host page styles
+  const shadowHost = document.createElement('div');
+  shadowHost.id = 'react-chrome-modal-host';
+  document.body.appendChild(shadowHost);
+  const shadowRoot = shadowHost.attachShadow({ mode: 'open' });
+
+  // Mount point inside shadow
+  const shadowMount = document.createElement('div');
+  shadowMount.id = 'react-chrome-modal';
+  shadowRoot.appendChild(shadowMount);
+
+  // Basic font normalization for readability (UA styles still apply)
+  const styleEl = document.createElement('style');
+  styleEl.textContent = `:host{all:initial} *{box-sizing:border-box;font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif}`;
+  shadowRoot.appendChild(styleEl);
+
+  const rootModal = ReactDOM.createRoot(shadowMount);
 
   rootModal.render(
-    <CreatePostModal
-      title=""
-      body=""
-      tags={[]}
-      author={userName}
-      host={host}
-      source={source}
-      commandType={commandType}
-    />,
+    <StyleProvider container={shadowRoot}>
+      <CreatePostModal
+        title=""
+        body=""
+        tags={[]}
+        author={userName}
+        host={host}
+        source={source}
+        commandType={commandType}
+        container={shadowMount}
+      />
+    </StyleProvider>,
   );
 };
 

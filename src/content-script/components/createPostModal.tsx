@@ -21,6 +21,7 @@ interface CreatePostProps {
     tags: string[];
     source: string;
     commandType?: string;
+    container?: HTMLElement;
 }
 
 const CreatePostModalContent: React.FC<CreatePostProps> = ({
@@ -31,6 +32,7 @@ const CreatePostModalContent: React.FC<CreatePostProps> = ({
   host,
   source,
   commandType,
+  container,
 }: CreatePostProps) => {
   const [isModalOpen, setIsModalOpen] = useState(true);
   const [isImageUploadModalVisible, setIsImageUploadModalVisible] = useState(false);
@@ -132,7 +134,14 @@ const CreatePostModalContent: React.FC<CreatePostProps> = ({
                 <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
 
                     {isRecipeSource && (
-                        <Tooltip title="Upload image from disk or clipboard" zIndex={Z_INDEX.TOOLTIP}>
+                        <Tooltip
+                            title="Upload image from disk or clipboard"
+                            zIndex={Z_INDEX.TOOLTIP}
+                            getPopupContainer={() => {
+                              if (typeof window !== 'undefined' && container) return container;
+                              return document.body;
+                            }}
+                        >
                             <Button
                                 icon={<PlusOutlined/>}
                                 onClick={handleImageUpload}
@@ -152,6 +161,7 @@ const CreatePostModalContent: React.FC<CreatePostProps> = ({
                     visible={isImageUploadModalVisible}
                     onCancel={() => setIsImageUploadModalVisible(false)}
                     onImageUpload={handleImageUploadComplete}
+                    container={container}
                 />
 
                 <WaivioTags
@@ -169,6 +179,10 @@ const CreatePostModal: React.FC<CreatePostProps> = (props) => (
           token: {
             colorPrimary: '#f87007',
           },
+        }}
+        getPopupContainer={() => {
+          if (typeof window !== 'undefined' && props.container) return props.container;
+          return document.body;
         }}
     >
         <PostProvider

@@ -11,12 +11,14 @@ interface ImageUploadModalProps {
   visible: boolean;
   onCancel: () => void;
   onImageUpload: (imageUrl: string) => void;
+  container?: HTMLElement;
 }
 
 export const ImageUploadModal: React.FC<ImageUploadModalProps> = ({
   visible,
   onCancel,
   onImageUpload,
+  container,
 }) => {
   const [imageUrl, setImageUrl] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
@@ -112,6 +114,7 @@ export const ImageUploadModal: React.FC<ImageUploadModalProps> = ({
       width={500}
       destroyOnClose
       zIndex={Z_INDEX.UPLOAD_MODAL}
+      getContainer={container || (() => document.body)}
     >
       <Tabs defaultActiveKey="file">
         <TabPane tab="Upload File" key="file">
