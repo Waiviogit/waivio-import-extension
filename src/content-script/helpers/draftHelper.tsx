@@ -1,7 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import getVideoCaptions, { captionType, extractVideoId } from './youtubeHelper';
-import { RECIPE_SOURCE_TYPES, SOURCE_TYPES } from '../../common/constants';
+import {
+  RECIPE_SOURCE_TYPES, REVIEW_SOURCE_TYPES, SOURCE_TYPES, TUTORIAL_SOURCE_TYPES,
+} from '../../common/constants';
 import { getWaivioUserInfo } from './userHelper';
 import { getPostImportHost } from './downloadWaivioHelper';
 import CreatePostModal from '../components/createPostModal';
@@ -155,6 +157,8 @@ const getYoutubeDraft = async (): Promise<BodyTitleType> => {
   };
 };
 
+const stripHtmlTags = (str: string): string => str.replace(/<[^>]*>/g, '');
+
 const getHiveDraft = async (): Promise<BodyTitleType> => {
   const post = await getHivePostFromDocUrl();
   if (!post) return EMPTY_BODY_RESPONSE;
@@ -163,7 +167,7 @@ const getHiveDraft = async (): Promise<BodyTitleType> => {
 
   return {
     title: post.title,
-    body: post.body,
+    body: stripHtmlTags(post.body),
     attribution,
     link: document.URL,
     author: post.author,
@@ -271,7 +275,7 @@ This is the Example Format in markdown:
 
 ---
 
-YouTube channel - [Channel Name]: [YouTube URL]
+[Channel Name]: [URL]
 
 ---
 
@@ -472,7 +476,7 @@ export const initialDeepAnalysis = async (source:string): Promise<Draft|null> =>
 
   let postBody = response.result || body;
 
-  if ([SOURCE_TYPES.TUTORIAL_INSTAGRAM, SOURCE_TYPES.TUTORIAL_TIKTOK, SOURCE_TYPES.TUTORIAL_YOUTUBE].includes(source)) {
+  if (TUTORIAL_SOURCE_TYPES.includes(source)) {
     emitLoadingEvent('deep-analysis-step', {
       step: 'Additional tutorial processing',
       message: 'Formating video analyses response...',
@@ -487,7 +491,7 @@ export const initialDeepAnalysis = async (source:string): Promise<Draft|null> =>
     if (formattedResponse) postBody = formattedResponse;
   }
 
-  if ([SOURCE_TYPES.DRAFT_YOUTUBE, SOURCE_TYPES.DRAFT_INSTAGRAM, SOURCE_TYPES.DRAFT_TIKTOK].includes(source)) {
+  if (REVIEW_SOURCE_TYPES.includes(source)) {
     emitLoadingEvent('deep-analysis-step', {
       step: 'Additional review processing',
       message: 'Formating video analyses response...',
