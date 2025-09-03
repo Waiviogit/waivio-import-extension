@@ -5,10 +5,11 @@ import { getGoogleId } from '../googleMaps/formBusinessObjectFromGoogle';
 import CopyContentModal, { fieldToCopyType } from '../components/copyContentModal';
 import { getObjectLinkOnWaivio } from '../validation';
 import AlertObjectModal from '../components/AlertObjectModal';
+import { MODAL_IDS } from '../constants';
 
 const renderModal = (fields: fieldToCopyType[]) => {
   const rootElement = document.createElement('div');
-  rootElement.id = 'react-chrome-modal';
+  rootElement.id = MODAL_IDS.MAIN_MODAL_HOST;
   document.body.appendChild(rootElement);
   const rootModal = ReactDOM.createRoot(rootElement);
 
@@ -85,7 +86,7 @@ export const getId = async (source: string):Promise<void> => {
 
 const renderModalObject = (link:string) => {
   const rootElement = document.createElement('div');
-  rootElement.id = 'react-chrome-modal-object';
+  rootElement.id = MODAL_IDS.OBJECT_MODAL_HOST;
   document.body.appendChild(rootElement);
   const rootModal = ReactDOM.createRoot(rootElement);
 

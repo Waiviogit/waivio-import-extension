@@ -45,3 +45,11 @@ export const THEME_CONFIG = {
     colorPrimary: '#f87007',
   },
 };
+
+export const MODAL_IDS = {
+  MAIN_MODAL_HOST: 'react-chrome-modal-host',
+  MAIN_MODAL_MOUNT: 'react-chrome-modal',
+  ALERT_MODAL_HOST: 'react-chrome-modal-alert-host',
+  ALERT_MODAL_MOUNT: 'react-chrome-modal-alert',
+  OBJECT_MODAL_HOST: 'react-chrome-modal-object',
+} as const;

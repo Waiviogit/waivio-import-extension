@@ -8,6 +8,7 @@ import {
 import { getWaivioUserInfo } from './userHelper';
 import { getPostImportHost } from './downloadWaivioHelper';
 import CreatePostModal from '../components/createPostModal';
+import { MODAL_IDS } from '../constants';
 import {
   formatHashTags, makeValidTag, tikTokInfoHandler,
 } from './postHelper';
@@ -572,13 +573,13 @@ export const createUnifiedModal = async (source: string, commandType: string): P
 
   // Create isolated Shadow DOM to avoid host page styles
   const shadowHost = document.createElement('div');
-  shadowHost.id = 'react-chrome-modal-host';
+  shadowHost.id = MODAL_IDS.MAIN_MODAL_HOST;
   document.body.appendChild(shadowHost);
   const shadowRoot = shadowHost.attachShadow({ mode: 'open' });
 
   // Mount point inside shadow
   const shadowMount = document.createElement('div');
-  shadowMount.id = 'react-chrome-modal';
+  shadowMount.id = MODAL_IDS.MAIN_MODAL_MOUNT;
   shadowRoot.appendChild(shadowMount);
 
   // Basic font normalization for readability (UA styles still apply)
@@ -589,7 +590,6 @@ export const createUnifiedModal = async (source: string, commandType: string): P
   const rootModal = ReactDOM.createRoot(shadowMount);
 
   rootModal.render(
-    <StyleProvider container={shadowRoot}>
       <CreatePostModal
         title=""
         body=""
@@ -599,8 +599,8 @@ export const createUnifiedModal = async (source: string, commandType: string): P
         source={source}
         commandType={commandType}
         container={shadowMount}
-      />
-    </StyleProvider>,
+        shadowRoot={shadowRoot}
+      />,
   );
 };
 

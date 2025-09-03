@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { ConfigProvider, Modal, Button } from 'antd';
+import { MODAL_IDS } from '../constants';
 
 export type fieldToCopyType = {
     title: string
@@ -21,14 +22,14 @@ const CopyContentModal = ({ fields, modalTitle }: copyContentModalProps) => {
     });
   };
   const handleOk = async () => {
-    const nested = document.getElementById('react-chrome-modal');
+    const nested = document.getElementById(MODAL_IDS.MAIN_MODAL_HOST);
     if (!nested) return;
     document.body.removeChild(nested);
   };
 
   const handleCancel = () => {
     setIsModalOpen(false);
-    const nested = document.getElementById('react-chrome-modal');
+    const nested = document.getElementById(MODAL_IDS.MAIN_MODAL_HOST);
     if (!nested) return;
     document.body.removeChild(nested);
   };

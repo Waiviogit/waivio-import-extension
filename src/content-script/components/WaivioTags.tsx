@@ -15,9 +15,10 @@ const tagInputStyle: React.CSSProperties = {
 interface waivioTagsProps {
   setParentTags: React.Dispatch<React.SetStateAction<string[]>>
   initialTags: string[]
+  container?: HTMLElement
 }
 
-const WaivioTags = ({ setParentTags, initialTags }: waivioTagsProps) => {
+const WaivioTags = ({ setParentTags, initialTags, container }: waivioTagsProps) => {
   const { token } = theme.useToken();
   const [tags, setTags] = useState<string[]>(initialTags);
   const [inputVisible, setInputVisible] = useState(false);
@@ -124,7 +125,11 @@ const WaivioTags = ({ setParentTags, initialTags }: waivioTagsProps) => {
                     </Tag>
               );
               return isLongTag ? (
-                    <Tooltip title={tag} key={tag}>
+                    <Tooltip 
+                      title={tag} 
+                      key={tag}
+                      getPopupContainer={() => container || document.body}
+                    >
                         {tagElem}
                     </Tooltip>
               ) : (

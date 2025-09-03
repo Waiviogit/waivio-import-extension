@@ -13,6 +13,7 @@ interface PostActionButtonsProps {
   onRefreshGpt: () => void;
   onAnalysis: () => void;
   onCopy: () => void;
+  container?: HTMLElement;
 }
 
 export const PostActionButtons: React.FC<PostActionButtonsProps> = ({
@@ -24,6 +25,7 @@ export const PostActionButtons: React.FC<PostActionButtonsProps> = ({
   onRefreshGpt,
   onAnalysis,
   onCopy,
+  container,
 }) => {
   const isRecipeSource = RECIPE_SOURCE_TYPES.includes(source || '');
 
@@ -41,7 +43,11 @@ export const PostActionButtons: React.FC<PostActionButtonsProps> = ({
         </>
       )}
 
-              <Tooltip title="Analyze video content with AI" zIndex={Z_INDEX.TOOLTIP}>
+              <Tooltip 
+                title="Analyze video content with AI" 
+                zIndex={Z_INDEX.TOOLTIP}
+                getPopupContainer={() => container || document.body}
+              >
         <Button
           icon={<VideoCameraAddOutlined />}
           onClick={onAnalysis}
@@ -49,7 +55,11 @@ export const PostActionButtons: React.FC<PostActionButtonsProps> = ({
         />
       </Tooltip>
 
-              <Tooltip title="Regenerate draft" zIndex={Z_INDEX.TOOLTIP}>
+              <Tooltip 
+                title="Regenerate draft" 
+                zIndex={Z_INDEX.TOOLTIP}
+                getPopupContainer={() => container || document.body}
+              >
         <Button
           icon={<ReloadOutlined />}
           onClick={onRefreshGpt}

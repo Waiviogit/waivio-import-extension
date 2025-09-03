@@ -1,5 +1,6 @@
 import ReactDOM from 'react-dom/client';
 import EditAiModal from '../components/editWithAiModal';
+import { MODAL_IDS } from '../constants';
 import {
   getAvatarAmazon,
   getAvatarSephora,
@@ -228,7 +229,7 @@ export const editWithAi = async () => {
     };
 
     const rootElement = document.createElement('div');
-    rootElement.id = 'react-chrome-modal';
+    rootElement.id = MODAL_IDS.MAIN_MODAL_HOST;
     document.body.appendChild(rootElement);
     const rootModal = ReactDOM.createRoot(rootElement);
 

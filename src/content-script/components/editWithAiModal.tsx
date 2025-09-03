@@ -7,6 +7,7 @@ import { FormField } from './FormField';
 import { PRODUCT_FORM_FIELDS } from '../config/formFields';
 import { ImagePreview } from './ImagePreview';
 import { downloadToWaivio } from '../helpers/downloadWaivioHelper';
+import { MODAL_IDS } from '../constants';
 
 interface ValidationError {
   errorFields?: Array<{
@@ -28,7 +29,7 @@ const EditAiModal = ({ product, title = 'Object draft' }: EditAiModalProps) => {
         object.features = object.features
           .map((el: {value: string}) => ({ ...el, value: [el.value] }));
       }
-      const nested = document.getElementById('react-chrome-modal');
+      const nested = document.getElementById(MODAL_IDS.MAIN_MODAL_HOST);
       if (!nested) return;
       await downloadToWaivio({
         object,
@@ -47,7 +48,7 @@ const EditAiModal = ({ product, title = 'Object draft' }: EditAiModalProps) => {
 
   const handleCancel = () => {
     setIsModalOpen(false);
-    const nested = document.getElementById('react-chrome-modal');
+    const nested = document.getElementById(MODAL_IDS.MAIN_MODAL_HOST);
     if (!nested) return;
     document.body.removeChild(nested);
   };

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { ConfigProvider, Modal } from 'antd';
 import { copyContent } from '../helpers/commonHelper';
+import { MODAL_IDS } from '../constants';
 
 interface youtubeModalProps {
     text: string
@@ -10,7 +11,7 @@ const YoutubeDraftModal = ({ text, title = 'Post draft' }: youtubeModalProps) =>
   const [isModalOpen, setIsModalOpen] = useState(true);
 
   const handleOk = async () => {
-    const nested = document.getElementById('react-chrome-modal');
+    const nested = document.getElementById(MODAL_IDS.MAIN_MODAL_HOST);
     if (!nested) return;
     await copyContent(text);
     document.body.removeChild(nested);
@@ -18,7 +19,7 @@ const YoutubeDraftModal = ({ text, title = 'Post draft' }: youtubeModalProps) =>
 
   const handleCancel = () => {
     setIsModalOpen(false);
-    const nested = document.getElementById('react-chrome-modal');
+    const nested = document.getElementById(MODAL_IDS.MAIN_MODAL_HOST);
     if (!nested) return;
     document.body.removeChild(nested);
   };

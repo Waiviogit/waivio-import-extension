@@ -6,6 +6,7 @@ import { getDraftBodyTitleTags } from '../helpers/draftHelper';
 import { extractPostInfo } from '../helpers/postHelper';
 import { createAnalysisVideoPromptBySource } from '../helpers/promptHelper';
 import { videoAnalysesByLink } from '../helpers/gptHelper';
+import { MODAL_IDS } from '../constants';
 
 interface PostActionsProps {
   title: string;
@@ -40,7 +41,7 @@ export const usePostActions = ({
   const [isAnalysisLoading, setIsAnalysisLoading] = useState(false);
 
   const handleSubmit = async () => {
-    const nested = document.getElementById('react-chrome-modal');
+    const nested = document.getElementById(MODAL_IDS.MAIN_MODAL_HOST);
     if (!nested) return;
 
     await postImportWaivio({

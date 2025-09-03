@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
 import { ConfigProvider, Modal, Button } from 'antd';
 import { StyleProvider } from '@ant-design/cssinjs';
-import { Z_INDEX } from '../constants';
+import { Z_INDEX, MODAL_IDS } from '../constants';
 import { copyContent } from '../helpers/commonHelper';
 
 interface AlertObjectProps {
@@ -25,7 +25,7 @@ const AlertObjectModal = ({
   const [isModalOpen, setIsModalOpen] = useState(true);
 
   const cleanup = () => {
-    const nested = document.getElementById('react-chrome-modal-alert-host');
+    const nested = document.getElementById(MODAL_IDS.ALERT_MODAL_HOST);
     if (nested) {
       document.body.removeChild(nested);
     }
@@ -109,13 +109,13 @@ const AlertObjectModal = ({
 export const showAlertObjectModal = (alertMessage: string, confirmText: string, url?: string): Promise<boolean> => new Promise((resolve) => {
   // Create isolated Shadow DOM to avoid host page styles
   const shadowHost = document.createElement('div');
-  shadowHost.id = 'react-chrome-modal-alert-host';
+  shadowHost.id = MODAL_IDS.ALERT_MODAL_HOST;
   document.body.appendChild(shadowHost);
   const shadowRoot = shadowHost.attachShadow({ mode: 'open' });
 
   // Mount point inside shadow
   const shadowMount = document.createElement('div');
-  shadowMount.id = 'react-chrome-modal-alert';
+  shadowMount.id = MODAL_IDS.ALERT_MODAL_MOUNT;
   shadowRoot.appendChild(shadowMount);
 
   // Basic font normalization for readability (UA styles still apply)

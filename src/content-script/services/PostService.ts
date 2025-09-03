@@ -5,6 +5,7 @@ import { getDraftBodyTitleTags } from '../helpers/draftHelper';
 import { extractPostInfo } from '../helpers/postHelper';
 import { createAnalysisVideoPromptBySource } from '../helpers/promptHelper';
 import { videoAnalysesByLink } from '../helpers/gptHelper';
+import { MODAL_IDS } from '../constants';
 
 export interface PostData {
   title: string;
@@ -54,7 +55,7 @@ export class PostService {
   }
 
   static cleanupModal(): void {
-    const nested = document.getElementById('react-chrome-modal');
+    const nested = document.getElementById(MODAL_IDS.MAIN_MODAL_HOST);
     if (nested) {
       document.body.removeChild(nested);
     }

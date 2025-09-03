@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Button, ConfigProvider, Tooltip } from 'antd';
+import { StyleProvider } from '@ant-design/cssinjs';
 import { PlusOutlined } from '@ant-design/icons';
 import WaivioTags from './WaivioTags';
 import { DraggableModal } from './DraggableModal';
@@ -22,6 +23,7 @@ interface CreatePostProps {
     source: string;
     commandType?: string;
     container?: HTMLElement;
+    shadowRoot?: ShadowRoot;
 }
 
 const CreatePostModalContent: React.FC<CreatePostProps> = ({
@@ -33,6 +35,7 @@ const CreatePostModalContent: React.FC<CreatePostProps> = ({
   source,
   commandType,
   container,
+  shadowRoot,
 }: CreatePostProps) => {
   const [isModalOpen, setIsModalOpen] = useState(true);
   const [isImageUploadModalVisible, setIsImageUploadModalVisible] = useState(false);
@@ -99,6 +102,7 @@ const CreatePostModalContent: React.FC<CreatePostProps> = ({
   const isRecipeSource = RECIPE_SOURCE_TYPES.includes(source || '');
 
   return (
+    <StyleProvider container={shadowRoot}>
         <DraggableModal
             title="Create post"
             open={isModalOpen}
@@ -116,6 +120,7 @@ const CreatePostModalContent: React.FC<CreatePostProps> = ({
                     onRefreshGpt={handleRefreshGpt}
                     onAnalysis={handleAnalysis}
                     onCopy={handleCopy}
+                    container={container}
                 />
             }
             width={500}
@@ -167,9 +172,11 @@ const CreatePostModalContent: React.FC<CreatePostProps> = ({
                 <WaivioTags
                     setParentTags={handleTagsChange}
                     initialTags={data.tags}
+                    container={container}
                 />
             </div>
         </DraggableModal>
+    </StyleProvider>
   );
 };
 
