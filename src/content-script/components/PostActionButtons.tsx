@@ -13,6 +13,7 @@ interface PostActionButtonsProps {
   onRefreshGpt: () => void;
   onAnalysis: () => void;
   onCopy: () => void;
+  host?: string;
   container?: HTMLElement;
 }
 
@@ -25,9 +26,12 @@ export const PostActionButtons: React.FC<PostActionButtonsProps> = ({
   onRefreshGpt,
   onAnalysis,
   onCopy,
+  host,
   container,
 }) => {
   const isRecipeSource = RECIPE_SOURCE_TYPES.includes(source || '');
+  const isWaivioHost = (host || '').includes('waivio.com');
+  const isWaivioPage = typeof window !== 'undefined' && window.location.hostname.includes('waivio.com');
 
   return (
     <>
@@ -43,17 +47,19 @@ export const PostActionButtons: React.FC<PostActionButtonsProps> = ({
         </>
       )}
 
-              <Tooltip 
-                title="Analyze video content with AI" 
-                zIndex={Z_INDEX.TOOLTIP}
-                getPopupContainer={() => container || document.body}
-              >
-        <Button
-          icon={<VideoCameraAddOutlined />}
-          onClick={onAnalysis}
-          loading={isAnalysisLoading}
-        />
-      </Tooltip>
+      {!(isWaivioHost || isWaivioPage) && (
+        <Tooltip 
+          title="Analyze video content with AI" 
+          zIndex={Z_INDEX.TOOLTIP}
+          getPopupContainer={() => container || document.body}
+        >
+          <Button
+            icon={<VideoCameraAddOutlined />}
+            onClick={onAnalysis}
+            loading={isAnalysisLoading}
+          />
+        </Tooltip>
+      )}
 
               <Tooltip 
                 title="Regenerate draft" 

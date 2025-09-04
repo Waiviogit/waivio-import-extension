@@ -108,6 +108,7 @@ const postInfoHandler = {
 
 export const extractPostInfo = async (source: string): Promise<Draft|null> => {
   const handler = postInfoHandler[source as keyof typeof postInfoHandler];
+  if (!handler) return null;
 
   const response = await handler();
   if (!response) return null;

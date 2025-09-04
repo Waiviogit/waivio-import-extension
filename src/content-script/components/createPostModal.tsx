@@ -12,7 +12,7 @@ import { usePostData, usePostActions } from '../hooks';
 import { PostProvider } from '../context/PostContext';
 import { PostService } from '../services/PostService';
 import { Z_INDEX } from '../constants';
-import { RECIPE_SOURCE_TYPES } from '../../common/constants';
+import { RECIPE_SOURCE_TYPES, TUTORIAL_SOURCE_TYPES, REVIEW_SOURCE_TYPES } from '../../common/constants';
 
 interface CreatePostProps {
     author: string;
@@ -100,11 +100,18 @@ const CreatePostModalContent: React.FC<CreatePostProps> = ({
   };
 
   const isRecipeSource = RECIPE_SOURCE_TYPES.includes(source || '');
+  const modalTitle = REVIEW_SOURCE_TYPES.includes(source || '')
+    ? 'Create review'
+    : RECIPE_SOURCE_TYPES.includes(source || '')
+      ? 'Create recipe'
+      : TUTORIAL_SOURCE_TYPES.includes(source || '')
+        ? 'Create tutorial'
+        : 'Create re-post';
 
   return (
     <StyleProvider container={shadowRoot}>
         <DraggableModal
-            title="Create post"
+            title={modalTitle}
             open={isModalOpen}
             onOk={handleSubmit}
             onCancel={handleCancel}
@@ -120,6 +127,7 @@ const CreatePostModalContent: React.FC<CreatePostProps> = ({
                     onRefreshGpt={handleRefreshGpt}
                     onAnalysis={handleAnalysis}
                     onCopy={handleCopy}
+                    host={host}
                     container={container}
                 />
             }
@@ -136,31 +144,41 @@ const CreatePostModalContent: React.FC<CreatePostProps> = ({
                     onTitleChange={handleTitleChange}
                     onBodyChange={handleBodyChange}
                 />
-                <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+                {(isRecipeSource || data.uploadedImage) && (
+                    <div
+                        style={{
+                          display: 'flex',
+                          flexDirection: 'row',
+                          alignItems: 'center',
+                          gap: 8,
+                          margin: '8px 0 12px 0',
+                        }}
+                    >
 
-                    {isRecipeSource && (
-                        <Tooltip
-                            title="Upload image from disk or clipboard"
-                            zIndex={Z_INDEX.TOOLTIP}
-                            getPopupContainer={() => {
-                              if (typeof window !== 'undefined' && container) return container;
-                              return document.body;
-                            }}
-                        >
-                            <Button
-                                icon={<PlusOutlined/>}
-                                onClick={handleImageUpload}
-                                style={{ margin: '0 8px 0 0', height: '85px' }}
+                        {isRecipeSource && (
+                            <Tooltip
+                                title="Upload image from disk or clipboard"
+                                zIndex={Z_INDEX.TOOLTIP}
+                                getPopupContainer={() => {
+                                  if (typeof window !== 'undefined' && container) return container;
+                                  return document.body;
+                                }}
+                            >
+                                <Button
+                                    icon={<PlusOutlined/>}
+                                    onClick={handleImageUpload}
+                                    style={{ height: '85px' }}
+                                />
+                            </Tooltip>
+                        )}
+                        {data.uploadedImage && (
+                            <ImagePreview
+                                imageUrl={data.uploadedImage}
+                                onRemove={handleImageRemove}
                             />
-                        </Tooltip>
-                    )}
-                    {data.uploadedImage && (
-                        <ImagePreview
-                            imageUrl={data.uploadedImage}
-                            onRemove={handleImageRemove}
-                        />
-                    )}
-                </div>
+                        )}
+                    </div>
+                )}
 
                 <ImageUploadModal
                     visible={isImageUploadModalVisible}
