@@ -49,8 +49,7 @@ export const ImagePreview: React.FC<ImagePreviewProps> = ({
       <Card
         size="small"
         style={{
-          marginTop: '10px',
-          marginBottom: '10px',
+          marginTop: 0,
           border: '1px solid #d9d9d9',
           borderRadius: '8px',
           flex: 1,

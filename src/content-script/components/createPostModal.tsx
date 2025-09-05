@@ -24,6 +24,7 @@ interface CreatePostProps {
     commandType?: string;
     container?: HTMLElement;
     shadowRoot?: ShadowRoot;
+    modalTitle?: string
 }
 
 const CreatePostModalContent: React.FC<CreatePostProps> = ({
@@ -36,6 +37,7 @@ const CreatePostModalContent: React.FC<CreatePostProps> = ({
   commandType,
   container,
   shadowRoot,
+  modalTitle = 'Create review',
 }: CreatePostProps) => {
   const [isModalOpen, setIsModalOpen] = useState(true);
   const [isImageUploadModalVisible, setIsImageUploadModalVisible] = useState(false);
@@ -100,11 +102,10 @@ const CreatePostModalContent: React.FC<CreatePostProps> = ({
   };
 
   const isRecipeSource = RECIPE_SOURCE_TYPES.includes(source || '');
-
   return (
     <StyleProvider container={shadowRoot}>
         <DraggableModal
-            title="Create post"
+            title={modalTitle}
             open={isModalOpen}
             onOk={handleSubmit}
             onCancel={handleCancel}
@@ -138,31 +139,41 @@ const CreatePostModalContent: React.FC<CreatePostProps> = ({
                     onTitleChange={handleTitleChange}
                     onBodyChange={handleBodyChange}
                 />
-                <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+                {(isRecipeSource || data.uploadedImage) && (
+                    <div
+                        style={{
+                          display: 'flex',
+                          flexDirection: 'row',
+                          alignItems: 'center',
+                          gap: 8,
+                          margin: '8px 0 12px 0',
+                        }}
+                    >
 
-                    {isRecipeSource && (
-                        <Tooltip
-                            title="Upload image from disk or clipboard"
-                            zIndex={Z_INDEX.TOOLTIP}
-                            getPopupContainer={() => {
-                              if (typeof window !== 'undefined' && container) return container;
-                              return document.body;
-                            }}
-                        >
-                            <Button
-                                icon={<PlusOutlined/>}
-                                onClick={handleImageUpload}
-                                style={{ margin: '0 8px 0 0', height: '85px' }}
+                        {isRecipeSource && (
+                            <Tooltip
+                                title="Upload image from disk or clipboard"
+                                zIndex={Z_INDEX.TOOLTIP}
+                                getPopupContainer={() => {
+                                  if (typeof window !== 'undefined' && container) return container;
+                                  return document.body;
+                                }}
+                            >
+                                <Button
+                                    icon={<PlusOutlined/>}
+                                    onClick={handleImageUpload}
+                                    style={{ height: '85px' }}
+                                />
+                            </Tooltip>
+                        )}
+                        {data.uploadedImage && (
+                            <ImagePreview
+                                imageUrl={data.uploadedImage}
+                                onRemove={handleImageRemove}
                             />
-                        </Tooltip>
-                    )}
-                    {data.uploadedImage && (
-                        <ImagePreview
-                            imageUrl={data.uploadedImage}
-                            onRemove={handleImageRemove}
-                        />
-                    )}
-                </div>
+                        )}
+                    </div>
+                )}
 
                 <ImageUploadModal
                     visible={isImageUploadModalVisible}
