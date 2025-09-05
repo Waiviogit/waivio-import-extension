@@ -1,10 +1,11 @@
 import { SOURCE_TYPES } from '../../common/constants';
 import {
-  extractVideoId, fetchVideoContent,  getTitleAndBody,
+  extractVideoId, fetchVideoContent, getTitleAndBody,
 } from './youtubeHelper';
 import { fetchTiktok, getTikTokDesc, getTikTokUsername } from './tikTokHelper';
 import { Draft, extractInstagramVideoId, createUnifiedModal } from './draftHelper';
 import { getInstagramDescription, getInstagramUsername } from './instaHelper';
+import { getHivePostFromDocUrl } from './hivePostHelper';
 
 type parsedPostType = {
   title: string
@@ -91,6 +92,23 @@ export const instInfoHandler = async (): Promise<parsedPostType> => {
   };
 };
 
+export const hiveInfoHandler = async (): Promise<parsedPostType> => {
+  const post = await getHivePostFromDocUrl();
+  if (!post) {
+    return {
+      title: '',
+      body: '',
+      author: '',
+    };
+  }
+
+  return {
+    title: post.title,
+    body: post.body,
+    author: post.author,
+  };
+};
+
 const postInfoHandler = {
   [SOURCE_TYPES.YOUTUBE]: youtubeInfoHandler,
   [SOURCE_TYPES.DRAFT_YOUTUBE]: youtubeInfoHandler,
@@ -104,6 +122,9 @@ const postInfoHandler = {
   [SOURCE_TYPES.DRAFT_INSTAGRAM]: instInfoHandler,
   [SOURCE_TYPES.RECIPE_DRAFT_INSTAGRAM]: instInfoHandler,
   [SOURCE_TYPES.TUTORIAL_INSTAGRAM]: instInfoHandler,
+  [SOURCE_TYPES.TUTORIAL_DRAFT_HIVE]: hiveInfoHandler,
+  [SOURCE_TYPES.RECIPE_DRAFT_HIVE]: hiveInfoHandler,
+  [SOURCE_TYPES.REVIEW_DRAFT_HIVE]: hiveInfoHandler,
 };
 
 export const extractPostInfo = async (source: string): Promise<Draft|null> => {

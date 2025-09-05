@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { setTimeout } from 'node:timers/promises';
 import { formatToJsonObject, getProduct } from '../getProduct';
 import Cookie = chrome.cookies.Cookie;
 import { EXTERNAL_URL } from '../constants';
@@ -113,7 +112,7 @@ export const downloadToWaivio = async ({
 
   let userInfo = await getWaivioUserInfo();
   if (!userInfo) {
-    await setTimeout(3000);
+    await new Promise((resolve) => { setTimeout(resolve, 2000); });
 
     userInfo = await getWaivioUserInfo();
     if (!userInfo) {
