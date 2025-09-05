@@ -12,7 +12,7 @@ import { usePostData, usePostActions } from '../hooks';
 import { PostProvider } from '../context/PostContext';
 import { PostService } from '../services/PostService';
 import { Z_INDEX } from '../constants';
-import { RECIPE_SOURCE_TYPES, TUTORIAL_SOURCE_TYPES, REVIEW_SOURCE_TYPES } from '../../common/constants';
+import { RECIPE_SOURCE_TYPES } from '../../common/constants';
 
 interface CreatePostProps {
     author: string;
@@ -24,6 +24,7 @@ interface CreatePostProps {
     commandType?: string;
     container?: HTMLElement;
     shadowRoot?: ShadowRoot;
+    modalTitle?: string
 }
 
 const CreatePostModalContent: React.FC<CreatePostProps> = ({
@@ -36,6 +37,7 @@ const CreatePostModalContent: React.FC<CreatePostProps> = ({
   commandType,
   container,
   shadowRoot,
+  modalTitle = 'Create review',
 }: CreatePostProps) => {
   const [isModalOpen, setIsModalOpen] = useState(true);
   const [isImageUploadModalVisible, setIsImageUploadModalVisible] = useState(false);
@@ -100,14 +102,6 @@ const CreatePostModalContent: React.FC<CreatePostProps> = ({
   };
 
   const isRecipeSource = RECIPE_SOURCE_TYPES.includes(source || '');
-  const modalTitle = REVIEW_SOURCE_TYPES.includes(source || '')
-    ? 'Create review'
-    : RECIPE_SOURCE_TYPES.includes(source || '')
-      ? 'Create recipe'
-      : TUTORIAL_SOURCE_TYPES.includes(source || '')
-        ? 'Create tutorial'
-        : 'Create re-post';
-
   return (
     <StyleProvider container={shadowRoot}>
         <DraggableModal
@@ -129,7 +123,6 @@ const CreatePostModalContent: React.FC<CreatePostProps> = ({
                     onRefreshGpt={handleRefreshGpt}
                     onAnalysis={handleAnalysis}
                     onCopy={handleCopy}
-                    host={host}
                     container={container}
                 />
             }

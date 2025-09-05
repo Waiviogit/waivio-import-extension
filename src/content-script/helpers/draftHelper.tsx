@@ -1,6 +1,5 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { StyleProvider } from '@ant-design/cssinjs';
 import getVideoCaptions, { captionType, extractVideoId } from './youtubeHelper';
 import {
   RECIPE_SOURCE_TYPES, REVIEW_SOURCE_TYPES, SOURCE_TYPES, TUTORIAL_SOURCE_TYPES,
@@ -564,6 +563,13 @@ export const initialDeepAnalysis = async (source:string): Promise<Draft|null> =>
   return result;
 };
 
+const getModalTitle = (source: string) => {
+  if (REVIEW_SOURCE_TYPES.includes(source)) return 'Create review';
+  if (RECIPE_SOURCE_TYPES.includes(source)) return 'Create recipe';
+  if (TUTORIAL_SOURCE_TYPES.includes(source)) return 'Create tutorial';
+  return 'Create re-post';
+};
+
 export const createUnifiedModal = async (source: string, commandType: string): Promise<void> => {
   const userInfo = await getWaivioUserInfo();
   if (!userInfo) return;
@@ -584,7 +590,7 @@ export const createUnifiedModal = async (source: string, commandType: string): P
 
   // Basic font normalization for readability (UA styles still apply)
   const styleEl = document.createElement('style');
-  styleEl.textContent = `:host{all:initial} *{box-sizing:border-box;font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif}`;
+  styleEl.textContent = ':host{all:initial} *{box-sizing:border-box;font-family: -apple-system, BlinkMacSystemFont, \'Segoe UI\', Roboto, \'Helvetica Neue\', Arial, \'Noto Sans\', sans-serif}';
   shadowRoot.appendChild(styleEl);
 
   const rootModal = ReactDOM.createRoot(shadowMount);
@@ -600,6 +606,7 @@ export const createUnifiedModal = async (source: string, commandType: string): P
         commandType={commandType}
         container={shadowMount}
         shadowRoot={shadowRoot}
+        modalTitle={getModalTitle(source)}
       />,
   );
 };
