@@ -19,13 +19,12 @@ function tiklydown(url: string): Promise<TilkyData> {
   });
 }
 
-export const getTiktokDataBlob = async (): Promise<Blob> => {
+export const getTiktokDataBlob = async (): Promise<string> => {
   const data = await tiklydown(document.URL);
   const downloadUrl = data.video.noWatermark;
 
   if (!downloadUrl) throw new Error('Cant get tiktok download url');
-  const blob = await fetch(downloadUrl).then((res) => res.blob());
-  return blob;
+  return downloadUrl;
 };
 
 export const getTicktockThumbnail = async (): Promise<string> => {
