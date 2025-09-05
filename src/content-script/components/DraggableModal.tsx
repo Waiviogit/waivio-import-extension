@@ -54,6 +54,7 @@ export const DraggableModal: React.FC<DraggableModalProps> = ({
       >
           <div
               ref={draggleRef}
+              onKeyDown={(e) => e.stopPropagation()}
               style={{
                 display: open ? 'block' : 'none',
                 width: `${width}px`,

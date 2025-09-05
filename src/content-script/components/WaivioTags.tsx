@@ -100,6 +100,7 @@ const WaivioTags = ({ setParentTags, initialTags, container }: waivioTagsProps) 
                             onChange={handleEditInputChange}
                             onBlur={handleEditInputConfirm}
                             onPressEnter={handleEditInputConfirm}
+                            onKeyDown={(e) => e.stopPropagation()}
                         />
                 );
               }
@@ -125,8 +126,8 @@ const WaivioTags = ({ setParentTags, initialTags, container }: waivioTagsProps) 
                     </Tag>
               );
               return isLongTag ? (
-                    <Tooltip 
-                      title={tag} 
+                    <Tooltip
+                      title={tag}
                       key={tag}
                       getPopupContainer={() => container || document.body}
                     >
@@ -146,6 +147,7 @@ const WaivioTags = ({ setParentTags, initialTags, container }: waivioTagsProps) 
                     onChange={handleInputChange}
                     onBlur={handleInputConfirm}
                     onPressEnter={handleInputConfirm}
+                    onKeyDown={(e) => e.stopPropagation()}
                 />
             ) : (
                 <Tag style={tagPlusStyle} icon={<PlusOutlined />} onClick={showInput}>

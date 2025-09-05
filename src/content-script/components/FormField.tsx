@@ -51,7 +51,7 @@ export const FormField: React.FC<FormFieldProps> = ({
                 rules={rules}
             >
                 <Space direction="vertical" style={{ width: '100%' }}>
-                    <Input placeholder="Enter image URL"/>
+                    <Input placeholder="Enter image URL" onKeyDown={(e) => e.stopPropagation()}/>
                     {preview}
                 </Space>
             </Form.Item>
@@ -71,7 +71,7 @@ export const FormField: React.FC<FormFieldProps> = ({
                                         name={fieldName}
                                         rules={[{ required: true, message: `Missing ${label.toLowerCase()}` }]}
                                     >
-                                        <Input placeholder="Enter image URL"/>
+                                        <Input placeholder="Enter image URL" onKeyDown={(e) => e.stopPropagation()}/>
                                     </Form.Item>
                                     <MinusCircleOutlined onClick={() => remove(fieldName)}/>
                                 </Space>
@@ -98,7 +98,7 @@ export const FormField: React.FC<FormFieldProps> = ({
                 name={name}
                 rules={rules}
             >
-                <Input.TextArea rows={rows}/>
+                <Input.TextArea rows={rows} onKeyDown={(e) => e.stopPropagation()}/>
             </Form.Item>
     );
   }
@@ -116,7 +116,10 @@ export const FormField: React.FC<FormFieldProps> = ({
                                         name={fieldName}
                                         rules={[{ required: true, message: `Missing ${label.toLowerCase()}` }]}
                                     >
-                                        <Input placeholder={label}/>
+                                        <Input
+                                            placeholder={label}
+                                            onKeyDown={(e) => e.stopPropagation()}
+                                        />
                                     </Form.Item>
                                     <MinusCircleOutlined onClick={() => remove(fieldName)}/>
                                 </Space>
@@ -153,14 +156,14 @@ export const FormField: React.FC<FormFieldProps> = ({
                                         name={[fieldName, 'key']}
                                         rules={[{ required: true, message: 'Missing key' }]}
                                     >
-                                        <Input placeholder="Key"/>
+                                        <Input placeholder="Key" onKeyDown={(e) => e.stopPropagation()}/>
                                     </Form.Item>
                                     <Form.Item
                                         {...restField}
                                         name={[fieldName, 'value']}
                                         rules={[{ required: true, message: 'Missing value' }]}
                                     >
-                                        <Input placeholder="Value"/>
+                                        <Input placeholder="Value" onKeyDown={(e) => e.stopPropagation()}/>
                                     </Form.Item>
                                     <MinusCircleOutlined onClick={() => remove(fieldName)}/>
                                 </Space>
@@ -207,7 +210,7 @@ export const FormField: React.FC<FormFieldProps> = ({
                                                 rules={[{ required: true, message: 'Missing category' }]}
                                                 style={{ marginBottom: 0 }}
                                             >
-                                                <Input placeholder="Category"/>
+                                                <Input placeholder="Category" onKeyDown={(e) => e.stopPropagation()}/>
                                             </Form.Item>
                                             <Form.Item
                                                 {...restField}
@@ -215,7 +218,7 @@ export const FormField: React.FC<FormFieldProps> = ({
                                                 rules={[{ required: true, message: 'Missing value' }]}
                                                 style={{ marginBottom: 0 }}
                                             >
-                                                <Input placeholder="Value"/>
+                                                <Input placeholder="Value" onKeyDown={(e) => e.stopPropagation()}/>
                                             </Form.Item>
                                         </Space>
 
@@ -290,7 +293,7 @@ export const FormField: React.FC<FormFieldProps> = ({
             name={name}
             rules={rules}
         >
-            <Input/>
+            <Input onKeyDown={(e) => e.stopPropagation()}/>
         </Form.Item>
   );
 };
