@@ -14,8 +14,7 @@ export const getThreeSpeakDataBlob = async () => {
   console.log(downloadUrl);
 
   if (!downloadUrl) throw new Error('Cant get tiktok download url');
-  const blob = await fetch(downloadUrl).then((res) => res.blob());
-  return blob;
+  return downloadUrl;
 };
 
 type ThreeSpeakSourceMap = {

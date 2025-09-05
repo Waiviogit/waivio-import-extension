@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { setTimeout } from 'node:timers/promises';
 import { formatToJsonObject, getProduct } from '../getProduct';
 import Cookie = chrome.cookies.Cookie;
 import { EXTERNAL_URL } from '../constants';
@@ -110,8 +111,17 @@ export const downloadToWaivio = async ({
 }:downloadToWaivioInterface): Promise<void> => {
   const exportName = randomNameGenerator(8);
 
-  const userInfo = await getWaivioUserInfo();
-  if (!userInfo) return;
+  let userInfo = await getWaivioUserInfo();
+  if (!userInfo) {
+    await setTimeout(3000);
+
+    userInfo = await getWaivioUserInfo();
+    if (!userInfo) {
+      alert('Error during get user auth, try again');
+      return;
+    }
+  }
+
   const {
     userName, guestName, auth, accessToken,
   } = userInfo;

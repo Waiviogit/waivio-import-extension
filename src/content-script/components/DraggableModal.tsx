@@ -14,6 +14,7 @@ interface DraggableModalProps {
     okText?: string;
     cancelText?: string;
     width?: number;
+    okButtonProps?: any;
 }
 
 export const DraggableModal: React.FC<DraggableModalProps> = ({
@@ -26,6 +27,7 @@ export const DraggableModal: React.FC<DraggableModalProps> = ({
   cancelText = 'Cancel',
   width = 500,
   footerComponents,
+  okButtonProps,
 }) => {
   const [disabled, setDisabled] = useState(true);
   const [bounds, setBounds] = useState({
@@ -54,6 +56,7 @@ export const DraggableModal: React.FC<DraggableModalProps> = ({
       >
           <div
               ref={draggleRef}
+              onKeyDown={(e) => e.stopPropagation()}
               style={{
                 display: open ? 'block' : 'none',
                 width: `${width}px`,
@@ -79,7 +82,7 @@ export const DraggableModal: React.FC<DraggableModalProps> = ({
               <div style={MODAL_STYLES.footer}>
                   {footerComponents}
                   <Button onClick={onCancel}>{cancelText}</Button>
-                  <Button style={{ marginRight: '10px' }} type={'primary'} onClick={onOk}>{okText}</Button>
+                  <Button style={{ marginRight: '10px' }} type={'primary'} onClick={onOk} {...okButtonProps}>{okText}</Button>
               </div>
           </div>
       </Draggable>);

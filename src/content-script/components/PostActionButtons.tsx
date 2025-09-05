@@ -6,6 +6,7 @@ import { Z_INDEX } from '../constants';
 
 interface PostActionButtonsProps {
   source: string;
+  isLoading: boolean;
   isRecipeLoading: boolean;
   isRefreshLoading: boolean;
   isAnalysisLoading: boolean;
@@ -13,12 +14,12 @@ interface PostActionButtonsProps {
   onRefreshGpt: () => void;
   onAnalysis: () => void;
   onCopy: () => void;
-  host?: string;
   container?: HTMLElement;
 }
 
 export const PostActionButtons: React.FC<PostActionButtonsProps> = ({
   source,
+  isLoading,
   isRecipeLoading,
   isRefreshLoading,
   isAnalysisLoading,
@@ -26,12 +27,9 @@ export const PostActionButtons: React.FC<PostActionButtonsProps> = ({
   onRefreshGpt,
   onAnalysis,
   onCopy,
-  host,
   container,
 }) => {
   const isRecipeSource = RECIPE_SOURCE_TYPES.includes(source || '');
-  const isWaivioHost = (host || '').includes('waivio.com');
-  const isWaivioPage = typeof window !== 'undefined' && window.location.hostname.includes('waivio.com');
 
   return (
     <>
@@ -41,28 +39,28 @@ export const PostActionButtons: React.FC<PostActionButtonsProps> = ({
           <Button
             onClick={onCreateObject}
             loading={isRecipeLoading}
+            disabled={isLoading}
           >
             Create object
           </Button>
         </>
       )}
 
-      {!(isWaivioHost || isWaivioPage) && (
-        <Tooltip 
-          title="Analyze video content with AI" 
-          zIndex={Z_INDEX.TOOLTIP}
-          getPopupContainer={() => container || document.body}
-        >
-          <Button
-            icon={<VideoCameraAddOutlined />}
-            onClick={onAnalysis}
-            loading={isAnalysisLoading}
-          />
-        </Tooltip>
-      )}
+              <Tooltip
+                title="Analyze video content with AI"
+                zIndex={Z_INDEX.TOOLTIP}
+                getPopupContainer={() => container || document.body}
+              >
+        <Button
+          icon={<VideoCameraAddOutlined />}
+          onClick={onAnalysis}
+          loading={isAnalysisLoading}
+          disabled={isLoading}
+        />
+      </Tooltip>
 
-              <Tooltip 
-                title="Regenerate draft" 
+              <Tooltip
+                title="Regenerate draft"
                 zIndex={Z_INDEX.TOOLTIP}
                 getPopupContainer={() => container || document.body}
               >
@@ -70,10 +68,11 @@ export const PostActionButtons: React.FC<PostActionButtonsProps> = ({
           icon={<ReloadOutlined />}
           onClick={onRefreshGpt}
           loading={isRefreshLoading}
+          disabled={isLoading}
         />
       </Tooltip>
 
-      <Button onClick={onCopy}>Copy</Button>
+      <Button onClick={onCopy} disabled={isLoading}>Copy</Button>
     </>
   );
 };
