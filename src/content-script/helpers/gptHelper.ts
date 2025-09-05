@@ -47,6 +47,18 @@ const videoAnalyzeWithBlob = async (prompt: string, url: string): Promise<respon
   try {
     const blob = await getBlobForUrl(url);
     if (!blob) throw new Error('cant make blob');
+
+    // Check blob size (50MB = 50 * 1024 * 1024 bytes)
+    const maxSizeInBytes = 50 * 1024 * 1024;
+    const currentSizeInMB = (blob.size / (1024 * 1024)).toFixed(2);
+    const allowedSizeInMB = 50;
+
+    if (blob.size > maxSizeInBytes) {
+      const errorMessage = `Max file size exceeded. Current size: ${currentSizeInMB}MB, Allowed size: ${allowedSizeInMB}MB`;
+      alert(errorMessage);
+      throw new Error(errorMessage);
+    }
+
     const formData = new FormData();
     formData.append('file', blob, 'video.mp4');
     formData.append('prompt', prompt);
