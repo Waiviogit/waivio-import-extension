@@ -121,6 +121,7 @@ export const downloadToWaivio = async ({
       return;
     }
   }
+
   const {
     userName, guestName, auth, accessToken,
   } = userInfo;
