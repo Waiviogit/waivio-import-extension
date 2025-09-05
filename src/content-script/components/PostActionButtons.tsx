@@ -6,6 +6,7 @@ import { Z_INDEX } from '../constants';
 
 interface PostActionButtonsProps {
   source: string;
+  isLoading: boolean;
   isRecipeLoading: boolean;
   isRefreshLoading: boolean;
   isAnalysisLoading: boolean;
@@ -18,6 +19,7 @@ interface PostActionButtonsProps {
 
 export const PostActionButtons: React.FC<PostActionButtonsProps> = ({
   source,
+  isLoading,
   isRecipeLoading,
   isRefreshLoading,
   isAnalysisLoading,
@@ -37,14 +39,15 @@ export const PostActionButtons: React.FC<PostActionButtonsProps> = ({
           <Button
             onClick={onCreateObject}
             loading={isRecipeLoading}
+            disabled={isLoading}
           >
             Create object
           </Button>
         </>
       )}
 
-              <Tooltip 
-                title="Analyze video content with AI" 
+              <Tooltip
+                title="Analyze video content with AI"
                 zIndex={Z_INDEX.TOOLTIP}
                 getPopupContainer={() => container || document.body}
               >
@@ -52,11 +55,12 @@ export const PostActionButtons: React.FC<PostActionButtonsProps> = ({
           icon={<VideoCameraAddOutlined />}
           onClick={onAnalysis}
           loading={isAnalysisLoading}
+          disabled={isLoading}
         />
       </Tooltip>
 
-              <Tooltip 
-                title="Regenerate draft" 
+              <Tooltip
+                title="Regenerate draft"
                 zIndex={Z_INDEX.TOOLTIP}
                 getPopupContainer={() => container || document.body}
               >
@@ -64,10 +68,11 @@ export const PostActionButtons: React.FC<PostActionButtonsProps> = ({
           icon={<ReloadOutlined />}
           onClick={onRefreshGpt}
           loading={isRefreshLoading}
+          disabled={isLoading}
         />
       </Tooltip>
 
-      <Button onClick={onCopy}>Copy</Button>
+      <Button onClick={onCopy} disabled={isLoading}>Copy</Button>
     </>
   );
 };

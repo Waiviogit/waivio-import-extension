@@ -110,9 +110,11 @@ const CreatePostModalContent: React.FC<CreatePostProps> = ({
             onCancel={handleCancel}
             okText="Publish"
             cancelText="Cancel"
+            okButtonProps={{ disabled: isLoading }}
             footerComponents={
                 <PostActionButtons
                     source={source}
+                    isLoading={isLoading}
                     isRecipeLoading={isRecipeLoading}
                     isRefreshLoading={isRefreshLoading}
                     isAnalysisLoading={isAnalysisLoading}
