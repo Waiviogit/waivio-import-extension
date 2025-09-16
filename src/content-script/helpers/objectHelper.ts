@@ -585,7 +585,7 @@ export const createObjectForPost = async (postBody: string, imageUrl?: string)
   const resultSocket = await socketClient.sendMessage({
     id: transactionId,
     method: 'subscribeTransactionId',
-    params: [`create-obj-${userName}`, transactionId],
+    params: [`create-obj-${transactionId}`, transactionId],
   });
 
   const successCreteObj = resultSocket?.data?.success;
@@ -616,7 +616,7 @@ export const createObjectForPost = async (postBody: string, imageUrl?: string)
   const resultSocketUpdate = await socketClient.sendMessage({
     id: createUpdateResponse.result.transactionId,
     method: 'subscribeTransactionId',
-    params: [`create-upd-${userName}`, createUpdateResponse.result.transactionId],
+    params: [`create-upd-${transactionId}`, createUpdateResponse.result.transactionId],
   });
   const successCreteUpdate = resultSocketUpdate?.data?.success;
   if (!successCreteUpdate) {
