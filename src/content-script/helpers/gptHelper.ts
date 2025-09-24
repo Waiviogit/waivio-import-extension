@@ -141,7 +141,6 @@ const videoAnalyzeWithBlob = async (prompt: string, url: string): Promise<respon
 
     if (currentSizeInMB > allowedSizeInMB) {
       const errorMessage = `Max file size exceeded. Current size: ${currentSizeInMB}MB, Allowed size: ${allowedSizeInMB}MB`;
-      alert(errorMessage);
       throw new Error(errorMessage);
     }
 
