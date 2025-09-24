@@ -45,14 +45,89 @@ const getDownloadUrl = async (url: string) => {
 
 export async function getRemoteFileSizeMB(url: string): Promise<number | null> {
   try {
-    const res = await fetch(url, { method: 'HEAD' }); // only headers
-    const sizeHeader = res.headers.get('content-length');
-    if (!sizeHeader) return null;
-
-    const sizeBytes = parseInt(sizeHeader, 10);
-    return Number((sizeBytes / (1024 * 1024)).toFixed(3)); // convert to MB
+    return new Promise((resolve) => {
+      chrome.runtime.sendMessage(
+        { action: 'getRemoteFileSize', url },
+        (response) => {
+          if (response.error) {
+            console.error('Error fetching file size:', response.error);
+            resolve(null);
+          } else {
+            resolve(response.sizeMB);
+          }
+        },
+      );
+    });
   } catch (err) {
     console.error('Error fetching file size:', err);
+    return null;
+  }
+}
+
+export async function downloadBlobViaBackground(url: string): Promise<Blob | null> {
+  try {
+    return new Promise((resolve) => {
+      chrome.runtime.sendMessage(
+        { action: 'downloadBlob', url },
+        async (response) => {
+          if (response.error) {
+            console.error('Error downloading blob:', response.error);
+            resolve(null);
+            return;
+          }
+
+          // Always use chunked download
+          try {
+            const downloadChunk = (chunkIndex: number) => new Promise<Uint8Array>(
+              (chunkResolve, chunkReject) => {
+                chrome.runtime.sendMessage(
+                  { action: 'getBlobChunk', url, chunkIndex },
+                  (chunkResponse) => {
+                    if (chunkResponse.error) {
+                      chunkReject(new Error(chunkResponse.error));
+                      return;
+                    }
+                    chunkResolve(new Uint8Array(chunkResponse.chunk));
+                  },
+                );
+              },
+            );
+
+            const chunkPromises = [];
+            for (let i = 0; i < response.totalChunks; i++) {
+              chunkPromises.push(downloadChunk(i));
+            }
+
+            Promise.all(chunkPromises).then((chunkArrays) => {
+              // Clear cache after successful download
+              chrome.runtime.sendMessage({ action: 'clearBlobCache', url });
+
+              const totalSize = chunkArrays.reduce((sum, chunk) => sum + chunk.length, 0);
+              const combined = new Uint8Array(totalSize);
+              let offset = 0;
+
+              for (const chunk of chunkArrays) {
+                combined.set(chunk, offset);
+                offset += chunk.length;
+              }
+
+              const blob = new Blob([combined]);
+              resolve(blob);
+            }).catch((chunkError) => {
+              console.error('Error downloading chunks:', chunkError);
+              chrome.runtime.sendMessage({ action: 'clearBlobCache', url });
+              resolve(null);
+            });
+          } catch (chunkError) {
+            console.error('Error processing chunks:', chunkError);
+            chrome.runtime.sendMessage({ action: 'clearBlobCache', url });
+            resolve(null);
+          }
+        },
+      );
+    });
+  } catch (err) {
+    console.error('Error downloading blob:', err);
     return null;
   }
 }
@@ -60,7 +135,7 @@ export async function getRemoteFileSizeMB(url: string): Promise<number | null> {
 const videoAnalyzeWithBlob = async (prompt: string, url: string): Promise<responseType> => {
   try {
     const downloadUrl = await getDownloadUrl(url);
-    const allowedSizeInMB = 50;
+    const allowedSizeInMB = 100;
     const currentSizeInMB = await getRemoteFileSizeMB(downloadUrl);
     if (!currentSizeInMB) throw new Error('Error fetching file size');
 
@@ -70,7 +145,7 @@ const videoAnalyzeWithBlob = async (prompt: string, url: string): Promise<respon
       throw new Error(errorMessage);
     }
 
-    const blob = await fetch(downloadUrl).then((res) => res.blob());
+    const blob = await downloadBlobViaBackground(downloadUrl);
 
     if (!blob) throw new Error('cant make blob');
 
