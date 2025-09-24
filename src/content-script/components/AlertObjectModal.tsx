@@ -45,6 +45,9 @@ const AlertObjectModal = ({
 
   const handleCopyLinkToClipboard = async () => {
     await copyContent(`https://www.waivio.com/object/${url}`);
+    setIsModalOpen(false);
+    onResolve(true);
+    cleanup();
   };
 
   // Cleanup on unmount
@@ -120,7 +123,7 @@ export const showAlertObjectModal = (alertMessage: string, confirmText: string, 
 
   // Basic font normalization for readability (UA styles still apply)
   const styleEl = document.createElement('style');
-  styleEl.textContent = `:host{all:initial} *{box-sizing:border-box;font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif}`;
+  styleEl.textContent = ':host{all:initial} *{box-sizing:border-box;font-family: -apple-system, BlinkMacSystemFont, \'Segoe UI\', Roboto, \'Helvetica Neue\', Arial, \'Noto Sans\', sans-serif}';
   shadowRoot.appendChild(styleEl);
 
   const handleResolve = (result: boolean) => {
