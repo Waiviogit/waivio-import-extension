@@ -34,7 +34,11 @@ export const getThreeSpeakThumbnail = async () => {
         || [];
 
     const ipfs = sourceMap.find((el) => el.type === 'thumbnail');
-    if (!ipfs) throw new Error('No video on post');
+    if (!ipfs) {
+      const image = metadata?.image?.[0] as string | undefined;
+      if (image) return image;
+      throw new Error('No video on post');
+    }
 
     return `https://ipfs-3speak.b-cdn.net/ipfs/${ipfs.url.replace(/ipfs:\/\//, '')}`;
   } catch (error) {
