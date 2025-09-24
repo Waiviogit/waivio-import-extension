@@ -468,6 +468,10 @@ export const initialDeepAnalysis = async (source:string): Promise<Draft|null> =>
     return null;
   }
 
+  if (!response.result) {
+    alert(`Can't process video, fallback to post data: ${(response.error as Error)?.message ?? ''}`);
+  }
+
   emitLoadingEvent('deep-analysis-step', {
     step: 'AI analysis complete',
     message: 'AI analysis completed successfully',

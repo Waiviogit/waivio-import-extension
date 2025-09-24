@@ -23,7 +23,7 @@ export const getTiktokDataBlob = async (): Promise<string> => {
   const data = await tiklydown(document.URL);
   const downloadUrl = data.video.noWatermark;
 
-  if (!downloadUrl) throw new Error('Cant get tiktok download url');
+  if (!downloadUrl) throw new Error('Can\'t get tiktok download url');
   return downloadUrl;
 };
 

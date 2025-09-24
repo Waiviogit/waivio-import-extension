@@ -7,13 +7,9 @@ export const getThreeSpeakDataBlob = async () => {
   const metadata = JSON.parse(post.json_metadata); console.log(metadata?.video);
 
   const ipfsUrl = metadata?.video?.info?.file;
-  if (!ipfsUrl) throw new Error('No video on post');
+  if (!ipfsUrl) throw new Error('We couldn’t process the video. Please try using a direct video link. Some videos may not be processed due to technical limitations.');
 
   const downloadUrl = `https://ipfs-3speak.b-cdn.net/ipfs/${ipfsUrl.replace(/ipfs:\/\//, '')}`;
-
-  console.log(downloadUrl);
-
-  if (!downloadUrl) throw new Error('Cant get tiktok download url');
   return downloadUrl;
 };
 

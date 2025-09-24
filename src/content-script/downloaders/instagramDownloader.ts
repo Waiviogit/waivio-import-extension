@@ -129,6 +129,6 @@ export const getInstagramThumbnail = async (): Promise<string> => {
 
 export const getInstagramDataBlob = async (): Promise<string> => {
   const downloadUrl = await getInstagramDownloadUrl();
-  if (!downloadUrl) throw new Error('Cant get instagram download url');
+  if (!downloadUrl) throw new Error('Can\'t get instagram download url');
   return downloadUrl;
 };
