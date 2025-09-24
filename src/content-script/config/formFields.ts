@@ -2,9 +2,6 @@ import { FormFieldConfig } from '../types/form';
 
 export const PRODUCT_FORM_FIELDS: FormFieldConfig[] = [
   {
-    label: 'List permlink', name: ['listAssociations', 0],
-  },
-  {
     label: 'Name',
     name: 'name',
     required: true,
@@ -57,4 +54,7 @@ export const PRODUCT_FORM_FIELDS: FormFieldConfig[] = [
   { label: 'Merchants', name: ['merchants', 0, 'name'] },
   { label: 'Features', name: 'features', type: 'keyValue' },
   { label: 'Options', name: 'waivio_options', type: 'categoryValue' },
+  {
+    label: 'List permlinks', name: 'listAssociations', type: 'list',
+  },
 ];
