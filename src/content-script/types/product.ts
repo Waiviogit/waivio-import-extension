@@ -34,6 +34,7 @@ export interface Product {
     objectType?: 'product' | 'book';
     websites?: string[]
     galleryLength?: number
+    listAssociations?: string[]
 }
 
 export interface EditAiModalProps {
