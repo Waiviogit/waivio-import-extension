@@ -47,6 +47,8 @@ const cutSubs = (subs: string): string => {
   return subs;
 };
 
+export const NO_ALERT_ERROR = 'NO_ALERT_ERROR';
+
 const createQuery = ({
   subs, source,
 }: createQueryInterface): string => {
@@ -469,7 +471,9 @@ export const initialDeepAnalysis = async (source:string): Promise<Draft|null> =>
   }
 
   if (!response.result) {
-    alert(`Can't process video, fallback to post data: ${(response.error as Error)?.message ?? ''}`);
+    const errMessage = (response.error as Error)?.message ?? '';
+    const showAlert = errMessage && errMessage !== NO_ALERT_ERROR;
+    if (showAlert) alert(`Can't process video, fallback to post data: ${errMessage}`);
   }
 
   emitLoadingEvent('deep-analysis-step', {

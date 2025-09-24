@@ -1,4 +1,5 @@
 import { getHivePostFromDocUrl } from '../helpers/hivePostHelper';
+import { NO_ALERT_ERROR } from '../helpers/draftHelper';
 
 export const getThreeSpeakDataBlob = async () => {
   const post = await getHivePostFromDocUrl();
@@ -7,7 +8,12 @@ export const getThreeSpeakDataBlob = async () => {
   const metadata = JSON.parse(post.json_metadata); console.log(metadata?.video);
 
   const ipfsUrl = metadata?.video?.info?.file;
-  if (!ipfsUrl) throw new Error('We couldn’t process the video. Please try using a direct video link. Some videos may not be processed due to technical limitations.');
+  if (!ipfsUrl) {
+    if (/https:\/\/3speak\.tv\/watch/.test(post.body)) {
+      throw new Error('We couldn’t process the video. Please try using a direct video link. Some videos may not be processed due to technical limitations.');
+    }
+    throw new Error(NO_ALERT_ERROR);
+  }
 
   const downloadUrl = `https://ipfs-3speak.b-cdn.net/ipfs/${ipfsUrl.replace(/ipfs:\/\//, '')}`;
   return downloadUrl;
