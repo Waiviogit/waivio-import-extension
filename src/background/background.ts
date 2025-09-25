@@ -1,5 +1,92 @@
+import axios from 'axios';
+import * as cheerio from 'cheerio';
+import * as qs from 'qs';
+
 // Cache for blob data to avoid multiple fetches - moved outside the listener
 const blobCache = new Map<string, Uint8Array>();
+
+async function tiktokdownloadUrl(url: string) {
+  return new Promise((resolve, reject) => {
+    // Create axios instance with realistic browser headers
+    const axiosInstance = axios.create({
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+        'Accept-Language': 'en-US,en;q=0.9',
+        'Accept-Encoding': 'gzip, deflate, br',
+        DNT: '1',
+        Connection: 'keep-alive',
+        'Upgrade-Insecure-Requests': '1',
+        'Sec-Fetch-Dest': 'document',
+        'Sec-Fetch-Mode': 'navigate',
+        'Sec-Fetch-Site': 'none',
+        'Sec-Fetch-User': '?1',
+        'Cache-Control': 'max-age=0',
+      },
+      timeout: 30000,
+      maxRedirects: 5,
+      validateStatus: (status) => status < 400, // Don't throw on 3xx redirects
+    });
+
+    axiosInstance.get('https://ttdownloader.com/')
+      .then((data) => {
+        console.log('Initial request status:', data.status);
+        console.log('Response headers:', data.headers);
+
+        const $ = cheerio.load(data.data);
+        const cookie = data.headers['set-cookie']?.join('') || '';
+        const token = $('#token').attr('value') || '';
+
+        console.log('Extracted token:', token);
+        console.log('Extracted cookies:', cookie);
+
+        const dataPost = {
+          url,
+          format: '',
+          token,
+        };
+
+        axiosInstance({
+          method: 'POST',
+          url: 'https://ttdownloader.com/search/',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+            'X-Requested-With': 'XMLHttpRequest',
+            Origin: 'https://ttdownloader.com',
+            Referer: 'https://ttdownloader.com/',
+            Cookie: cookie,
+            'Sec-Fetch-Dest': 'empty',
+            'Sec-Fetch-Mode': 'cors',
+            'Sec-Fetch-Site': 'same-origin',
+          },
+          data: qs.stringify(dataPost),
+        }).then(({ data: searchData, status }) => {
+          console.log('Search request status:', status);
+          console.log('Search response length:', searchData.length);
+
+          const $$ = cheerio.load(searchData);
+          const result = {
+            nowm: $$('#results-list > div:nth-child(2) > div.download > a')?.attr('href'),
+            wm: $$('#results-list > div:nth-child(3) > div.download > a')?.attr('href'),
+            audio: $$('#results-list > div:nth-child(4) > div.download > a')?.attr('href'),
+          };
+
+          console.log('Parsed result:', result);
+          resolve(result);
+        })
+          .catch((e) => {
+            console.error('Search request error:', e.response?.status, e.response?.statusText);
+            console.error('Search request data:', e.response?.data);
+            reject(new Error(`Search request failed: ${e.response?.status} ${e.response?.statusText || e.message}`));
+          });
+      })
+      .catch((e) => {
+        console.error('Initial request error:', e.response?.status, e.response?.statusText);
+        console.error('Initial request data:', e.response?.data);
+        reject(new Error(`Initial request failed: ${e.response?.status} ${e.response?.statusText || e.message}`));
+      });
+  });
+}
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.action === 'getCookies') {
@@ -130,6 +217,18 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     } catch (error) {
       sendResponse({ error: (error as Error).message });
     }
+    return true;
+  }
+
+  if (message.action === 'tiktokdownloadUrl') {
+    (async () => {
+      try {
+        const result = await tiktokdownloadUrl(message.url);
+        sendResponse({ result });
+      } catch (error) {
+        sendResponse({ error: (error as Error).message });
+      }
+    })();
     return true;
   }
 });

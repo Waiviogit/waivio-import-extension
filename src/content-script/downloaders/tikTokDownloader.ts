@@ -1,27 +1,32 @@
-import axios from 'axios';
-
-interface TilkyData {
-  video:{
-    noWatermark: string
-  }
+interface TiktokDownloadData {
+  nowm?: string;
+  wm?: string;
+  audio?: string;
 }
-// https://github.com/MRHRTZ/Tiktok-Scraper-Without-Watermark/blob/main/src/function/index.js
 
-function tiklydown(url: string): Promise<TilkyData> {
+// Function moved to background script to avoid CORS issues
+export async function tiktokdownloadUrl(url: string): Promise<TiktokDownloadData> {
   return new Promise((resolve, reject) => {
-    axios.get(`https://api.tiklydown.eu.org/api/download?url=${url}`)
-      .then(({ data }) => {
-        resolve(data);
-      })
-      .catch((e) => {
-        reject(e);
-      });
+    chrome.runtime.sendMessage(
+      { action: 'tiktokdownloadUrl', url },
+      (response) => {
+        if (chrome.runtime.lastError) {
+          reject(new Error(chrome.runtime.lastError.message));
+          return;
+        }
+        if (response.error) {
+          reject(new Error(response.error));
+          return;
+        }
+        resolve(response.result);
+      },
+    );
   });
 }
 
 export const getTiktokDataBlob = async (): Promise<string> => {
-  const data = await tiklydown(document.URL);
-  const downloadUrl = data.video.noWatermark;
+  const data = await tiktokdownloadUrl(document.URL);
+  const downloadUrl = data.nowm;
 
   if (!downloadUrl) throw new Error('Can\'t get tiktok download url');
   return downloadUrl;
