@@ -101,6 +101,7 @@ const WaivioTags = ({ setParentTags, initialTags, container }: waivioTagsProps) 
                             onBlur={handleEditInputConfirm}
                             onPressEnter={handleEditInputConfirm}
                             onKeyDown={(e) => e.stopPropagation()}
+                            onKeyUp={(e) => e.stopPropagation()}
                         />
                 );
               }
@@ -148,6 +149,7 @@ const WaivioTags = ({ setParentTags, initialTags, container }: waivioTagsProps) 
                     onBlur={handleInputConfirm}
                     onPressEnter={handleInputConfirm}
                     onKeyDown={(e) => e.stopPropagation()}
+                    onKeyUp={(e) => e.stopPropagation()}
                 />
             ) : (
                 <Tag style={tagPlusStyle} icon={<PlusOutlined />} onClick={showInput}>

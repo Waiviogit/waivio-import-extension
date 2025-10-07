@@ -57,6 +57,7 @@ export const PostFormFields: React.FC<PostFormFieldsProps> = ({
       maxLength={MAX_TITLE_LENGTH}
       onChange={(e) => onTitleChange(e.target.value)}
       onKeyDown={(e) => e.stopPropagation()}
+      onKeyUp={(e) => e.stopPropagation()}
       placeholder={isLoading ? 'Loading title...' : 'Enter title'}
       disabled={isLoading}
       style={{ marginTop: '10px' }}
@@ -80,8 +81,9 @@ export const PostFormFields: React.FC<PostFormFieldsProps> = ({
 
     <Input.TextArea
       value={body}
-      onChange={(e) => onBodyChange(e.target.value)}
+      onChange={(e) => { onBodyChange(e.target.value); }}
       onKeyDown={(e) => e.stopPropagation()}
+      onKeyUp={(e) => e.stopPropagation()}
       placeholder={isLoading ? 'Loading content...' : 'Enter post content'}
       disabled={isLoading}
       style={{ height: '400px', marginTop: '10px', marginBottom: '10px' }}
