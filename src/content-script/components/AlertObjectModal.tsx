@@ -46,7 +46,7 @@ const AlertObjectModal = ({
   const handleCopyLinkToClipboard = async () => {
     await copyContent(`https://www.waivio.com/object/${url}`);
     setIsModalOpen(false);
-    onResolve(true);
+    onResolve(false);
     cleanup();
   };
 
