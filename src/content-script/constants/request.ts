@@ -18,4 +18,5 @@ export const EXTERNAL_URL = {
   WAIVIO_CREATE_OBJECT: 'https://www.waivio.com/objects-bot/create-object',
   WAIVIO_GET_OBJECT: 'https://www.waivio.com/api/wobject/',
   WAIVIO_CREATE_UPDATE: 'https://www.waivio.com/objects-bot/append-object',
+  WAIVIO_ACTIVE_SITES_LIST: 'https://www.waivio.com/api/sites/active/list',
 };

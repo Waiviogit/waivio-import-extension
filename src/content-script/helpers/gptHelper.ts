@@ -3,6 +3,7 @@ import { getInstagramDataBlob } from '../downloaders/instagramDownloader';
 import { getTiktokDataBlob } from '../downloaders/tikTokDownloader';
 import { shortenYoutubeUrl } from './youtubeHelper';
 import { getThreeSpeakDataBlob } from '../downloaders/threeSpeakDownloader';
+import { getActiveSites } from '../../common/helper/commonHelper';
 
 type responseType = {
     result?: string
@@ -39,7 +40,13 @@ const blobGetters: Record<string, () => Promise<string>> = {
 
 const getDownloadUrl = async (url: string) => {
   const entry = Object.entries(blobGetters).find(([domain]) => url.includes(domain));
-  if (!entry) throw new Error('Unsupported platform');
+  if (!entry) {
+    const waivioSites = await getActiveSites();
+    for (const waivioSite of waivioSites) {
+      if (url.includes(waivioSite)) return getThreeSpeakDataBlob();
+    }
+    throw new Error('Unsupported platform');
+  }
   return entry[1]();
 };
 

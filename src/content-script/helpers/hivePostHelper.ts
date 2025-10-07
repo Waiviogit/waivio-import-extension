@@ -21,13 +21,10 @@ const extractAuthorPermlink = (url: string):null | {author: string, permlink:str
       return { author, permlink };
     }
 
-    // case: waivio.com/.../@author/permlink[/*]
-    if (u.hostname.includes('waivio.com')) {
-      const match = u.pathname.match(/\/@([^/]+)\/([^/]+)/);
-      if (match) {
-        const [, author, permlink] = match;
-        return { author: author.replace(/^@/, ''), permlink };
-      }
+    const match = u.pathname.match(/\/@([^/]+)\/([^/]+)/);
+    if (match) {
+      const [, author, permlink] = match;
+      return { author: author.replace(/^@/, ''), permlink };
     }
 
     return null;
