@@ -10,6 +10,7 @@ interface PostActionButtonsProps {
   isRecipeLoading: boolean;
   isRefreshLoading: boolean;
   isAnalysisLoading: boolean;
+  isObjectCreated?: boolean;
   onCreateObject: () => void;
   onRefreshGpt: () => void;
   onAnalysis: () => void;
@@ -23,6 +24,7 @@ export const PostActionButtons: React.FC<PostActionButtonsProps> = ({
   isRecipeLoading,
   isRefreshLoading,
   isAnalysisLoading,
+  isObjectCreated,
   onCreateObject,
   onRefreshGpt,
   onAnalysis,
@@ -39,7 +41,7 @@ export const PostActionButtons: React.FC<PostActionButtonsProps> = ({
           <Button
             onClick={onCreateObject}
             loading={isRecipeLoading}
-            disabled={isLoading}
+            disabled={isLoading || isObjectCreated}
           >
             Create object
           </Button>

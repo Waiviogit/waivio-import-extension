@@ -39,6 +39,7 @@ export const usePostActions = ({
   const [isRecipeLoading, setIsRecipeLoading] = useState(false);
   const [isRefreshLoading, setIsRefreshLoading] = useState(false);
   const [isAnalysisLoading, setIsAnalysisLoading] = useState(false);
+  const [isObjectCreated, setIsObjectCreated] = useState(false);
 
   const handleSubmit = async () => {
     const nested = document.getElementById(MODAL_IDS.MAIN_MODAL_HOST);
@@ -65,6 +66,7 @@ export const usePostActions = ({
       if (objectForPost) {
         const updatedBody = `${body}\n[${objectForPost.name}](https://${host}/object/${objectForPost.permlink})`;
         onDataUpdate({ body: updatedBody });
+        setIsObjectCreated(true);
       }
     } finally {
       setIsRecipeLoading(false);
@@ -119,6 +121,7 @@ export const usePostActions = ({
     isRecipeLoading,
     isRefreshLoading,
     isAnalysisLoading,
+    isObjectCreated,
     uploadedImage,
   };
 };

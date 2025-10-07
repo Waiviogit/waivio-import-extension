@@ -60,6 +60,7 @@ const CreatePostModalContent: React.FC<CreatePostProps> = ({
     isRecipeLoading,
     isRefreshLoading,
     isAnalysisLoading,
+    isObjectCreated,
   } = usePostActions({
     title: data.title,
     body: data.body,
@@ -119,6 +120,7 @@ const CreatePostModalContent: React.FC<CreatePostProps> = ({
                     isRecipeLoading={isRecipeLoading}
                     isRefreshLoading={isRefreshLoading}
                     isAnalysisLoading={isAnalysisLoading}
+                    isObjectCreated={isObjectCreated}
                     onCreateObject={handleCreateObject}
                     onRefreshGpt={handleRefreshGpt}
                     onAnalysis={handleAnalysis}
