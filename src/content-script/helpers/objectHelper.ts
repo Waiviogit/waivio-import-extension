@@ -10,6 +10,7 @@ import { getInstagramThumbnail } from '../downloaders/instagramDownloader';
 import { getTicktockThumbnail } from '../downloaders/tikTokDownloader';
 import { showAlertObjectModal } from '../components/AlertObjectModal';
 import { getThreeSpeakThumbnail } from '../downloaders/threeSpeakDownloader';
+import { getActiveSites } from '../../common/helper/commonHelper';
 
 type userImportResultType = {
     result: boolean
@@ -486,11 +487,10 @@ export const getRecipeUrl = async () => {
   if (url.includes('tiktok.com')) {
     return getTicktockThumbnail();
   }
-  if (url.includes('3speak.tv')) {
-    return getThreeSpeakThumbnail();
-  }
-  if (url.includes('waivio.com')) {
-    return getThreeSpeakThumbnail();
+
+  const waivioSites = await getActiveSites();
+  for (const waivioSite of waivioSites) {
+    if (url.includes(waivioSite)) return getThreeSpeakThumbnail();
   }
 
   return '';
