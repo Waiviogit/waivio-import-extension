@@ -4,6 +4,7 @@ import {
   ConfigProvider,
   Tooltip,
   Switch,
+  Spin,
 } from 'antd';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { StyleProvider } from '@ant-design/cssinjs';
@@ -160,6 +161,9 @@ const CreatePostModalContent: React.FC<CreatePostProps> = ({
             headerComponents={(
               <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                 <span style={{ fontSize: 12, color: '#666' }}>Post</span>
+                {(isCommentGenerating) && (
+                  <Spin size="small" />
+                )}
                 <Switch
                   checked={isCommentMode}
                   onChange={onToggleMode}
