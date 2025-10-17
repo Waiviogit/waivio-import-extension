@@ -5,7 +5,7 @@ import { createObjectForPost } from '../helpers/objectHelper';
 import { getDraftBodyTitleTags } from '../helpers/draftHelper';
 import { extractPostInfo } from '../helpers/postHelper';
 import { createAnalysisVideoPromptBySource } from '../helpers/promptHelper';
-import { videoAnalysesByLink } from '../helpers/gptHelper';
+import { videoAnalysesByLink, getGptAnswer } from '../helpers/gptHelper';
 import { MODAL_IDS } from '../constants';
 
 interface PostActionsProps {
@@ -111,6 +111,13 @@ export const usePostActions = ({
     onShowImageUploadModal();
   };
 
+  const createCommentFromBody = async (input: string): Promise<string | null> => {
+    const prompt = 'Remove markup, author attribution and any links from text. Return plain text only.';
+    const query = `${prompt}\n\nText:\n${input}`;
+    const response = await getGptAnswer(query);
+    return response.result || null;
+  };
+
   return {
     handleSubmit,
     handleCopy,
@@ -123,5 +130,6 @@ export const usePostActions = ({
     isAnalysisLoading,
     isObjectCreated,
     uploadedImage,
+    createCommentFromBody,
   };
 };

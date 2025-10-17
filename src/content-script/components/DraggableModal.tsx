@@ -10,6 +10,7 @@ interface DraggableModalProps {
     onOk: () => void;
     onCancel: () => void;
     footerComponents?: React.ReactNode;
+    headerComponents?: React.ReactNode;
     children: React.ReactNode;
     okText?: string;
     cancelText?: string;
@@ -27,6 +28,7 @@ export const DraggableModal: React.FC<DraggableModalProps> = ({
   cancelText = 'Cancel',
   width = 500,
   footerComponents,
+  headerComponents,
   okButtonProps,
 }) => {
   const [disabled, setDisabled] = useState(true);
@@ -103,6 +105,7 @@ export const DraggableModal: React.FC<DraggableModalProps> = ({
               >
                   <div style={MODAL_STYLES.title}>{title}</div>
                   <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+                      {!isMinimized && headerComponents}
                       <div
                           style={{ ...MODAL_STYLES.close, margin: '0' }}
                           onClick={handleMinimize}

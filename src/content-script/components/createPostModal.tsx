@@ -1,5 +1,11 @@
-import React, { useState } from 'react';
-import { Button, ConfigProvider, Tooltip } from 'antd';
+import React, { useEffect, useState } from 'react';
+import {
+  Button,
+  ConfigProvider,
+  Tooltip,
+  Switch,
+} from 'antd';
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { StyleProvider } from '@ant-design/cssinjs';
 import { PlusOutlined } from '@ant-design/icons';
 import WaivioTags from './WaivioTags';
@@ -41,6 +47,10 @@ const CreatePostModalContent: React.FC<CreatePostProps> = ({
 }: CreatePostProps) => {
   const [isModalOpen, setIsModalOpen] = useState(true);
   const [isImageUploadModalVisible, setIsImageUploadModalVisible] = useState(false);
+  const [isCommentMode, setIsCommentMode] = useState(false);
+  const [isCommentGenerating, setIsCommentGenerating] = useState(false);
+  const [postBody, setPostBody] = useState(initialBody);
+  const [commentBody, setCommentBody] = useState<string | null>(null);
 
   const {
     data, isLoading, analysisState, updateData,
@@ -57,6 +67,7 @@ const CreatePostModalContent: React.FC<CreatePostProps> = ({
     handleRefreshGpt,
     handleAnalysis,
     handleImageUpload,
+    createCommentFromBody,
     isRecipeLoading,
     isRefreshLoading,
     isAnalysisLoading,
@@ -87,6 +98,8 @@ const CreatePostModalContent: React.FC<CreatePostProps> = ({
 
   const handleBodyChange = (body: string) => {
     updateData({ body });
+    if (isCommentMode) setCommentBody(body);
+    else setPostBody(body);
   };
 
   const handleTagsChange: React.Dispatch<React.SetStateAction<string[]>> = (value) => {
@@ -102,6 +115,37 @@ const CreatePostModalContent: React.FC<CreatePostProps> = ({
     updateData({ uploadedImage: undefined });
   };
 
+  useEffect(() => {
+    if (!isCommentMode) setPostBody(data.body);
+  }, [data.body, isCommentMode]);
+
+  const onToggleMode = async (checked: boolean) => {
+    if (isLoading || isCommentGenerating) return;
+    if (checked) {
+      // Switch to Comment
+      if (commentBody && commentBody.length) {
+        setIsCommentMode(true);
+        updateData({ body: commentBody });
+        return;
+      }
+      try {
+        setIsCommentGenerating(true);
+        const generated = await createCommentFromBody(data.body);
+        if (generated) {
+          setCommentBody(generated);
+          setIsCommentMode(true);
+          updateData({ body: generated });
+        }
+      } finally {
+        setIsCommentGenerating(false);
+      }
+    } else {
+      // Switch to Post
+      setIsCommentMode(false);
+      updateData({ body: postBody || data.body });
+    }
+  };
+
   const isRecipeSource = RECIPE_SOURCE_TYPES.includes(source || '');
   return (
     <StyleProvider container={shadowRoot}>
@@ -113,6 +157,18 @@ const CreatePostModalContent: React.FC<CreatePostProps> = ({
             okText="Publish"
             cancelText="Cancel"
             okButtonProps={{ disabled: isLoading }}
+            headerComponents={(
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <span style={{ fontSize: 12, color: '#666' }}>Post</span>
+                <Switch
+                  checked={isCommentMode}
+                  onChange={onToggleMode}
+                  disabled={isLoading || isCommentGenerating}
+                  size="small"
+                />
+                <span style={{ fontSize: 12, color: '#666' }}>Comment</span>
+              </div>
+            )}
             footerComponents={
                 <PostActionButtons
                     source={source}
