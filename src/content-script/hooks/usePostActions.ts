@@ -112,7 +112,7 @@ export const usePostActions = ({
   };
 
   const createCommentFromBody = async (input: string): Promise<string | null> => {
-    const prompt = 'Remove markup, author attribution and any links from text. Return plain text only.';
+    const prompt = 'Remove markup, author attribution and any links from text. Return plain text only, do not remove emoji.';
     const query = `${prompt}\n\nText:\n${input}`;
     const response = await getGptAnswer(query);
     return response.result || null;
