@@ -293,11 +293,21 @@ export const getIdFromUrl = (url:string) => {
     { regex: /instagram\.com\/reels?\/([^\/]+)/, group: 1 },
     // TikTok video: https://www.tiktok.com/@user/video/ID
     { regex: /tiktok\.com\/@[^\/]+\/video\/(\d+)/, group: 1 },
+    // 3Speak video: https://3speak.tv/watch?v=author/permlink
+    { regex: /3speak\.tv\/watch\?v=([^\/]+)\/([^&]+)/, group: [1, 2] },
+    // Waivio or any host: /@author/permlink
+    { regex: /\/@([^\/]+)\/([^\/?#]+)/, group: [1, 2] },
   ];
 
   for (const { regex, group } of patterns) {
-    const m = url.match(regex);
-    if (m) return m[group];
+    const match = url.match(regex);
+    if (match) {
+      if (Array.isArray(group)) {
+        // For @author/permlink pattern
+        return `${match[group[0]]}/${match[group[1]]}`;
+      }
+      return match[group];
+    }
   }
 
   // fallback: strip protocol
