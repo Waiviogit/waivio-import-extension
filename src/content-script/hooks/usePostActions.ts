@@ -115,8 +115,6 @@ export const usePostActions = ({
 
   const createCommentFromBody = async (input: string): Promise<string | null> => {
     const cleanText = removeMd(input);
-    console.log('cleanText', cleanText);
-
     const isRecipeSource = RECIPE_SOURCE_TYPES.includes(source || '');
     const maxChars = [SOURCE_TYPES.TUTORIAL_TIKTOK, SOURCE_TYPES.RECIPE_DRAFT_TIKTOK, SOURCE_TYPES.DRAFT_TIKTOK].includes(source)
       ? 150
