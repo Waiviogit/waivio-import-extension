@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import removeMd from 'remove-markdown';
 import { postImportWaivio } from '../helpers/downloadWaivioHelper';
 import { copyContent } from '../helpers/commonHelper';
 import { createObjectForPost } from '../helpers/objectHelper';
@@ -7,6 +8,7 @@ import { extractPostInfo } from '../helpers/postHelper';
 import { createAnalysisVideoPromptBySource } from '../helpers/promptHelper';
 import { videoAnalysesByLink, getGptAnswer } from '../helpers/gptHelper';
 import { MODAL_IDS } from '../constants';
+import { RECIPE_SOURCE_TYPES, SOURCE_TYPES } from '../../common/constants';
 
 interface PostActionsProps {
   title: string;
@@ -112,8 +114,21 @@ export const usePostActions = ({
   };
 
   const createCommentFromBody = async (input: string): Promise<string | null> => {
-    const prompt = 'Remove markup, author attribution and any links from text. Return plain text only, do not remove emoji.';
-    const query = `${prompt}\n\nText:\n${input}`;
+    const cleanText = removeMd(input);
+    console.log('cleanText', cleanText);
+
+    const isRecipeSource = RECIPE_SOURCE_TYPES.includes(source || '');
+    const maxChars = [SOURCE_TYPES.TUTORIAL_TIKTOK, SOURCE_TYPES.RECIPE_DRAFT_TIKTOK, SOURCE_TYPES.DRAFT_TIKTOK].includes(source)
+      ? 150
+      : 2200;
+    let prompt = 'Remove author attribution and any links from text. Return plain text only, do not remove emoji.';
+    if (isRecipeSource) {
+      prompt += 'remove first introduction paragraph, remove any hashtags';
+    }
+    prompt += `max output length should not exceed ${maxChars} characters including whitespaces, 
+shorten the post if needed, do not remove logical newlines`;
+
+    const query = `${prompt}\n\nText:\n${cleanText}`;
     const response = await getGptAnswer(query);
     return response.result || null;
   };
