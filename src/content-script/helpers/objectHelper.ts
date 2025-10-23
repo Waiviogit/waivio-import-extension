@@ -551,6 +551,7 @@ export const createObjectForPost = async (postBody: string, imageUrl?: string)
             fieldRecipeIngredients: parseJsonStringArray(wobject?.recipeIngredients || ''),
             fieldNutrition: wobject?.nutrition,
             ...wobject.avatar && { primaryImageURLs: [wobject?.avatar] },
+            ...(!wobject.avatar && imageUrl && { recipeUrl: imageUrl }),
             waivio_product_ids: productId,
           },
           objectPermlink: existPermlink,
