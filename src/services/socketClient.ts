@@ -30,33 +30,35 @@ const initConnection = async (url: string): Promise<WebSocket> => new Promise((r
   });
   ws.addEventListener('message', (message) => {
     const data = parseJson(message.data);
-    emitter.emit(data?.id, { data, error: data?.error });
+    if (data?.id) emitter.emit(data.id, { data, error: data?.error });
   });
 
   ws.addEventListener('open', () => {
-    setTimeout(() => { resolve(ws); }, 100);
+    setTimeout(() => {
+      resolve(ws);
+    }, 100);
   });
 });
 
 const sendMessage = async (message: Record<string, any> = {}): Promise<SendMessageResponse> => {
   const ws = await initConnection(SOCKET_URL);
+  if (ws.readyState !== WebSocket.OPEN) {
+    return { error: new Error(HIVE_SOCKET_ERR.CLOSED) };
+  }
+  const { id } = message;
+  let timeoutId: NodeJS.Timeout | undefined;
 
   return new Promise((resolve) => {
-    if (ws.readyState !== WebSocket.OPEN) {
-      resolve({ error: new Error(HIVE_SOCKET_ERR.CLOSED) });
-    }
-
-    const { id } = message;
-
     ws.send(JSON.stringify(message));
 
     emitter.once(id, ({ data, error }) => {
       ws.close();
+      if (timeoutId) clearTimeout(timeoutId);
       if (error) resolve({ error });
-      else resolve({ data });
+      resolve({ data });
     });
 
-    setTimeout(() => {
+    timeoutId = setTimeout(() => {
       if (emitter.eventNames().includes(id)) {
         emitter.off(id, () => {});
         ws.close();
