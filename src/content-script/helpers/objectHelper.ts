@@ -12,8 +12,6 @@ import { showAlertObjectModal } from '../components/AlertObjectModal';
 import { getThreeSpeakThumbnail } from '../downloaders/threeSpeakDownloader';
 import { getActiveSites } from '../../common/helper/commonHelper';
 
-type SocketResponse = { error?: Error; data?: any };
-
 type userImportResultType = {
     result: boolean
 }
@@ -595,28 +593,17 @@ export const createObjectForPost = async (postBody: string, imageUrl?: string)
 
   const { transactionId, parentPermlink, parentAuthor } = createObjectResponse.result;
 
-  console.log('Subscribing to transaction object:', transactionId);
-  const resultSocket: SocketResponse = await socketClient.sendMessage({
+  const resultSocket = await socketClient.sendMessage({
     id: transactionId,
     method: 'subscribeTransactionId',
     params: [`create-obj-${transactionId}`, transactionId],
   });
-
-  console.log('Socket object response:', resultSocket);
-
-  if (resultSocket && resultSocket.error) {
-    const errorMessage = resultSocket.error instanceof Error ? resultSocket.error.message : 'Unknown socket error';
-    alert(`Socket error: ${errorMessage}`);
-    return;
-  }
 
   const successCreteObj = resultSocket?.data?.success;
   if (!successCreteObj) {
     alert(`socket subscribeTransactionId create object error ${transactionId}`);
     return;
   }
-
-  console.log('Socket object subscription successful');
 
   const updateBody = getUpdateBody({
     author: userName,
@@ -637,57 +624,16 @@ export const createObjectForPost = async (postBody: string, imageUrl?: string)
     alert(`Create object error: ${createUpdateResponse.error}`);
     return;
   }
-  console.log('Subscribing to transaction update:', createUpdateResponse.result.transactionId);
-
-  // Add timeout wrapper for socket operation
-  const socketPromise = socketClient.sendMessage({
+  const resultSocketUpdate = await socketClient.sendMessage({
     id: createUpdateResponse.result.transactionId,
     method: 'subscribeTransactionId',
     params: [`create-upd-${transactionId}`, createUpdateResponse.result.transactionId],
   });
-
-  const timeoutPromise = new Promise((_, reject) => {
-    setTimeout(() => reject(new Error('Socket operation timed out after 15 seconds')), 15000);
-  });
-
-  let resultSocketUpdate: SocketResponse | undefined;
-  try {
-    resultSocketUpdate = await Promise.race([socketPromise, timeoutPromise]) as SocketResponse;
-  } catch (error) {
-    console.error('Socket operation failed:', error);
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-    alert(`Socket operation failed: ${errorMessage}. Proceeding with download anyway...`);
-    // Continue with download even if socket fails
-    await downloadToWaivio({
-      object: {
-        ...recipe,
-        waivio_product_ids: productId,
-        ...(imageUrl && { recipeUrl: imageUrl }),
-      },
-      objectType: 'recipe',
-      objectPermlink: createObjectResponse.result.parentPermlink,
-    });
-    return {
-      name: recipe.name,
-      permlink: createObjectResponse.result.parentPermlink,
-    };
-  }
-
-  console.log('Socket update response:', resultSocketUpdate);
-
-  if (resultSocketUpdate && resultSocketUpdate.error) {
-    const errorMessage = resultSocketUpdate.error instanceof Error ? resultSocketUpdate.error.message : 'Unknown socket error';
-    alert(`Socket error: ${errorMessage}`);
-    return;
-  }
-
   const successCreteUpdate = resultSocketUpdate?.data?.success;
   if (!successCreteUpdate) {
     alert(`socket subscribeTransactionId create update error ${createUpdateResponse.result.transactionId}`);
     return;
   }
-
-  console.log('Socket subscription successful, proceeding to downloadToWaivio');
 
   await downloadToWaivio({
     object: {

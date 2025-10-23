@@ -44,39 +44,25 @@ const sendMessage = async (message: Record<string, any> = {}): Promise<SendMessa
   return new Promise((resolve) => {
     if (ws.readyState !== WebSocket.OPEN) {
       resolve({ error: new Error(HIVE_SOCKET_ERR.CLOSED) });
-      return;
     }
 
     const { id } = message;
-    let isResolved = false;
 
-    const handleResponse = ({ data, error }: { data: any; error: any }) => {
-      if (isResolved) return;
-      isResolved = true;
-
-      emitter.off(id, handleResponse);
-      ws.close();
-
-      if (error) {
-        resolve({ error });
-      } else {
-        resolve({ data });
-      }
-    };
-
-    const handleTimeout = () => {
-      if (isResolved) return;
-      isResolved = true;
-
-      emitter.off(id, handleResponse);
-      ws.close();
-      resolve({ error: new Error(HIVE_SOCKET_ERR.TIMEOUT) });
-    };
-
-    emitter.once(id, handleResponse);
     ws.send(JSON.stringify(message));
 
-    setTimeout(handleTimeout, REQUEST_TIMEOUT);
+    emitter.once(id, ({ data, error }) => {
+      ws.close();
+      if (error) resolve({ error });
+      else resolve({ data });
+    });
+
+    setTimeout(() => {
+      if (emitter.eventNames().includes(id)) {
+        emitter.off(id, () => {});
+        ws.close();
+        resolve({ error: new Error(HIVE_SOCKET_ERR.TIMEOUT) });
+      }
+    }, REQUEST_TIMEOUT);
   });
 };
 
