@@ -585,7 +585,10 @@ export const createObjectForPost = async (postBody: string, imageUrl?: string)
 
   const recipeCreateBody = await getRecipeCreateBody(recipe.name, userName);
 
-  const createObjectResponse = await createWaivioObject(recipeCreateBody);
+  const createObjectResponse = await createWaivioObject({
+    ...recipeCreateBody,
+    datafinityObject: true,
+  });
   if ('error' in createObjectResponse) {
     alert(`Create object error: ${createObjectResponse.error}`);
     return;
