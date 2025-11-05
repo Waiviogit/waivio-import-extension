@@ -645,11 +645,11 @@ export const createObjectForPost = async (postBody: string, imageUrl?: string)
       ...(imageUrl && { recipeUrl: imageUrl }),
     },
     objectType: 'recipe',
-    objectPermlink: createObjectResponse.result.parentPermlink,
+    objectPermlink: createObjectResponse.result.permlink,
   });
 
   return {
     name: recipe.name,
-    permlink: createObjectResponse.result.parentPermlink,
+    permlink: createObjectResponse.result.permlink,
   };
 };
