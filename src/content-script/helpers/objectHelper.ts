@@ -594,7 +594,7 @@ export const createObjectForPost = async (postBody: string, imageUrl?: string)
     return;
   }
 
-  const { transactionId, parentPermlink, parentAuthor } = createObjectResponse.result;
+  const { transactionId, author, permlink } = createObjectResponse.result;
 
   const resultSocket = await socketClient.sendMessage({
     id: transactionId,
@@ -610,8 +610,8 @@ export const createObjectForPost = async (postBody: string, imageUrl?: string)
 
   const updateBody = getUpdateBody({
     author: userName,
-    parentAuthor,
-    parentPermlink,
+    parentAuthor: author,
+    parentPermlink: permlink,
     field: {
       body: JSON.stringify({
         productIdType: productId[0].key,
@@ -645,11 +645,11 @@ export const createObjectForPost = async (postBody: string, imageUrl?: string)
       ...(imageUrl && { recipeUrl: imageUrl }),
     },
     objectType: 'recipe',
-    objectPermlink: createObjectResponse.result.permlink,
+    objectPermlink: permlink,
   });
 
   return {
     name: recipe.name,
-    permlink: createObjectResponse.result.permlink,
+    permlink,
   };
 };
