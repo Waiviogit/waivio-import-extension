@@ -1,12 +1,12 @@
 {
   "name": "Waivio Chrome Extension",
-  "version": "1.8.7",
+  "version": "1.8.8",
   "manifest_version": 3,
   "action": {
     "default_title": "Parse Waivio Product",
     "default_popup": "./index.html"
   },
-  "permissions": ["activeTab", "tabs", "cookies", "storage", "downloads"],
+  "permissions": ["activeTab", "tabs", "cookies", "storage", "downloads", "declarativeNetRequest"],
   "content_security_policy": {
     "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'"
   },

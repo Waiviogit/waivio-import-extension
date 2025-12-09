@@ -1,6 +1,8 @@
 import { sendMessageToContentScript } from '../../services/pageParser';
 import { BUTTON_TEXT, PARSE_COMMANDS, SOURCE_TYPES } from '../constants';
 import { generateUniqueId } from './commonHelper';
+import { getCurrentTab } from '../../services/chromeHelper';
+import { extractVideoId } from '../../content-script/helpers/youtubeHelper';
 
 const editWithAi = {
   text: BUTTON_TEXT.EDIT_WITH_AI,
@@ -263,45 +265,115 @@ export const walmartButtonsConfig = [
   editWithAi,
 ];
 
+interface EmbeddableResult {
+  playable: boolean;
+  reason: string;
+}
+
+const getEmbedConfirmMessage = (reason: string): string => `Video cannot be embedded: ${reason}. Do you want to proceed?`;
+
+const testYouTubeEmbeddable = async (): Promise<EmbeddableResult> => {
+  try {
+    const tab = await getCurrentTab();
+    if (!tab?.url) {
+      console.log('No URL detected');
+      return { playable: false, reason: 'No URL detected' };
+    }
+
+    const videoId = extractVideoId(tab.url);
+    if (!videoId) {
+      console.log('Could not extract video ID from URL');
+      return { playable: false, reason: 'Could not extract video ID' };
+    }
+
+    console.log('Checking video via background:', videoId);
+
+    const result = await chrome.runtime.sendMessage({
+      action: 'checkYouTubeEmbeddable',
+      videoId,
+    });
+
+    console.log('Background result:', result);
+
+    if (result.error) {
+      console.error('Background error:', result.error);
+      return { playable: false, reason: result.error };
+    }
+
+    if (result.playable) {
+      return { playable: true, reason: '' };
+    }
+    console.log('Not playable, reason:', result.reason);
+    return { playable: false, reason: result.reason || 'Unknown reason' };
+  } catch (error) {
+    console.error('Error testing embeddability:', error);
+    return { playable: false, reason: 'Error checking embeddability' };
+  }
+};
+
 export const youtubeButtonConfig = [
   {
     text: BUTTON_TEXT.CREATE_POST_DRAFT,
-    onClick: async (event:Event): Promise<void> => (
-      sendMessageToContentScript(
+    onClick: async (event:Event): Promise<void> => {
+      const { playable, reason } = await testYouTubeEmbeddable();
+      if (!playable) {
+        const proceed = window.confirm(getEmbedConfirmMessage(reason));
+        if (!proceed) return;
+      }
+      await sendMessageToContentScript(
         event,
         PARSE_COMMANDS.CREATE_DRAFT,
         SOURCE_TYPES.DRAFT_YOUTUBE,
-      )),
+      );
+    },
     id: generateUniqueId(),
   },
   {
     text: BUTTON_TEXT.CREATE_RECIPE_DRAFT,
-    onClick: async (event:Event): Promise<void> => (
-      sendMessageToContentScript(
+    onClick: async (event:Event): Promise<void> => {
+      const { playable, reason } = await testYouTubeEmbeddable();
+      if (!playable) {
+        const proceed = window.confirm(getEmbedConfirmMessage(reason));
+        if (!proceed) return;
+      }
+      await sendMessageToContentScript(
         event,
         PARSE_COMMANDS.CREATE_DRAFT,
         SOURCE_TYPES.RECIPE_DRAFT,
-      )),
+      );
+    },
     id: generateUniqueId(),
   },
   {
     text: BUTTON_TEXT.TUTORIAL_DRAFT,
-    onClick: async (event:Event): Promise<void> => (
-      sendMessageToContentScript(
+    onClick: async (event:Event): Promise<void> => {
+      const { playable, reason } = await testYouTubeEmbeddable();
+      if (!playable) {
+        const proceed = window.confirm(getEmbedConfirmMessage(reason));
+        if (!proceed) return;
+      }
+      await sendMessageToContentScript(
         event,
         PARSE_COMMANDS.CREATE_DRAFT,
         SOURCE_TYPES.TUTORIAL_YOUTUBE,
-      )),
+      );
+    },
     id: generateUniqueId(),
   },
   {
     text: BUTTON_TEXT.CREATE_POST,
-    onClick: async (event:Event): Promise<void> => (
-      sendMessageToContentScript(
+    onClick: async (event:Event): Promise<void> => {
+      const { playable, reason } = await testYouTubeEmbeddable();
+      if (!playable) {
+        const proceed = window.confirm(getEmbedConfirmMessage(reason));
+        if (!proceed) return;
+      }
+      await sendMessageToContentScript(
         event,
         PARSE_COMMANDS.CREATE_POST,
         SOURCE_TYPES.YOUTUBE,
-      )),
+      );
+    },
     id: generateUniqueId(),
   },
   {

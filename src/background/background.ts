@@ -231,6 +231,93 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     })();
     return true;
   }
+
+  if (message.action === 'checkYouTubeEmbeddable') {
+    const ruleId = 1;
+    (async () => {
+      try {
+        const { videoId } = message;
+        const embedUrl = `https://www.youtube.com/embed/${videoId}`;
+
+        // Add dynamic rule to set Referer header
+        await chrome.declarativeNetRequest.updateDynamicRules({
+          removeRuleIds: [ruleId],
+          addRules: [{
+            id: ruleId,
+            priority: 1,
+            action: {
+              type: 'modifyHeaders' as chrome.declarativeNetRequest.RuleActionType,
+              requestHeaders: [
+                {
+                  header: 'Referer',
+                  operation: 'set' as chrome.declarativeNetRequest.HeaderOperation,
+                  value: 'https://www.waivio.com/',
+                },
+                {
+                  header: 'Origin',
+                  operation: 'set' as chrome.declarativeNetRequest.HeaderOperation,
+                  value: 'https://www.waivio.com',
+                },
+              ],
+            },
+            condition: {
+              urlFilter: embedUrl,
+              resourceTypes: ['xmlhttprequest' as chrome.declarativeNetRequest.ResourceType],
+            },
+          }],
+        });
+
+        const response = await fetch(embedUrl);
+        const html = await response.text();
+
+        // Check for error indicators
+        const hasError = html.includes('"status":"ERROR"')
+          || html.includes('"status":"UNPLAYABLE"')
+          || html.includes('Video unavailable');
+
+        // Parse playability info
+        const statusMatch = html.match(/"playabilityStatus"[^}]*"status"\s*:\s*"(\w+)"/);
+        const reasonMatch = html.match(/"reason"\s*:\s*"([^"]+)"/);
+        const playableMatch = html.match(/"playableInEmbed"\s*:\s*(true|false)/);
+        let playable = true;
+        let reason = null;
+
+        if (hasError) {
+          playable = false;
+          reason = 'Video contains playback errors or is unavailable';
+        } else if (statusMatch && statusMatch[1] !== 'OK') {
+          playable = false;
+          const status = statusMatch[1];
+          if (status === 'UNPLAYABLE') {
+            reason = 'Video is unplayable (may be region-restricted or require sign-in)';
+          } else if (status === 'LOGIN_REQUIRED') {
+            reason = 'Video requires YouTube login to play';
+          } else if (status === 'ERROR') {
+            reason = 'YouTube returned an error for this video';
+          } else {
+            reason = `Video status: ${status}`;
+          }
+        } else if (playableMatch && playableMatch[1] === 'false') {
+          playable = false;
+          reason = 'Embedding disabled by video owner';
+        } else if (reasonMatch) {
+          playable = false;
+          [, reason] = reasonMatch;
+        }
+
+        sendResponse({ playable, reason, status: statusMatch?.[1] });
+      } catch (error) {
+        console.error('Error checking embeddability:', error);
+        sendResponse({ error: (error as Error).message, playable: false });
+      } finally {
+        // Always clean up the rule
+        await chrome.declarativeNetRequest.updateDynamicRules({
+          removeRuleIds: [ruleId],
+        });
+      }
+    })();
+    return true;
+  }
 });
 
 export {};

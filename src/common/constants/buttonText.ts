@@ -13,4 +13,5 @@ export const BUTTON_TEXT = {
   CREATE_LINK_ALL: 'Link object',
   CREATE_POST: 'Re-post',
   EDIT_WITH_AI: 'Analyze with AI',
+  TEST_EMBEDDABLE: 'Test Embeddable',
 };
