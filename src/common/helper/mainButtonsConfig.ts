@@ -3,6 +3,7 @@ import { BUTTON_TEXT, PARSE_COMMANDS, SOURCE_TYPES } from '../constants';
 import { generateUniqueId } from './commonHelper';
 import { getCurrentTab } from '../../services/chromeHelper';
 import { extractVideoId } from '../../content-script/helpers/youtubeHelper';
+import { showAlertObjectModal } from '../../content-script/components/AlertObjectModal';
 
 const editWithAi = {
   text: BUTTON_TEXT.EDIT_WITH_AI,
@@ -317,7 +318,7 @@ export const youtubeButtonConfig = [
     onClick: async (event:Event): Promise<void> => {
       const { playable, reason } = await testYouTubeEmbeddable();
       if (!playable) {
-        const proceed = window.confirm(getEmbedConfirmMessage(reason));
+        const proceed = await showAlertObjectModal(getEmbedConfirmMessage(reason), 'Proceed Anyway');
         if (!proceed) return;
       }
       await sendMessageToContentScript(
@@ -333,7 +334,7 @@ export const youtubeButtonConfig = [
     onClick: async (event:Event): Promise<void> => {
       const { playable, reason } = await testYouTubeEmbeddable();
       if (!playable) {
-        const proceed = window.confirm(getEmbedConfirmMessage(reason));
+        const proceed = await showAlertObjectModal(getEmbedConfirmMessage(reason), 'Proceed Anyway');
         if (!proceed) return;
       }
       await sendMessageToContentScript(
@@ -349,7 +350,7 @@ export const youtubeButtonConfig = [
     onClick: async (event:Event): Promise<void> => {
       const { playable, reason } = await testYouTubeEmbeddable();
       if (!playable) {
-        const proceed = window.confirm(getEmbedConfirmMessage(reason));
+        const proceed = await showAlertObjectModal(getEmbedConfirmMessage(reason), 'Proceed Anyway');
         if (!proceed) return;
       }
       await sendMessageToContentScript(
@@ -365,7 +366,7 @@ export const youtubeButtonConfig = [
     onClick: async (event:Event): Promise<void> => {
       const { playable, reason } = await testYouTubeEmbeddable();
       if (!playable) {
-        const proceed = window.confirm(getEmbedConfirmMessage(reason));
+        const proceed = await showAlertObjectModal(getEmbedConfirmMessage(reason), 'Proceed Anyway');
         if (!proceed) return;
       }
       await sendMessageToContentScript(
