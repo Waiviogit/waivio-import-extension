@@ -118,7 +118,7 @@ export const usePostActions = ({
     const isRecipeSource = RECIPE_SOURCE_TYPES.includes(source || '');
     const maxChars = [SOURCE_TYPES.TUTORIAL_TIKTOK, SOURCE_TYPES.RECIPE_DRAFT_TIKTOK, SOURCE_TYPES.DRAFT_TIKTOK].includes(source)
       ? 150
-      : 2200;
+      : 1800;
     let prompt = 'Remove author attribution and any links from text. Return plain text only, do not remove emoji.';
     if (isRecipeSource) {
       prompt += 'remove first introduction paragraph, remove any hashtags';
