@@ -118,6 +118,8 @@ export const PERSON_FORM_FIELDS: FormFieldConfig[] = [
   {
     label: 'Email', name: ['emails', 0],
   },
+  { label: 'Price amount', name: 'mostRecentPriceAmount' },
+  { label: 'Price currency', name: 'mostRecentPriceCurrency' },
   {
     label: 'Product IDs',
     name: 'waivio_product_ids',
@@ -200,6 +202,8 @@ export const BUSINESS_FORM_FIELDS: FormFieldConfig[] = [
   {
     label: 'Email', name: ['emails', 0],
   },
+  { label: 'Price amount', name: 'mostRecentPriceAmount' },
+  { label: 'Price currency', name: 'mostRecentPriceCurrency' },
   {
     label: 'Company IDs',
     name: 'waivio_company_ids',
