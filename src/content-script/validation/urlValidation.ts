@@ -165,7 +165,7 @@ const validatePageForYoutube = (url: string): boolean => {
 };
 
 const isValidInstagramUrl = (url: string): boolean => {
-  const pattern = /^(https?:\/\/)?(www\.)?instagram\.com\/(?:[\w-]+\/)?(p|reel)\/([\w-]+)(\/?|\?.*)/;
+  const pattern = /^(https?:\/\/)?(www\.)?instagram\.com\/(?:[\w-]+\/)?(p|reel|reels)\/([\w-]+)(\/?|\?.*)/;
   return pattern.test(url);
 };
 
