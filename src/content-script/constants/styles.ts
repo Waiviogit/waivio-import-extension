@@ -8,7 +8,7 @@ export const MODAL_STYLES = {
   },
   body: {
     overflowY: 'auto' as const,
-    maxHeight: 'calc(110vh - 200px)',
+    maxHeight: 'calc(100vh - 180px)',
     padding: '20px',
     paddingBottom: '10px',
     position: 'relative' as const,
