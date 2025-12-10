@@ -7,8 +7,6 @@ import {
   getAvatarAliexpress,
   getAvatarWalmart,
   getAvatarInstacart,
-} from '../parser/avatar';
-import {
   getProductIdAmazon,
   getProductIdSephora,
   getProductIdAliExpress,
@@ -16,13 +14,14 @@ import {
   getProductIdInstacart,
   getPossibleIdsWalmart,
   getProductIdDefault,
-} from '../parser/productId';
+  getGalleryItemsAmazon,
+} from '../parser';
 import { extractGalleryRequest, extractIdFromUrlRequest, generateObjectFromImage } from '../helpers/objectHelper';
 import { getWaivioUserInfo } from '../helpers/userHelper';
 import { makeBlobFromHtmlPage } from '../objectLink/createLink';
 import { loadImageBase64 } from '../helpers/downloadWaivioHelper';
 import Cookie = chrome.cookies.Cookie;
-import { getGalleryItemsAmazon } from '../parser';
+import { SOURCE_TYPES } from '../../common/constants';
 
 interface GetWaivioProductIds {
   user: string
@@ -166,7 +165,15 @@ const getWaivioProductIds = async ({
   return [getProductIdDefault(response.result)];
 };
 
-export const editWithAi = async () => {
+const sourceToObjectType:Record<string, string> = {
+  [SOURCE_TYPES.EDIT_AI_PRODUCT]: 'product',
+  [SOURCE_TYPES.EDIT_AI_PERSON]: 'person',
+  [SOURCE_TYPES.EDIT_AI_BUSINESS]: 'business',
+};
+
+export const editWithAi = async (source: string) => {
+  const objectType = sourceToObjectType[source] ?? 'product';
+
   const userInfo = await getWaivioUserInfo();
   if (!userInfo) return;
   const {
@@ -185,7 +192,7 @@ export const editWithAi = async () => {
   }
 
   const response = await generateObjectFromImage({
-    accessToken, guestName, auth, user: userName, url: imageUrl,
+    accessToken, guestName, auth, user: userName, url: imageUrl, objectType,
   });
 
   if ('error' in response) {
@@ -220,12 +227,12 @@ export const editWithAi = async () => {
       }),
     ]);
 
-    const product = {
+    const object = {
       ...response.result,
       primaryImageURLs: primaryImageURLs || [],
       imageURLs: imageURLs || [],
-      waivio_product_ids: waivioProductIds || [],
-      websites: [document.URL],
+      ...(objectType === 'business' ? { waivio_company_ids: waivioProductIds || [] } : { waivio_product_ids: waivioProductIds || [] }),
+      ...(!response.result?.websites?.length && { websites: [document.URL] }),
     };
 
     const rootElement = document.createElement('div');
@@ -234,7 +241,8 @@ export const editWithAi = async () => {
     const rootModal = ReactDOM.createRoot(rootElement);
 
     rootModal.render(<EditAiModal
-        product={product}
+        product={object}
+        objectType={objectType}
     />);
   } catch (error) {
     console.error('Error setting up AI modal:', error);

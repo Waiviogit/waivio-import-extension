@@ -137,6 +137,7 @@ interface ExtractGallery {
 
 interface GenerateObjectFromURLImageI {
   url: string
+  objectType: string
   user: string
   accessToken: string
   guestName: string
@@ -248,7 +249,7 @@ export const extractGalleryRequest = async (
 
 export const generateObjectFromImage = async (
   {
-    url, user, accessToken, guestName, auth,
+    url, user, accessToken, guestName, auth, objectType,
   }: GenerateObjectFromURLImageI,
 ): Promise<generateObjectFromURLType> => {
   try {
@@ -265,7 +266,7 @@ export const generateObjectFromImage = async (
           'Hive-Auth': auth ? 'true' : 'false',
           'Waivio-Auth': guestName ? 'true' : 'false',
         },
-        body: JSON.stringify({ user, url }),
+        body: JSON.stringify({ user, url, objectType }),
       },
     );
 

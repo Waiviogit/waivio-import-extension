@@ -1,13 +1,21 @@
 import React, { useState } from 'react';
 import { ConfigProvider, Form } from 'antd';
-import { THEME_CONFIG } from '../constants/styles';
+import { THEME_CONFIG, MODAL_IDS } from '../constants';
 import { EditAiModalProps } from '../types/product';
 import { DraggableModal } from './DraggableModal';
 import { FormField } from './FormField';
-import { PRODUCT_FORM_FIELDS } from '../config/formFields';
+import { PRODUCT_FORM_FIELDS, PERSON_FORM_FIELDS, BUSINESS_FORM_FIELDS } from '../config/formFields';
 import { ImagePreview } from './ImagePreview';
+import { FormFieldConfig } from '../types/form';
 import { downloadToWaivio } from '../helpers/downloadWaivioHelper';
-import { MODAL_IDS } from '../constants';
+
+type ObjectType = 'product' | 'person' | 'business';
+
+const FORM_FIELDS_BY_TYPE: Record<ObjectType, FormFieldConfig[]> = {
+  product: PRODUCT_FORM_FIELDS,
+  person: PERSON_FORM_FIELDS,
+  business: BUSINESS_FORM_FIELDS,
+};
 
 interface ValidationError {
   errorFields?: Array<{
@@ -18,7 +26,7 @@ interface ValidationError {
   message?: string;
 }
 
-const EditAiModal = ({ product, title = 'Object draft' }: EditAiModalProps) => {
+const EditAiModal = ({ product, title = 'Object draft', objectType }: EditAiModalProps) => {
   const [isModalOpen, setIsModalOpen] = useState(true);
   const [form] = Form.useForm();
 
@@ -33,7 +41,7 @@ const EditAiModal = ({ product, title = 'Object draft' }: EditAiModalProps) => {
       if (!nested) return;
       await downloadToWaivio({
         object,
-        objectType: object.objectType,
+        objectType,
       });
 
       document.body.removeChild(nested);
@@ -53,24 +61,28 @@ const EditAiModal = ({ product, title = 'Object draft' }: EditAiModalProps) => {
     document.body.removeChild(nested);
   };
 
-  const renderFormFields = () => PRODUCT_FORM_FIELDS.map((field) => {
-    const preview = field.showPreview ? (
-        <Form.Item noStyle shouldUpdate>
-          {(formInstance) => {
-            const value = formInstance.getFieldValue(field.name);
-            return <ImagePreview value={value} />;
-          }}
-        </Form.Item>
-    ) : null;
+  const renderFormFields = () => {
+    const fields = FORM_FIELDS_BY_TYPE[objectType as ObjectType] ?? PRODUCT_FORM_FIELDS;
 
-    return (
-        <FormField
-          key={field.name.toString()}
-          {...field}
-          preview={preview}
-        />
-    );
-  });
+    return fields.map((field) => {
+      const preview = field.showPreview ? (
+          <Form.Item noStyle shouldUpdate>
+            {(formInstance) => {
+              const value = formInstance.getFieldValue(field.name);
+              return <ImagePreview value={value} />;
+            }}
+          </Form.Item>
+      ) : null;
+
+      return (
+          <FormField
+            key={field.name.toString()}
+            {...field}
+            preview={preview}
+          />
+      );
+    });
+  };
 
   return (
     <ConfigProvider theme={THEME_CONFIG}>
@@ -83,7 +95,7 @@ const EditAiModal = ({ product, title = 'Object draft' }: EditAiModalProps) => {
         <Form
           form={form}
           layout="vertical"
-          initialValues={{ ...product, objectType: 'product' }}
+          initialValues={{ ...product }}
         >
           {renderFormFields()}
         </Form>

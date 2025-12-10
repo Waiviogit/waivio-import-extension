@@ -1,4 +1,4 @@
-export type FormFieldType = 'text' | 'textarea' | 'list' | 'keyValue' | 'categoryValue' | 'imageUrl' | 'imageList' | 'select';
+export type FormFieldType = 'text' | 'textarea' | 'list' | 'keyValue' | 'categoryValue' | 'imageUrl' | 'imageList' | 'select' | 'number';
 
 export interface FormFieldConfig {
   label: string;
@@ -9,6 +9,7 @@ export interface FormFieldConfig {
   required?: boolean;
   rules?: any[];
   options?: { value: string; label: string }[];
+  dependencies?: string[];
 }
 
 export interface ImagePreviewProps {

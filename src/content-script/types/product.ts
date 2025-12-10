@@ -40,4 +40,5 @@ export interface Product {
 export interface EditAiModalProps {
     product: Product;
     title?: string;
+    objectType: string;
 }

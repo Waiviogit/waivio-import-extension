@@ -22,6 +22,9 @@ export const SOURCE_TYPES = {
   RECIPE_DRAFT_HIVE: 'recipe_draft_hive',
   TUTORIAL_DRAFT_HIVE: 'tutorial_draft_hive',
   REVIEW_DRAFT_HIVE: 'review_draft_hive',
+  EDIT_AI_PRODUCT: 'edit_ai_product',
+  EDIT_AI_PERSON: 'edit_ai_person',
+  EDIT_AI_BUSINESS: 'edit_ai_business',
 };
 
 export const RECIPE_SOURCE_TYPES = [

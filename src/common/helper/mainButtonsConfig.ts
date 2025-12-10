@@ -5,15 +5,38 @@ import { getCurrentTab } from '../../services/chromeHelper';
 import { extractVideoId } from '../../content-script/helpers/youtubeHelper';
 import { showAlertObjectModal } from '../../content-script/components/AlertObjectModal';
 
-const editWithAi = {
-  text: BUTTON_TEXT.EDIT_WITH_AI,
-  onClick: async (event:Event): Promise<void> => (
-    sendMessageToContentScript(
-      event,
-      PARSE_COMMANDS.EDIT_WITH_AI,
-    )),
-  id: generateUniqueId(),
-};
+export const editAiButtons = [
+  {
+    text: BUTTON_TEXT.EDIT_WITH_AI_PRODUCT,
+    onClick: async (event:Event): Promise<void> => (
+      sendMessageToContentScript(
+        event,
+        PARSE_COMMANDS.EDIT_WITH_AI,
+        SOURCE_TYPES.EDIT_AI_PRODUCT,
+      )),
+    id: generateUniqueId(),
+  },
+  {
+    text: BUTTON_TEXT.EDIT_WITH_AI_BUSINESS,
+    onClick: async (event:Event): Promise<void> => (
+      sendMessageToContentScript(
+        event,
+        PARSE_COMMANDS.EDIT_WITH_AI,
+        SOURCE_TYPES.EDIT_AI_BUSINESS,
+      )),
+    id: generateUniqueId(),
+  },
+  {
+    text: BUTTON_TEXT.EDIT_WITH_AI_PERSON,
+    onClick: async (event:Event): Promise<void> => (
+      sendMessageToContentScript(
+        event,
+        PARSE_COMMANDS.EDIT_WITH_AI,
+        SOURCE_TYPES.EDIT_AI_PERSON,
+      )),
+    id: generateUniqueId(),
+  },
+];
 
 export const mainButtonsConfig = [
   {
@@ -79,7 +102,7 @@ export const mainButtonsConfig = [
     ),
     id: generateUniqueId(),
   },
-  editWithAi,
+  ...editAiButtons,
 ];
 
 export const aliexpressButtonsConfig = [
@@ -136,7 +159,7 @@ export const aliexpressButtonsConfig = [
     ),
     id: generateUniqueId(),
   },
-  editWithAi,
+  ...editAiButtons,
 ];
 
 export const instacartButtonsConfig = [
@@ -151,7 +174,7 @@ export const instacartButtonsConfig = [
     ),
     id: generateUniqueId(),
   },
-  editWithAi,
+  ...editAiButtons,
 ];
 
 export const sephoraButtonsConfig = [
@@ -207,7 +230,7 @@ export const sephoraButtonsConfig = [
     ),
     id: generateUniqueId(),
   },
-  editWithAi,
+  ...editAiButtons,
 ];
 
 export const walmartButtonsConfig = [
@@ -263,7 +286,7 @@ export const walmartButtonsConfig = [
     ),
     id: generateUniqueId(),
   },
-  editWithAi,
+  ...editAiButtons,
 ];
 
 interface EmbeddableResult {

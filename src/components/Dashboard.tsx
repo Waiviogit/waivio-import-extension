@@ -12,6 +12,7 @@ import {
   youtubeButtonConfig,
   instacartButtonsConfig,
   hiveConfig,
+  editAiButtons,
 } from '../common/helper';
 import { getCurrentTab } from '../services/chromeHelper';
 import { DashboardSelect } from './DashboardSelect';
@@ -352,15 +353,13 @@ export const Dashboard = () => {
         name: 'generic-valid-url',
         test: (url) => validUrlRegEx.test(url),
         render: () => {
-          const editWithAi = <DashboardButton
-            text={BUTTON_TEXT.EDIT_WITH_AI}
-            onClick={async (event:Event): Promise<void> => (
-              sendMessageToContentScript(
-                event,
-                PARSE_COMMANDS.EDIT_WITH_AI,
-              ))}
-            id={generateUniqueId()}
-          />;
+          const editButtons = editAiButtons.map((el) => <DashboardButton
+              text={el.text}
+              onClick={el.onClick}
+              id={el.id}
+              key={el.id}
+          />);
+
           const createObjectLinkAllButton = <DashboardButton
             text={BUTTON_TEXT.CREATE_LINK_ALL}
             onClick={async (event:Event): Promise<void> => (
@@ -372,7 +371,7 @@ export const Dashboard = () => {
             id={generateUniqueId()}
           />;
 
-          return [createObjectLinkAllButton, editWithAi];
+          return [createObjectLinkAllButton, ...editButtons];
         },
       },
     ];

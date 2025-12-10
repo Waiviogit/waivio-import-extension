@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import {
-  Form, Input, Space, Button, Image, Select,
+  Form, Input, InputNumber, Space, Button, Image, Select,
 } from 'antd';
 import { PlusOutlined, MinusCircleOutlined } from '@ant-design/icons';
 import { ImageUploadModal } from './ImageUploadModal';
@@ -8,13 +8,14 @@ import { ImageUploadModal } from './ImageUploadModal';
 interface FormFieldProps {
     label: string;
     name: string | (string | number)[];
-    type?: 'text' | 'textarea' | 'list' | 'keyValue' | 'categoryValue' | 'imageUrl' | 'imageList' | 'select';
+    type?: 'text' | 'textarea' | 'list' | 'keyValue' | 'categoryValue' | 'imageUrl' | 'imageList' | 'select' | 'number';
     rows?: number;
     preview?: React.ReactNode;
     maxItems?: number;
     required?: boolean;
     rules?: any[];
     options?: { value: string; label: string }[];
+    dependencies?: string[];
 }
 
 export const FormField: React.FC<FormFieldProps> = ({
@@ -27,7 +28,21 @@ export const FormField: React.FC<FormFieldProps> = ({
   required,
   rules,
   options,
+  dependencies,
 }) => {
+  if (type === 'number') {
+    return (
+            <Form.Item
+                label={<span style={{ fontWeight: 600 }}>{label}</span>}
+                name={name}
+                rules={rules}
+                dependencies={dependencies}
+            >
+                <InputNumber style={{ width: '100%' }} onKeyDown={(e) => e.stopPropagation()}/>
+            </Form.Item>
+    );
+  }
+
   if (type === 'select') {
     return (
             <Form.Item
