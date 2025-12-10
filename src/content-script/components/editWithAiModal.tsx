@@ -1,15 +1,30 @@
-import React, { useState } from 'react';
-import { ConfigProvider, Form } from 'antd';
+import { useState, useEffect } from 'react';
+import { ConfigProvider, Form, Spin } from 'antd';
 import { THEME_CONFIG, MODAL_IDS } from '../constants';
-import { EditAiModalProps } from '../types/product';
 import { DraggableModal } from './DraggableModal';
 import { FormField } from './FormField';
 import { PRODUCT_FORM_FIELDS, PERSON_FORM_FIELDS, BUSINESS_FORM_FIELDS } from '../config/formFields';
 import { ImagePreview } from './ImagePreview';
 import { FormFieldConfig } from '../types/form';
-import { downloadToWaivio } from '../helpers/downloadWaivioHelper';
+import { downloadToWaivio, loadImageBase64 } from '../helpers/downloadWaivioHelper';
+import { getWaivioUserInfo } from '../helpers/userHelper';
+import { makeBlobFromHtmlPage } from '../objectLink/createLink';
+import { generateObjectFromImage } from '../helpers/objectHelper';
+import {
+  getWaivioProductIds,
+  getAvatarAndGallery,
+  UserInfo,
+} from '../editAi/editWithAi';
 
 type ObjectType = 'product' | 'person' | 'business';
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type ProductData = Record<string, any>;
+
+interface EditAiModalProps {
+  objectType: string;
+  title?: string;
+}
 
 const FORM_FIELDS_BY_TYPE: Record<ObjectType, FormFieldConfig[]> = {
   product: PRODUCT_FORM_FIELDS,
@@ -26,9 +41,105 @@ interface ValidationError {
   message?: string;
 }
 
-const EditAiModal = ({ product, title = 'Object draft', objectType }: EditAiModalProps) => {
+const getGalleryLength = (aiResult: ProductData | null): number => {
+  if (!aiResult) return 3;
+  const len = aiResult?.galleryLength as number || 0;
+  if (len > 2) return len - 1;
+  return aiResult?.galleryLength as number || 1;
+};
+
+const EditAiModal = ({ title = 'Object draft', objectType }: EditAiModalProps) => {
   const [isModalOpen, setIsModalOpen] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
+  const [product, setProduct] = useState<ProductData | null>(null);
   const [form] = Form.useForm();
+
+  useEffect(() => {
+    const fetchObjectData = async () => {
+      setIsLoading(true);
+
+      const userInfo = await getWaivioUserInfo();
+      if (!userInfo) {
+        setIsLoading(false);
+        setProduct({ websites: [document.URL] });
+        return;
+      }
+
+      const {
+        accessToken, guestName, userName, auth,
+      } = userInfo as UserInfo;
+
+      let aiResult: ProductData | null = null;
+
+      // Try to get AI-generated object, but continue even if it fails
+      try {
+        const imageBlob = await makeBlobFromHtmlPage(false);
+        if (imageBlob) {
+          const { result: imageUrl } = await loadImageBase64(imageBlob);
+          if (imageUrl) {
+            const response = await generateObjectFromImage({
+              accessToken, guestName, auth, user: userName, url: imageUrl, objectType,
+            });
+
+            if (!('error' in response) && response.result) {
+              aiResult = response.result;
+            }
+          }
+        }
+      } catch (err) {
+        console.warn('Failed to generate object from image:', err);
+      }
+
+      const galleryLength = getGalleryLength(aiResult);
+
+      try {
+        const [waivioProductIds, { primaryImageURLs, imageURLs }] = await Promise.all([
+          getWaivioProductIds({
+            user: userName,
+            auth,
+            accessToken,
+            guestName,
+          }),
+          getAvatarAndGallery({
+            user: userName,
+            auth,
+            accessToken,
+            guestName,
+            galleryLength,
+          }),
+        ]);
+
+        const hasWebsites = aiResult?.websites && Array.isArray(aiResult.websites)
+          && aiResult.websites.length > 0;
+
+        const object = {
+          ...(aiResult || {}),
+          primaryImageURLs: primaryImageURLs || [],
+          imageURLs: imageURLs || [],
+          ...(objectType === 'business'
+            ? { waivio_company_ids: waivioProductIds || [] }
+            : { waivio_product_ids: waivioProductIds || [] }),
+          ...(!hasWebsites && { websites: [document.URL] }),
+        };
+
+        setProduct(object);
+        form.setFieldsValue(object);
+      } catch (error) {
+        console.error('Error fetching product data:', error);
+        // Even on error, set empty form with website
+        const fallbackObject = {
+          ...(aiResult || {}),
+          websites: [document.URL],
+        };
+        setProduct(fallbackObject);
+        form.setFieldsValue(fallbackObject);
+      }
+
+      setIsLoading(false);
+    };
+
+    fetchObjectData();
+  }, [objectType, form]);
 
   const handleOk = async () => {
     try {
@@ -91,14 +202,26 @@ const EditAiModal = ({ product, title = 'Object draft', objectType }: EditAiModa
         open={isModalOpen}
         onOk={handleOk}
         onCancel={handleCancel}
+        okButtonProps={{ disabled: isLoading }}
       >
-        <Form
-          form={form}
-          layout="vertical"
-          initialValues={{ ...product }}
-        >
-          {renderFormFields()}
-        </Form>
+        {isLoading ? (
+          <div style={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            minHeight: 200,
+          }}>
+            <Spin size="large" tip="Generating object data..." />
+          </div>
+        ) : (
+          <Form
+            form={form}
+            layout="vertical"
+            initialValues={{ ...product }}
+          >
+            {renderFormFields()}
+          </Form>
+        )}
       </DraggableModal>
     </ConfigProvider>
   );

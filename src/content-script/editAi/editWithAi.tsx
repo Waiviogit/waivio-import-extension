@@ -16,21 +16,18 @@ import {
   getProductIdDefault,
   getGalleryItemsAmazon,
 } from '../parser';
-import { extractGalleryRequest, extractIdFromUrlRequest, generateObjectFromImage } from '../helpers/objectHelper';
-import { getWaivioUserInfo } from '../helpers/userHelper';
-import { makeBlobFromHtmlPage } from '../objectLink/createLink';
-import { loadImageBase64 } from '../helpers/downloadWaivioHelper';
+import { extractGalleryRequest, extractIdFromUrlRequest } from '../helpers/objectHelper';
 import Cookie = chrome.cookies.Cookie;
 import { SOURCE_TYPES } from '../../common/constants';
 
-interface GetWaivioProductIds {
+export interface GetWaivioProductIds {
   user: string
   accessToken: string
   guestName: string
   auth: Cookie|undefined
 }
 
-interface GetWaivioAvatar {
+export interface GetWaivioAvatar {
   user: string
   accessToken: string
   guestName: string
@@ -38,7 +35,14 @@ interface GetWaivioAvatar {
   auth: Cookie|undefined
 }
 
-const getAvatarAndGallery = async ({
+export interface UserInfo {
+  accessToken: string
+  guestName: string
+  userName: string
+  auth: Cookie|undefined
+}
+
+export const getAvatarAndGallery = async ({
   user, accessToken, guestName, auth, galleryLength,
 }: GetWaivioAvatar) => {
   const url = document.URL.toLowerCase();
@@ -119,7 +123,7 @@ const getAvatarAndGallery = async ({
   };
 };
 
-const getWaivioProductIds = async ({
+export const getWaivioProductIds = async ({
   user, auth, accessToken, guestName,
 }: GetWaivioProductIds) => {
   const url = document.URL.toLowerCase();
@@ -174,78 +178,10 @@ const sourceToObjectType:Record<string, string> = {
 export const editWithAi = async (source: string) => {
   const objectType = sourceToObjectType[source] ?? 'product';
 
-  const userInfo = await getWaivioUserInfo();
-  if (!userInfo) return;
-  const {
-    accessToken, guestName, userName, auth,
-  } = userInfo;
+  const rootElement = document.createElement('div');
+  rootElement.id = MODAL_IDS.MAIN_MODAL_HOST;
+  document.body.appendChild(rootElement);
+  const rootModal = ReactDOM.createRoot(rootElement);
 
-  const imageBlob = await makeBlobFromHtmlPage(false);
-  if (!imageBlob) {
-    alert('Can\'t make screenshot of this page');
-    return;
-  }
-  const { result: imageUrl } = await loadImageBase64(imageBlob);
-  if (!imageUrl) {
-    alert('Can\'t save screenshot of this page');
-    return;
-  }
-
-  const response = await generateObjectFromImage({
-    accessToken, guestName, auth, user: userName, url: imageUrl, objectType,
-  });
-
-  if ('error' in response) {
-    alert(response.error?.message || 'Failed to generate object from image');
-    return;
-  }
-
-  // Ensure response.result exists and has required properties
-  if (!response.result) {
-    alert('No result received from AI service');
-    return;
-  }
-
-  const galleryLength = (response.result?.galleryLength || 0) > 2
-    ? (response.result?.galleryLength || 0) - 1
-    : response.result?.galleryLength || 1;
-
-  try {
-    const [waivioProductIds, { primaryImageURLs, imageURLs }] = await Promise.all([
-      getWaivioProductIds({
-        user: userName,
-        auth,
-        accessToken,
-        guestName,
-      }),
-      getAvatarAndGallery({
-        user: userName,
-        auth,
-        accessToken,
-        guestName,
-        galleryLength,
-      }),
-    ]);
-
-    const object = {
-      ...response.result,
-      primaryImageURLs: primaryImageURLs || [],
-      imageURLs: imageURLs || [],
-      ...(objectType === 'business' ? { waivio_company_ids: waivioProductIds || [] } : { waivio_product_ids: waivioProductIds || [] }),
-      ...(!response.result?.websites?.length && { websites: [document.URL] }),
-    };
-
-    const rootElement = document.createElement('div');
-    rootElement.id = MODAL_IDS.MAIN_MODAL_HOST;
-    document.body.appendChild(rootElement);
-    const rootModal = ReactDOM.createRoot(rootElement);
-
-    rootModal.render(<EditAiModal
-        product={object}
-        objectType={objectType}
-    />);
-  } catch (error) {
-    console.error('Error setting up AI modal:', error);
-    alert('Failed to setup AI editing modal');
-  }
+  rootModal.render(<EditAiModal objectType={objectType} />);
 };
