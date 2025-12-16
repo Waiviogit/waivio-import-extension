@@ -145,7 +145,7 @@ export const getProductIdInstacart = (): productIdType | undefined => {
 export const getProductIdDefault = (value?:string) => {
   const urlObject = new URL(document.URL);
   const pathWithId = urlObject.pathname.split('/').at(-1) || '';
-  const valueFromPath = (pathWithId?.length || 0) > 8 ? pathWithId : document.URL;
+  const valueFromPath = ((pathWithId?.length || 0) > 8 ? pathWithId : document.URL).replace('%20', '_');
 
   return {
     key: urlObject.host.replace(/www\./, ''),

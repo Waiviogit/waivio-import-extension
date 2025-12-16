@@ -1,6 +1,6 @@
 {
   "name": "Waivio Chrome Extension",
-  "version": "1.9.0",
+  "version": "1.9.1",
   "manifest_version": 3,
   "action": {
     "default_title": "Parse Waivio Product",
@@ -22,5 +22,11 @@
   },
   "icons" : {
     "128" : "icon128.png"
-  }
+  },
+  "web_accessible_resources": [
+    {
+      "resources": ["pageScript.js"],
+      "matches": ["<all_urls>"]
+    }
+  ]
 }

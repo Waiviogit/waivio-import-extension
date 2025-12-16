@@ -13,7 +13,7 @@ import { generateObjectFromImage } from '../helpers/objectHelper';
 import {
   getWaivioProductIds,
   getAvatarAndGallery,
-  UserInfo,
+  UserInfo, getDistriatorObject,
 } from '../editAi/editWithAi';
 
 type ObjectType = 'product' | 'person' | 'business';
@@ -64,10 +64,29 @@ const EditAiModal = ({ title = 'Object draft', objectType }: EditAiModalProps) =
         setProduct({ websites: [document.URL] });
         return;
       }
-
       const {
         accessToken, guestName, userName, auth,
       } = userInfo as UserInfo;
+
+      if (document.URL.includes('distriator.com')) {
+        const waivioProductIds = await getWaivioProductIds({
+          user: userName,
+          auth,
+          accessToken,
+          guestName,
+        });
+
+        const object = {
+          ...await getDistriatorObject(),
+          ...(objectType === 'business'
+            ? { waivio_company_ids: waivioProductIds || [] }
+            : { waivio_product_ids: waivioProductIds || [] }),
+        };
+
+        setIsLoading(false);
+        setProduct(object);
+        return;
+      }
 
       let aiResult: ProductData | null = null;
 

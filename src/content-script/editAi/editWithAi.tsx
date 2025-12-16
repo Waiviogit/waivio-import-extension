@@ -123,6 +123,121 @@ export const getAvatarAndGallery = async ({
   };
 };
 
+type DistriatorType = {
+  name: string;
+  address?: string;
+  websites?: string[];
+  primaryImageURLs?: string[];
+  imageURLs?: string[];
+  latitude?: number;
+  longitude?: number;
+}
+
+type LatitudeLongitudeType = {
+  latitude: number;
+  longitude: number;
+}
+
+// Inject external page script once
+let pageScriptInjected = false;
+const injectPageScript = () => {
+  if (pageScriptInjected) return;
+  const script = document.createElement('script');
+  script.src = chrome.runtime.getURL('pageScript.js');
+  script.onload = () => script.remove();
+  document.documentElement.appendChild(script);
+  pageScriptInjected = true;
+};
+
+const getLocationData = async (
+  clickableLocation: HTMLElement | null,
+): Promise<LatitudeLongitudeType | null> => {
+  if (!clickableLocation) {
+    console.log('no clickableLocation');
+    return null;
+  }
+
+  // Inject the page script if not already done
+  injectPageScript();
+
+  // Generate a unique ID for this element
+  const uniqueId = `location-data-${Date.now()}`;
+  clickableLocation.setAttribute('data-location-id', uniqueId);
+
+  // Listen for response
+  return new Promise((resolve) => {
+    const timeout = setTimeout(() => {
+      // eslint-disable-next-line no-use-before-define
+      window.removeEventListener('message', handler);
+      clickableLocation.removeAttribute('data-location-id');
+      console.log('no latitude and longitude - timeout');
+      resolve(null);
+    }, 2000);
+
+    const handler = (event: MessageEvent) => {
+      if (event.data.type === 'LOCATION_DATA_RESULT' && event.data.id === uniqueId) {
+        clearTimeout(timeout);
+        window.removeEventListener('message', handler);
+        clickableLocation.removeAttribute('data-location-id');
+        resolve(event.data.data);
+      }
+    };
+
+    window.addEventListener('message', handler);
+
+    // Small delay to ensure script is loaded, then request location data
+    setTimeout(() => {
+      window.postMessage({ type: 'GET_LOCATION_DATA', id: uniqueId }, '*');
+    }, 50);
+  });
+};
+
+export const getDistriatorObject = async ():Promise<DistriatorType> => {
+  const result: DistriatorType = {
+    name: document.querySelector('h1')?.textContent || '',
+  };
+
+  const headers = document.querySelectorAll<HTMLElement>('h2');
+
+  const headers2 = Array.from(document.querySelectorAll('h2'));
+  const clickableLocation = headers2.find((el) => el?.textContent?.trim() === 'Location')?.nextSibling as HTMLElement | null;
+
+  const latLon = await getLocationData(clickableLocation);
+  if (latLon) {
+    result.latitude = latLon.latitude;
+    result.longitude = latLon.longitude;
+  }
+
+  for (const h2 of headers) {
+    if (!h2.textContent) continue;
+    const title = h2.textContent.trim();
+
+    // Usually content is placed right after h2
+    const container = h2.nextElementSibling as HTMLElement;
+    if (!container) continue;
+
+    if (title === 'Contact') {
+      result.websites = [container.innerText.trim()];
+    }
+
+    if (title === 'Location') {
+      result.address = container.innerText.trim();
+    }
+
+    if (title === 'Business Photo Gallery') {
+      const images = Array.from(container.querySelectorAll('img')).map((img) => img.src)
+        .filter(Boolean);
+
+      const [avatar, ...gallery] = images;
+      if (!avatar) continue;
+      result.primaryImageURLs = [avatar];
+      if (gallery.length) result.imageURLs = gallery;
+    }
+  }
+
+  return result;
+};
+
 export const getWaivioProductIds = async ({
   user, auth, accessToken, guestName,
 }: GetWaivioProductIds) => {
@@ -155,7 +270,7 @@ export const getWaivioProductIds = async ({
   }
 
   const response = await extractIdFromUrlRequest({
-    url: document.URL,
+    url: document.URL.replace('%20', '_'),
     user,
     accessToken,
     guestName,
