@@ -127,10 +127,14 @@ type DistriatorType = {
   name: string;
   address?: string;
   websites?: string[];
+  emails?: string[];
   primaryImageURLs?: string[];
   imageURLs?: string[];
   latitude?: number;
   longitude?: number;
+  phone?: string;
+  workingHours?: string;
+  fieldDescription?: string;
 }
 
 type LatitudeLongitudeType = {
@@ -192,6 +196,30 @@ const getLocationData = async (
   });
 };
 
+function findNextPAfter(el: HTMLElement): HTMLElement | null {
+  let node: HTMLElement | null = el;
+
+  while (node) {
+    // 1) try next siblings on the same level
+    let sibling = node.nextElementSibling as HTMLElement | null;
+    while (sibling) {
+      // found a <p>
+      if (sibling.tagName === 'P') return sibling;
+
+      // if it's a wrapper, look inside it for a <p>
+      const pInside = sibling.querySelector('p');
+      if (pInside) return pInside as HTMLElement;
+
+      sibling = sibling.nextElementSibling as HTMLElement | null;
+    }
+
+    // 2) go up and continue searching siblings of the parent
+    node = node.parentElement;
+  }
+
+  return null;
+}
+
 export const getDistriatorObject = async ():Promise<DistriatorType> => {
   const result: DistriatorType = {
     name: document.querySelector('h1')?.textContent || '',
@@ -217,7 +245,31 @@ export const getDistriatorObject = async ():Promise<DistriatorType> => {
     if (!container) continue;
 
     if (title === 'Contact') {
-      result.websites = [container.innerText.trim()];
+      const spans = Array.from(container.querySelectorAll('span'));
+      for (const span of spans) {
+        const content = span.innerText.trim();
+        if (!content) continue;
+
+        // Email check
+        if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(content)) {
+          result.emails = [content];
+          continue;
+        }
+
+        // URL check
+        try {
+          const _ = new URL(content);
+          if (_) result.websites = [content];
+          continue;
+        } catch {
+          // not a valid URL
+        }
+
+        // Phone check (only digits and +)
+        if (/^[\d+]+$/.test(content)) {
+          result.phone = content;
+        }
+      }
     }
 
     if (title === 'Location') {
@@ -232,6 +284,24 @@ export const getDistriatorObject = async ():Promise<DistriatorType> => {
       if (!avatar) continue;
       result.primaryImageURLs = [avatar];
       if (gallery.length) result.imageURLs = gallery;
+    }
+
+    if (title === 'Notes') {
+      const paragraphs = Array.from(h2.parentElement?.querySelectorAll('h3') || []);
+      paragraphs.forEach((h3) => {
+        const h3title = (h3.textContent || '').trim();
+        const p = findNextPAfter(h3);
+        const pText = p?.textContent;
+        if (!pText) return;
+
+        if (h3title === 'Business Notes') {
+          result.fieldDescription = pText.trim();
+        }
+
+        if (h3title === 'Work Time') {
+          result.workingHours = pText.trim();
+        }
+      });
     }
   }
 
