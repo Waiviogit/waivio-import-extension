@@ -273,7 +273,8 @@ export const getDistriatorObject = async ():Promise<DistriatorType> => {
     }
 
     if (title === 'Location') {
-      result.address = container.innerText.trim();
+      const paragraphs = Array.from(container.querySelectorAll('p'));
+      result.address = paragraphs.map((p) => p.textContent?.trim()).filter(Boolean).join(' ').replace(/\s{2,}/g, ' ');
     }
 
     if (title === 'Business Photo Gallery') {
