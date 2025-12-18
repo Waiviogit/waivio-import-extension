@@ -274,7 +274,7 @@ export const getDistriatorObject = async ():Promise<DistriatorType> => {
 
     if (title === 'Location') {
       const paragraphs = Array.from(container.querySelectorAll('p'));
-      result.address = paragraphs.map((p) => p.textContent?.trim()).filter(Boolean).join(' ').replace(/\s{2,}/g, ' ');
+      result.address = paragraphs.map((p) => p.textContent?.trim()).filter(Boolean).join(', ').replace(/\s{2,}/g, ' ');
     }
 
     if (title === 'Business Photo Gallery') {
