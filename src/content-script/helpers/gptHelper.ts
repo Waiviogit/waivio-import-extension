@@ -144,9 +144,8 @@ const videoAnalyzeWithBlob = async (prompt: string, url: string): Promise<respon
     const downloadUrl = await getDownloadUrl(url);
     const allowedSizeInMB = 100;
     const currentSizeInMB = await getRemoteFileSizeMB(downloadUrl);
-    if (!currentSizeInMB) throw new Error('Error fetching file size');
 
-    if (currentSizeInMB > allowedSizeInMB) {
+    if (currentSizeInMB && currentSizeInMB > allowedSizeInMB) {
       const errorMessage = `Max file size exceeded. Current size: ${currentSizeInMB}MB, Allowed size: ${allowedSizeInMB}MB`;
       throw new Error(errorMessage);
     }
@@ -154,6 +153,16 @@ const videoAnalyzeWithBlob = async (prompt: string, url: string): Promise<respon
     const blob = await downloadBlobViaBackground(downloadUrl);
 
     if (!blob) throw new Error('cant make blob');
+
+    // Fallback validation when remote size is unavailable
+    if (!currentSizeInMB) {
+      const blobSizeInMB = blob.size / (1024 * 1024);
+      console.log('blobSizeInMB', blobSizeInMB);
+      if (blobSizeInMB > allowedSizeInMB) {
+        const errorMessage = `Max file size exceeded after download. Current size: ${blobSizeInMB.toFixed(2)}MB, Allowed size: ${allowedSizeInMB}MB`;
+        throw new Error(errorMessage);
+      }
+    }
 
     const formData = new FormData();
     formData.append('file', blob, 'video.mp4');
