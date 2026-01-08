@@ -89,6 +89,7 @@ If the following text is in a language other than English, translate it into Eng
     [SOURCE_TYPES.RECIPE_DRAFT]: recipeQuery,
     [SOURCE_TYPES.RECIPE_DRAFT_INSTAGRAM]: recipeQuery,
     [SOURCE_TYPES.RECIPE_DRAFT_TIKTOK]: recipeQuery,
+    [SOURCE_TYPES.RECIPE_DRAFT_HIVE]: recipeQuery,
     default: query,
   };
   if (source) return querySet[source] || querySet.default;
