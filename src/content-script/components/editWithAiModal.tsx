@@ -8,7 +8,6 @@ import { ImagePreview } from './ImagePreview';
 import { FormFieldConfig } from '../types/form';
 import { downloadToWaivio, loadImageBase64 } from '../helpers/downloadWaivioHelper';
 import { getWaivioUserInfo } from '../helpers/userHelper';
-import { makeBlobFromHtmlPage } from '../objectLink/createLink';
 import { generateObjectFromImage } from '../helpers/objectHelper';
 import {
   getWaivioProductIds,
@@ -24,6 +23,7 @@ type ProductData = Record<string, any>;
 interface EditAiModalProps {
   objectType: string;
   title?: string;
+  imageBlob?: Blob | null;
 }
 
 const FORM_FIELDS_BY_TYPE: Record<ObjectType, FormFieldConfig[]> = {
@@ -48,7 +48,7 @@ const getGalleryLength = (aiResult: ProductData | null): number => {
   return aiResult?.galleryLength as number || 1;
 };
 
-const EditAiModal = ({ title = 'Object draft', objectType }: EditAiModalProps) => {
+const EditAiModal = ({ title = 'Object draft', objectType, imageBlob }: EditAiModalProps) => {
   const [isModalOpen, setIsModalOpen] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
   const [product, setProduct] = useState<ProductData | null>(null);
@@ -92,7 +92,6 @@ const EditAiModal = ({ title = 'Object draft', objectType }: EditAiModalProps) =
 
       // Try to get AI-generated object, but continue even if it fails
       try {
-        const imageBlob = await makeBlobFromHtmlPage(false);
         if (imageBlob) {
           const { result: imageUrl } = await loadImageBase64(imageBlob);
           if (imageUrl) {
@@ -158,7 +157,7 @@ const EditAiModal = ({ title = 'Object draft', objectType }: EditAiModalProps) =
     };
 
     fetchObjectData();
-  }, [objectType, form]);
+  }, [objectType, form, imageBlob]);
 
   const handleOk = async () => {
     try {

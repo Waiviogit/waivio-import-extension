@@ -1,6 +1,7 @@
 import ReactDOM from 'react-dom/client';
 import EditAiModal from '../components/editWithAiModal';
 import { MODAL_IDS } from '../constants';
+import { makeBlobFromHtmlPage } from '../objectLink/createLink';
 import {
   getAvatarAmazon,
   getAvatarSephora,
@@ -14,7 +15,7 @@ import {
   getProductIdInstacart,
   getPossibleIdsWalmart,
   getProductIdDefault,
-  getGalleryItemsAmazon,
+  getGalleryItemsAmazon, getAvatarInstagram,
 } from '../parser';
 import { extractGalleryRequest, extractIdFromUrlRequest } from '../helpers/objectHelper';
 import Cookie = chrome.cookies.Cookie;
@@ -46,6 +47,14 @@ export const getAvatarAndGallery = async ({
   user, accessToken, guestName, auth, galleryLength,
 }: GetWaivioAvatar) => {
   const url = document.URL.toLowerCase();
+
+  if (url.includes('instagram.com')) {
+    const { avatar, gallery } = getAvatarInstagram();
+    return {
+      primaryImageURLs: avatar ? [avatar] : [],
+      imageURLs: gallery,
+    };
+  }
 
   if (url.includes('amazon')) {
     const avatar = getAvatarAmazon();
@@ -364,10 +373,13 @@ const sourceToObjectType:Record<string, string> = {
 export const editWithAi = async (source: string) => {
   const objectType = sourceToObjectType[source] ?? 'product';
 
+  // Take screenshot before rendering modal to avoid interference
+  const imageBlob = await makeBlobFromHtmlPage(false);
+
   const rootElement = document.createElement('div');
   rootElement.id = MODAL_IDS.MAIN_MODAL_HOST;
   document.body.appendChild(rootElement);
   const rootModal = ReactDOM.createRoot(rootElement);
 
-  rootModal.render(<EditAiModal objectType={objectType} />);
+  rootModal.render(<EditAiModal objectType={objectType} imageBlob={imageBlob} />);
 };

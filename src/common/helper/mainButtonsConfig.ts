@@ -411,6 +411,7 @@ export const youtubeButtonConfig = [
     ),
     id: generateUniqueId(),
   },
+  ...editAiButtons,
 ];
 
 export const instagramButtonConfig = [
@@ -465,6 +466,7 @@ export const instagramButtonConfig = [
     ),
     id: generateUniqueId(),
   },
+  ...editAiButtons,
 ];
 
 export const tikTokConfig = [
@@ -519,6 +521,7 @@ export const tikTokConfig = [
     ),
     id: generateUniqueId(),
   },
+  ...editAiButtons,
 ];
 
 export const hiveConfig = [
