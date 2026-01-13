@@ -48,7 +48,7 @@ export const getAvatarAndGallery = async ({
 }: GetWaivioAvatar) => {
   const url = document.URL.toLowerCase();
 
-  if (url.includes('instagram.com')) {
+  if (url.includes('instagram.com') || url.includes('tiktok.com')) {
     const { avatar, gallery } = getAvatarInstagram();
     return {
       primaryImageURLs: avatar ? [avatar] : [],
