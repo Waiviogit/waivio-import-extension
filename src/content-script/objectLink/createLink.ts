@@ -238,7 +238,7 @@ export const makeBlobFromHtmlPage = async (cropHeight = true):Promise<Blob |null
 
     // Use a Promise to handle the asynchronous nature of html2canvas
     const canvas = await html2canvas(body, {
-      useCORS: true,
+      useCORS: false,
       width,
       ...(cropHeight && { height }),
       scale: 1,
@@ -260,10 +260,18 @@ export const makeBlobFromHtmlPage = async (cropHeight = true):Promise<Blob |null
     });
 
     // Convert the canvas to a Blob
-    return new Promise((resolve) => {
-      canvas.toBlob((blob) => {
-        resolve(blob);
-      }, 'image/png');
+    return await new Promise((resolve, reject) => {
+      try {
+        canvas.toBlob((blob) => {
+          if (blob) {
+            resolve(blob);
+          } else {
+            reject(new Error('Failed to convert canvas to blob'));
+          }
+        }, 'image/png');
+      } catch (error) {
+        reject(error);
+      }
     });
   } catch (error) {
     // Fallback 1: background captureVisibleTab
