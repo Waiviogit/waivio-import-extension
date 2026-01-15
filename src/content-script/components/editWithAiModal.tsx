@@ -52,23 +52,32 @@ const EditAiModal = ({ title = 'Object draft', objectType, imageBlob }: EditAiMo
   const [isModalOpen, setIsModalOpen] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
   const [product, setProduct] = useState<ProductData | null>(null);
+  const [currentUrl, setCurrentUrl] = useState(document.URL);
   const [form] = Form.useForm();
+
+  useEffect(() => {
+    // Update current URL to track page changes
+    setCurrentUrl(document.URL);
+  }, []);
 
   useEffect(() => {
     const fetchObjectData = async () => {
       setIsLoading(true);
+      setProduct(null); // Clear previous data to avoid stale data from other tabs
+
+      const pageUrl = document.URL; // Capture URL at the start of the effect
 
       const userInfo = await getWaivioUserInfo();
       if (!userInfo) {
         setIsLoading(false);
-        setProduct({ websites: [document.URL] });
+        setProduct({ websites: [pageUrl] });
         return;
       }
       const {
         accessToken, guestName, userName, auth,
       } = userInfo as UserInfo;
 
-      if (document.URL.includes('distriator.com')) {
+      if (pageUrl.includes('distriator.com')) {
         const waivioProductIds = await getWaivioProductIds({
           user: userName,
           auth,
@@ -137,7 +146,7 @@ const EditAiModal = ({ title = 'Object draft', objectType, imageBlob }: EditAiMo
           ...(objectType === 'business'
             ? { waivio_company_ids: waivioProductIds || [] }
             : { waivio_product_ids: waivioProductIds || [] }),
-          ...(!hasWebsites && { websites: [document.URL] }),
+          ...(!hasWebsites && { websites: [pageUrl] }),
         };
 
         setProduct(object);
@@ -147,7 +156,7 @@ const EditAiModal = ({ title = 'Object draft', objectType, imageBlob }: EditAiMo
         // Even on error, set empty form with website
         const fallbackObject = {
           ...(aiResult || {}),
-          websites: [document.URL],
+          websites: [pageUrl],
         };
         setProduct(fallbackObject);
         form.setFieldsValue(fallbackObject);
@@ -157,7 +166,7 @@ const EditAiModal = ({ title = 'Object draft', objectType, imageBlob }: EditAiMo
     };
 
     fetchObjectData();
-  }, [objectType, form, imageBlob]);
+  }, [objectType, form, imageBlob, currentUrl]);
 
   const handleOk = async () => {
     try {

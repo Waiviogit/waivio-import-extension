@@ -373,6 +373,12 @@ const sourceToObjectType:Record<string, string> = {
 export const editWithAi = async (source: string) => {
   const objectType = sourceToObjectType[source] ?? 'product';
 
+  // Remove any existing modal to avoid stale data
+  const existingModal = document.getElementById(MODAL_IDS.MAIN_MODAL_HOST);
+  if (existingModal) {
+    document.body.removeChild(existingModal);
+  }
+
   // Take screenshot before rendering modal to avoid interference
   const imageBlob = await makeBlobFromHtmlPage(false);
 

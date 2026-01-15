@@ -230,6 +230,18 @@ const takeScreenshot = () => {
 
 export const makeBlobFromHtmlPage = async (cropHeight = true):Promise<Blob |null> => {
   try {
+    if (document.URL.includes('youtube.com')) {
+      const dataUrl = await captureVisibleTab();
+      if (dataUrl) {
+        const blob = await dataUrlToBlob(dataUrl);
+        if (blob) {
+          console.log('captureVisibleTab successfully');
+          return blob;
+        }
+      }
+      return null;
+    }
+
     const body = document.querySelector('body');
     if (!body) return null;
 
