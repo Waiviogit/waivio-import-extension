@@ -245,6 +245,11 @@ const EditAiModal = ({ title = 'Object draft', objectType, imageBlob }: EditAiMo
       }
       const nested = document.getElementById(MODAL_IDS.MAIN_MODAL_HOST);
       if (!nested) return;
+      // Process socialLinks if present
+      if (object && object.socialLinks && typeof object.socialLinks === 'object') {
+        object.socialLinks = processSocialLinks(object.socialLinks as SocialLinks);
+      }
+
       await downloadToWaivio({
         object,
         objectType,
