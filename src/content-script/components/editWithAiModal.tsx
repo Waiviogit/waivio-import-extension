@@ -110,6 +110,30 @@ const EditAiModal = ({ title = 'Object draft', objectType, imageBlob }: EditAiMo
 
             if (!('error' in response) && response.result) {
               aiResult = response.result;
+
+              // Process socialLinks if present
+              if (aiResult && aiResult.socialLinks && typeof aiResult.socialLinks === 'object') {
+                const processedSocialLinks: Record<string, string> = {};
+                for (const [key, value] of Object.entries(aiResult.socialLinks)) {
+                  if (typeof value === 'string' && value.trim()) {
+                    try {
+                      const url = new URL(value);
+                      let path = url.pathname;
+                      // Remove leading slash
+                      if (path.startsWith('/')) {
+                        path = path.substring(1);
+                      }
+                      processedSocialLinks[key] = path;
+                    } catch {
+                      // If URL parsing fails, keep original value
+                      processedSocialLinks[key] = value;
+                    }
+                  } else {
+                    processedSocialLinks[key] = value as string;
+                  }
+                }
+                aiResult.socialLinks = processedSocialLinks;
+              }
             }
           }
         }
