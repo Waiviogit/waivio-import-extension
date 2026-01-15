@@ -20,6 +20,23 @@ type ObjectType = 'product' | 'person' | 'business';
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type ProductData = Record<string, any>;
 
+interface SocialLinks {
+  linkFacebook?: string;
+  linkTwitter?: string;
+  linkYouTube?: string;
+  linkTikTok?: string;
+  linkReddit?: string;
+  linkLinkedIn?: string;
+  linkTelegram?: string;
+  linkWhatsApp?: string;
+  linkPinterest?: string;
+  linkTwitch?: string;
+  linkSnapchat?: string;
+  linkInstagram?: string;
+  linkGitHub?: string;
+  linkHive?: string;
+}
+
 interface EditAiModalProps {
   objectType: string;
   title?: string;
@@ -46,6 +63,52 @@ const getGalleryLength = (aiResult: ProductData | null): number => {
   const len = aiResult?.galleryLength as number || 0;
   if (len > 2) return len - 1;
   return aiResult?.galleryLength as number || 1;
+};
+
+const processSocialLinks = (socialLinks: SocialLinks): SocialLinks => {
+  const processed: SocialLinks = {};
+
+  for (const [key, value] of Object.entries(socialLinks)) {
+    if (!value || typeof value !== 'string' || !value.trim()) {
+      processed[key as keyof SocialLinks] = value;
+      continue;
+    }
+
+    try {
+      const url = new URL(value);
+      let path = url.pathname;
+
+      // Remove leading slash
+      if (path.startsWith('/')) {
+        path = path.substring(1);
+      }
+
+      // Platform-specific processing
+      if (key === 'linkYouTube') {
+        // Remove "@" from YouTube
+        path = path.replace(/^@/, '');
+      } else if (key === 'linkLinkedIn') {
+        // Remove "/in/" from LinkedIn
+        path = path.replace(/^in\//, '');
+      } else if (key === 'linkReddit') {
+        // Remove "/user/" from Reddit
+        path = path.replace(/^user\//, '');
+      } else if (key === 'linkHive') {
+        // Remove "@" from Hive
+        path = path.replace(/^@/, '');
+      } else if (key === 'linkTikTok') {
+        // Remove "@" from TikTok
+        path = path.replace(/^@/, '');
+      }
+
+      processed[key as keyof SocialLinks] = path;
+    } catch {
+      // If URL parsing fails, keep original value
+      processed[key as keyof SocialLinks] = value;
+    }
+  }
+
+  return processed;
 };
 
 const EditAiModal = ({ title = 'Object draft', objectType, imageBlob }: EditAiModalProps) => {
@@ -113,26 +176,7 @@ const EditAiModal = ({ title = 'Object draft', objectType, imageBlob }: EditAiMo
 
               // Process socialLinks if present
               if (aiResult && aiResult.socialLinks && typeof aiResult.socialLinks === 'object') {
-                const processedSocialLinks: Record<string, string> = {};
-                for (const [key, value] of Object.entries(aiResult.socialLinks)) {
-                  if (typeof value === 'string' && value.trim()) {
-                    try {
-                      const url = new URL(value);
-                      let path = url.pathname;
-                      // Remove leading slash
-                      if (path.startsWith('/')) {
-                        path = path.substring(1);
-                      }
-                      processedSocialLinks[key] = path;
-                    } catch {
-                      // If URL parsing fails, keep original value
-                      processedSocialLinks[key] = value;
-                    }
-                  } else {
-                    processedSocialLinks[key] = value as string;
-                  }
-                }
-                aiResult.socialLinks = processedSocialLinks;
+                aiResult.socialLinks = processSocialLinks(aiResult.socialLinks as SocialLinks);
               }
             }
           }
