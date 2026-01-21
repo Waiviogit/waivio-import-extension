@@ -6,9 +6,9 @@ import { FormField } from './FormField';
 import { PRODUCT_FORM_FIELDS, PERSON_FORM_FIELDS, BUSINESS_FORM_FIELDS } from '../config/formFields';
 import { ImagePreview } from './ImagePreview';
 import { FormFieldConfig } from '../types/form';
-import { downloadToWaivio, loadImageBase64 } from '../helpers/downloadWaivioHelper';
+import { loadImageBase64 } from '../helpers/downloadWaivioHelper';
 import { getWaivioUserInfo } from '../helpers/userHelper';
-import { generateObjectFromImage } from '../helpers/objectHelper';
+import { createObjectEditWithAI, generateObjectFromImage } from '../helpers/objectHelper';
 import {
   getWaivioProductIds,
   getAvatarAndGallery,
@@ -256,12 +256,7 @@ const EditAiModal = ({ title = 'Object draft', objectType, imageBlob }: EditAiMo
       if (object && object.socialLinks && typeof object.socialLinks === 'object') {
         object.socialLinks = processSocialLinks(object.socialLinks as SocialLinks);
       }
-
-      await downloadToWaivio({
-        object,
-        objectType,
-      });
-
+      await createObjectEditWithAI({ object, objectType });
       document.body.removeChild(nested);
     } catch (error) {
       const validationError = error as ValidationError;

@@ -393,6 +393,44 @@ const getRecipeCreateBody = async (name: string, author: string) => ({
   parentPermlink: 'fpw-recipe',
 });
 
+const getParentAuthorByObjectType = (objectType: string) => {
+  const typesMap: Record<string, string> = {
+    recipe: 'waivio.updates08',
+    product: 'wiv01',
+    person: 'w95hj',
+    business: 'xcv47',
+  };
+  const parentAuthor = typesMap[objectType] as keyof typeof typesMap;
+  if (!parentAuthor) throw new Error(`objectType ${objectType} not supported`);
+  return parentAuthor;
+};
+
+const getParentPermlinkByObjectType = (objectType: string) => {
+  const typesMap: Record<string, string> = {
+    recipe: 'fpw-recipe',
+    product: 'vgl-product',
+    person: 'hdc-person',
+    business: 'uhx-business',
+  };
+  const parentPermlink = typesMap[objectType] as keyof typeof typesMap;
+  if (!parentPermlink) throw new Error(`objectType ${objectType} not supported`);
+  return parentPermlink;
+};
+
+const getCreateBody = async (name: string, author: string, objectType: string) => ({
+  permlink: await generateUniquePermlink(name),
+  objectName: name,
+  author,
+  title: `${name} - waivio object`,
+  body: `Waivio object "${name}" has been created`,
+  locale: 'en-US',
+  type: objectType,
+  isExtendingOpen: true,
+  isPostingOpen: true,
+  parentAuthor: getParentAuthorByObjectType(objectType),
+  parentPermlink: getParentPermlinkByObjectType(objectType),
+});
+
 const createWaivioObject = async (
   body: object,
 ): Promise<createWaivioObjectType> => {
@@ -659,4 +697,131 @@ export const createObjectForPost = async (postBody: string, imageUrl?: string)
     name: recipe.name,
     permlink,
   };
+};
+
+interface createObjectEditWithAIInterface {
+  object: any,
+  objectType: string
+}
+
+const getIdBodyForObject = (object: any, objectType: string) => {
+  const name = objectType === 'business' ? 'companyId' : 'productId';
+
+  const bodyObject = objectType === 'business'
+    ? {
+      companyIdType: object?.waivio_company_ids[0].key,
+      companyId: object?.waivio_company_ids[0].value,
+    }
+    : {
+      productIdType: object?.waivio_product_ids[0].key,
+      productId: object?.waivio_product_ids[0].value,
+    };
+
+  return {
+    body: JSON.stringify(bodyObject),
+    locale: 'en-US',
+    name,
+  };
+};
+export const createObjectEditWithAI = async ({
+  object, objectType,
+}: createObjectEditWithAIInterface) => {
+  const userInfo = await getWaivioUserInfo();
+  if (!userInfo) {
+    alert('No user info');
+    return;
+  }
+  const {
+    userName,
+  } = userInfo;
+  const validateResponse = await validateUserImport(userName);
+  if ('error' in validateResponse) {
+    alert(`Validate import error: ${validateResponse.error}`);
+    return;
+  }
+  let existPermlink = '';
+
+  const idArr = [
+    ...object?.waivio_product_ids as {key: string, value: string}[],
+    ...object?.waivio_company_ids as {key: string, value: string}[],
+  ];
+
+  if (!idArr?.length) {
+    alert('Ids not found');
+    return;
+  }
+
+  for (const id of idArr) {
+    existPermlink = await getLinkById(id.value, id.key);
+    if (existPermlink) break;
+  }
+
+  if (existPermlink) {
+    const wobject = await getWaivioObject(existPermlink);
+    if (wobject) {
+      // recreate object field (to get like on each update)
+      if (await showAlertObjectModal(`The object already exists on Waivio. Here is the link: https://www.waivio.com/object/${existPermlink}`, 'Import', existPermlink)) {
+        await downloadToWaivio({
+          object,
+          objectPermlink: existPermlink,
+          objectType,
+        });
+      }
+      return;
+    }
+  }
+
+  const recipeCreateBody = await getCreateBody(object.name as string, userName, objectType);
+
+  const createObjectResponse = await createWaivioObject({
+    ...recipeCreateBody,
+    datafinityObject: true,
+  });
+  if ('error' in createObjectResponse) {
+    alert(`Create object error: ${createObjectResponse.error}`);
+    return;
+  }
+
+  const { transactionId, author, permlink } = createObjectResponse.result;
+
+  const resultSocket = await socketClient.sendMessage({
+    id: transactionId,
+    method: 'subscribeTransactionId',
+    params: [`create-obj-${transactionId}`, transactionId],
+  });
+
+  const successCreteObj = resultSocket?.data?.success;
+  if (!successCreteObj) {
+    alert(`socket subscribeTransactionId create object error ${transactionId}`);
+    return;
+  }
+
+  const updateBody = getUpdateBody({
+    author: userName,
+    parentAuthor: author,
+    parentPermlink: permlink,
+    field: getIdBodyForObject(object, objectType),
+  });
+
+  const createUpdateResponse = await createWaivioUpdate(updateBody);
+  if ('error' in createUpdateResponse) {
+    alert(`Create object error: ${createUpdateResponse.error}`);
+    return;
+  }
+  const resultSocketUpdate = await socketClient.sendMessage({
+    id: createUpdateResponse.result.transactionId,
+    method: 'subscribeTransactionId',
+    params: [`create-upd-${transactionId}`, createUpdateResponse.result.transactionId],
+  });
+  const successCreteUpdate = resultSocketUpdate?.data?.success;
+  if (!successCreteUpdate) {
+    alert(`socket subscribeTransactionId create update error ${createUpdateResponse.result.transactionId}`);
+    return;
+  }
+
+  await downloadToWaivio({
+    object,
+    objectType,
+    objectPermlink: permlink,
+  });
 };
