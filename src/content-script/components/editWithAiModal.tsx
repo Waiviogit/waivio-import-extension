@@ -129,6 +129,7 @@ const EditAiModal = ({ title = 'Object draft', objectType, imageBlob }: EditAiMo
       setProduct(null); // Clear previous data to avoid stale data from other tabs
 
       const pageUrl = document.URL; // Capture URL at the start of the effect
+      let linksForProductId = [document.URL];
 
       const userInfo = await getWaivioUserInfo();
       if (!userInfo) {
@@ -146,6 +147,7 @@ const EditAiModal = ({ title = 'Object draft', objectType, imageBlob }: EditAiMo
           auth,
           accessToken,
           guestName,
+          linksForProductId,
         });
 
         const object = {
@@ -176,6 +178,10 @@ const EditAiModal = ({ title = 'Object draft', objectType, imageBlob }: EditAiMo
 
               // Process socialLinks if present
               if (aiResult && aiResult.socialLinks && typeof aiResult.socialLinks === 'object') {
+                linksForProductId = [
+                  ...Object.values(aiResult.socialLinks) as string[],
+                  document.URL,
+                ].filter((el, index, self) => index === self.indexOf(el));
                 aiResult.socialLinks = processSocialLinks(aiResult.socialLinks as SocialLinks);
               }
             }
@@ -194,6 +200,7 @@ const EditAiModal = ({ title = 'Object draft', objectType, imageBlob }: EditAiMo
             auth,
             accessToken,
             guestName,
+            linksForProductId,
           }),
           getAvatarAndGallery({
             user: userName,

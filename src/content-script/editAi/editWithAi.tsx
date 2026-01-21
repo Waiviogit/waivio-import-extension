@@ -26,6 +26,7 @@ export interface GetWaivioProductIds {
   accessToken: string
   guestName: string
   auth: Cookie|undefined
+  linksForProductId: string[]
 }
 
 export interface GetWaivioAvatar {
@@ -319,49 +320,61 @@ export const getDistriatorObject = async ():Promise<DistriatorType> => {
 };
 
 export const getWaivioProductIds = async ({
-  user, auth, accessToken, guestName,
+  user, auth, accessToken, guestName, linksForProductId,
 }: GetWaivioProductIds) => {
-  const url = document.URL.toLowerCase();
+  const ids = [];
+  for (const url of linksForProductId) {
+    if (url.includes('amazon')) {
+      const asin = getProductIdAmazon(url);
+      ids.push(asin ? { key: 'asin', value: asin } : getProductIdDefault('', url));
+      continue;
+    }
 
-  if (url.includes('amazon')) {
-    const asin = getProductIdAmazon();
-    return asin ? [{ key: 'asin', value: asin }] : [getProductIdDefault()];
+    if (url.includes('sephora')) {
+      const sephoraId = getProductIdSephora(url);
+      ids.push(sephoraId || getProductIdDefault('', url));
+      continue;
+    }
+
+    if (url.includes('aliexpress')) {
+      const aliId = getProductIdAliExpress(url);
+      ids.push(aliId || getProductIdDefault('', url));
+      continue;
+    }
+
+    if (url.includes('walmart')) {
+      const walmartId = getProductIdWalmart(url);
+      const possibleIds = getPossibleIdsWalmart();
+      if (walmartId) {
+        ids.push(...[walmartId, ...possibleIds]);
+        continue;
+      }
+      ids.push(...possibleIds);
+      continue;
+    }
+
+    if (url.includes('instacart')) {
+      const instacartId = getProductIdInstacart(url);
+      ids.push(instacartId || getProductIdDefault('', url));
+      continue;
+    }
+
+    const response = await extractIdFromUrlRequest({
+      url: url.replace('%20', '_'),
+      user,
+      accessToken,
+      guestName,
+      auth,
+    });
+
+    if ('error' in response) {
+      ids.push(getProductIdDefault('', url));
+      continue;
+    }
+    ids.push(getProductIdDefault(response.result, url));
   }
 
-  if (url.includes('sephora')) {
-    const sephoraId = getProductIdSephora();
-    return sephoraId ? [sephoraId] : [getProductIdDefault()];
-  }
-
-  if (url.includes('aliexpress')) {
-    const aliId = getProductIdAliExpress();
-    return aliId ? [aliId] : [getProductIdDefault()];
-  }
-
-  if (url.includes('walmart')) {
-    const walmartId = getProductIdWalmart();
-    const possibleIds = getPossibleIdsWalmart();
-    return walmartId ? [walmartId, ...possibleIds] : possibleIds;
-  }
-
-  if (url.includes('instacart')) {
-    const instacartId = getProductIdInstacart();
-    return instacartId ? [instacartId] : [getProductIdDefault()];
-  }
-
-  const response = await extractIdFromUrlRequest({
-    url: document.URL.replace('%20', '_'),
-    user,
-    accessToken,
-    guestName,
-    auth,
-  });
-
-  if ('error' in response) {
-    return [getProductIdDefault()];
-  }
-
-  return [getProductIdDefault(response.result)];
+  return ids;
 };
 
 const sourceToObjectType:Record<string, string> = {

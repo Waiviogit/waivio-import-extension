@@ -4,17 +4,14 @@ import { classSelectorByRegex } from '../helpers/scrapingHelper';
 
 const PRODUCT_ID_TYPES = ['ean', 'ean8', 'ean13', 'isbn10', 'isbn13', 'asin'];
 
-export const getProductIdAmazon = (): string => {
-  const url = document.URL;
+export const getProductIdAmazon = (url = document.URL): string => {
   let match = url.match(/\/dp\/([A-Z0-9]+)/);
   if (!match) match = url.match(/\/product\/([A-Z0-9]+)/);
 
   return match ? replaceInvisible(match[1]) : '';
 };
 
-export const getProductIdSephora = ():productIdType| undefined => {
-  const url = document.URL;
-
+export const getProductIdSephora = (url = document.URL):productIdType| undefined => {
   const product = url.match(/P\d+/);
   const sku = url.match(/\?skuId=\d+/);
   if (!product) return;
@@ -25,9 +22,7 @@ export const getProductIdSephora = ():productIdType| undefined => {
   };
 };
 
-export const getGroupIdAliExpress = ():string|undefined => {
-  const url = document.URL;
-
+export const getGroupIdAliExpress = (url = document.URL):string|undefined => {
   const match = url.match(/\/item\/(\d+)\.html/);
   if (!match) return;
 
@@ -59,9 +54,7 @@ export const getProductIdAliExpress = (groupId?: string):productIdType| undefine
   };
 };
 
-export const getProductIdSephoraSku = ():productIdType| undefined => {
-  const url = document.URL;
-
+export const getProductIdSephoraSku = (url = document.URL):productIdType| undefined => {
   const sku = url.match(/skuId=(\d+)/);
 
   if (!sku) return;
@@ -71,16 +64,14 @@ export const getProductIdSephoraSku = ():productIdType| undefined => {
   };
 };
 
-export const getGroupIdSephora = ():string => {
-  const url = document.URL;
+export const getGroupIdSephora = (url = document.URL):string => {
   const product = url.match(/P\d+/);
   if (!product) return '';
 
   return product[0];
 };
 
-export const getProductIdWalmart = ():productIdType| undefined => {
-  const url = document.URL;
+export const getProductIdWalmart = (url = document.URL):productIdType| undefined => {
   const match = url.match(/\/ip\/([^\/]+)\/(.\d+)/);
   if (!match) return;
   if (!match[2]) return;
@@ -90,8 +81,7 @@ export const getProductIdWalmart = ():productIdType| undefined => {
   };
 };
 
-export const getGroupIdWalmart = ():string => {
-  const url = document.URL;
+export const getGroupIdWalmart = (url = document.URL):string => {
   const match = url.match(/\/ip\/([^\/]+)\/(.\d+)/);
   if (!match) return '';
   if (!match[1]) return '';
@@ -132,8 +122,7 @@ export const getPossibleIdsWalmart = ():productIdType[] => {
   return productIds;
 };
 
-export const getProductIdInstacart = (): productIdType | undefined => {
-  const url = document.URL;
+export const getProductIdInstacart = (url = document.URL): productIdType | undefined => {
   const match = url.match(/\/products\/([^\/?]+)/);
   if (!match) return;
   return {
@@ -142,8 +131,8 @@ export const getProductIdInstacart = (): productIdType | undefined => {
   };
 };
 
-export const getProductIdDefault = (value?:string) => {
-  const urlObject = new URL(document.URL);
+export const getProductIdDefault = (value?:string, url = document.URL) => {
+  const urlObject = new URL(url);
   const pathWithId = urlObject.pathname.split('/').at(-1) || '';
   const valueFromPath = ((pathWithId?.length || 0) > 8 ? pathWithId : document.URL).replace('%20', '_');
 
