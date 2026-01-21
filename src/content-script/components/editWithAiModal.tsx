@@ -114,6 +114,7 @@ const processSocialLinks = (socialLinks: SocialLinks): SocialLinks => {
 const EditAiModal = ({ title = 'Object draft', objectType, imageBlob }: EditAiModalProps) => {
   const [isModalOpen, setIsModalOpen] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [product, setProduct] = useState<ProductData | null>(null);
   const [currentUrl, setCurrentUrl] = useState(document.URL);
   const [form] = Form.useForm();
@@ -244,6 +245,7 @@ const EditAiModal = ({ title = 'Object draft', objectType, imageBlob }: EditAiMo
   }, [objectType, form, imageBlob, currentUrl]);
 
   const handleOk = async () => {
+    setIsSubmitting(true);
     try {
       const object = await form.validateFields();
       if (object?.features?.length) {
@@ -264,6 +266,8 @@ const EditAiModal = ({ title = 'Object draft', objectType, imageBlob }: EditAiMo
         ? validationError.errorFields.map((field) => `${field.name.join('.')}: ${field.errors.join(', ')}`).join('\n')
         : validationError?.message;
       alert(message);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -304,7 +308,7 @@ const EditAiModal = ({ title = 'Object draft', objectType, imageBlob }: EditAiMo
         open={isModalOpen}
         onOk={handleOk}
         onCancel={handleCancel}
-        okButtonProps={{ disabled: isLoading }}
+        okButtonProps={{ disabled: isLoading, loading: isSubmitting }}
       >
         {isLoading ? (
           <div style={{
