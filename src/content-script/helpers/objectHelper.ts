@@ -272,6 +272,12 @@ export const generateObjectFromImage = async (
 
     const data = await response.json();
     console.log('response object', data);
+
+    if (data.mostRecentPriceAmount && data.mostRecentPriceAmount === '0') {
+      return {
+        result: (({ mostRecentPriceAmount, mostRecentPriceCurrency, ...rest }) => rest)(data),
+      };
+    }
     return {
       result: data,
     };
