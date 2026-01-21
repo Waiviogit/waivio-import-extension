@@ -742,8 +742,8 @@ export const createObjectEditWithAI = async ({
   let existPermlink = '';
 
   const idArr = [
-    ...object?.waivio_product_ids as {key: string, value: string}[],
-    ...object?.waivio_company_ids as {key: string, value: string}[],
+    ...(object?.waivio_product_ids || []) as {key: string, value: string}[],
+    ...(object?.waivio_company_ids || []) as {key: string, value: string}[],
   ];
 
   if (!idArr?.length) {
