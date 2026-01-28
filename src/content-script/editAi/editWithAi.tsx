@@ -377,6 +377,17 @@ export const getWaivioProductIds = async ({
   return ids;
 };
 
+export const getTextInfoFromSite = () => {
+  const url = document.URL;
+  if (url.includes('youtube')) {
+    return document
+      .querySelector('meta[property="og:description"]')
+      ?.getAttribute('content') || '';
+  }
+
+  return '';
+};
+
 const sourceToObjectType:Record<string, string> = {
   [SOURCE_TYPES.EDIT_AI_PRODUCT]: 'product',
   [SOURCE_TYPES.EDIT_AI_PERSON]: 'person',

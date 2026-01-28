@@ -12,7 +12,7 @@ import { createObjectEditWithAI, generateObjectFromImage } from '../helpers/obje
 import {
   getWaivioProductIds,
   getAvatarAndGallery,
-  UserInfo, getDistriatorObject,
+  UserInfo, getDistriatorObject, getTextInfoFromSite,
 } from '../editAi/editWithAi';
 
 type ObjectType = 'product' | 'person' | 'business';
@@ -170,8 +170,9 @@ const EditAiModal = ({ title = 'Object draft', objectType, imageBlob }: EditAiMo
         if (imageBlob) {
           const { result: imageUrl } = await loadImageBase64(imageBlob);
           if (imageUrl) {
+            const textInfo = getTextInfoFromSite();
             const response = await generateObjectFromImage({
-              accessToken, guestName, auth, user: userName, url: imageUrl, objectType,
+              accessToken, guestName, auth, user: userName, url: imageUrl, objectType, textInfo,
             });
 
             if (!('error' in response) && response.result) {

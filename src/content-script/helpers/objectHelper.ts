@@ -142,6 +142,7 @@ interface GenerateObjectFromURLImageI {
   accessToken: string
   guestName: string
   auth: Cookie|undefined
+  textInfo?: string
 }
 
 interface GetUpdateBodyI {
@@ -249,7 +250,7 @@ export const extractGalleryRequest = async (
 
 export const generateObjectFromImage = async (
   {
-    url, user, accessToken, guestName, auth, objectType,
+    url, user, accessToken, guestName, auth, objectType, textInfo,
   }: GenerateObjectFromURLImageI,
 ): Promise<generateObjectFromURLType> => {
   try {
@@ -266,7 +267,9 @@ export const generateObjectFromImage = async (
           'Hive-Auth': auth ? 'true' : 'false',
           'Waivio-Auth': guestName ? 'true' : 'false',
         },
-        body: JSON.stringify({ user, url, objectType }),
+        body: JSON.stringify({
+          user, url, objectType, textInfo,
+        }),
       },
     );
 
