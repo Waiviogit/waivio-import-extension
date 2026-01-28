@@ -380,9 +380,19 @@ export const getWaivioProductIds = async ({
 export const getTextInfoFromSite = () => {
   const url = document.URL;
   if (url.includes('youtube')) {
-    return document
+    let result = '';
+
+    const title = document
+      .querySelector('meta[property="og:title"]')
+      ?.getAttribute('content') || '';
+    const description = document
       .querySelector('meta[property="og:description"]')
       ?.getAttribute('content') || '';
+
+    if (title) result += `page title: ${title}`;
+    if (description) result += ` page description: ${description}`;
+
+    return result;
   }
 
   return '';
