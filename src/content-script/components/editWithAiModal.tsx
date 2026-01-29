@@ -118,6 +118,8 @@ const processSocialLinks = (socialLinks: SocialLinks): SocialLinks => {
       } else if (key === 'linkTikTok') {
         // Remove "@" from TikTok
         path = path.replace(/^@/, '');
+      } else if (key === 'linkSnapchat') {
+        path = path.replace(/^add\//, '');
       }
 
       processed[key as keyof SocialLinks] = path;
