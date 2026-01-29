@@ -122,6 +122,10 @@ const processSocialLinks = (socialLinks: SocialLinks): SocialLinks => {
         path = path.replace(/^add\//, '');
       }
 
+      if (path.endsWith('/')) {
+        path = path.slice(0, -1);
+      }
+
       processed[key as keyof SocialLinks] = path;
     } catch {
       // If URL parsing fails, keep original value
