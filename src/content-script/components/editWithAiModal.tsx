@@ -8,7 +8,7 @@ import { FormField } from './FormField';
 import { PRODUCT_FORM_FIELDS, PERSON_FORM_FIELDS, BUSINESS_FORM_FIELDS } from '../config/formFields';
 import { ImagePreview } from './ImagePreview';
 import { FormFieldConfig } from '../types/form';
-import { loadImageBase64 } from '../helpers/downloadWaivioHelper';
+import { loadImageBase64, validateWaivioImport } from '../helpers/downloadWaivioHelper';
 import { getWaivioUserInfo } from '../helpers/userHelper';
 import { createObjectEditWithAI, generateObjectFromImage } from '../helpers/objectHelper';
 import {
@@ -324,10 +324,14 @@ const EditAiModal = ({ title = 'Object draft', objectType, imageBlob }: EditAiMo
       }
       const nested = document.getElementById(MODAL_IDS.MAIN_MODAL_HOST);
       if (!nested) return;
-      // Process socialLinks if present
-      if (object && object.socialLinks && typeof object.socialLinks === 'object') {
-        object.socialLinks = processSocialLinks(object.socialLinks as SocialLinks);
+
+      const { valid, message: errorMessage } = await validateWaivioImport();
+      if (!valid) {
+        alert(errorMessage);
+        setIsSubmitting(false);
+        return;
       }
+
       await createObjectEditWithAI({ object, objectType });
       document.body.removeChild(nested);
     } catch (error) {
