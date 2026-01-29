@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
-import { ConfigProvider, Form, Spin } from 'antd';
+import {
+  ConfigProvider, Form, Spin, type FormInstance,
+} from 'antd';
 import { THEME_CONFIG, MODAL_IDS } from '../constants';
 import { DraggableModal } from './DraggableModal';
 import { FormField } from './FormField';
@@ -51,7 +53,7 @@ const SOCIAL_LINKS_HOST_MAP: Partial<Record<keyof SocialLinks, string>> = {
   linkSnapchat: 'snapchat.com',
   linkInstagram: 'instagram.com',
   linkGitHub: 'github.com',
-  linkHive: 'hive.blog',
+  linkHive: 'hive',
 };
 
 interface EditAiModalProps {
@@ -146,6 +148,34 @@ const getWaivioProductIdsFromSocialLinks = (socialLinks: SocialLinks): WaivioPro
   });
 
   return ids;
+};
+
+const syncWaivioIdsFromSocialLinks = (
+  formInstance: FormInstance,
+  allValues: ProductData,
+  objectType: ObjectType,
+) => {
+  const socialLinks = allValues.socialLinks as SocialLinks | undefined;
+  if (!socialLinks || typeof socialLinks !== 'object') return;
+
+  const autoIds = getWaivioProductIdsFromSocialLinks(socialLinks);
+  const fieldName = objectType === 'business' ? 'waivio_company_ids' : 'waivio_product_ids';
+  const existing: WaivioProductId[] = formInstance.getFieldValue(fieldName) || [];
+
+  // Hosts controlled by socialLinks (anything coming from SOCIAL_LINKS_HOST_MAP)
+  const socialHosts = new Set(
+    Object.values(SOCIAL_LINKS_HOST_MAP).filter((v): v is string => Boolean(v)),
+  );
+
+  // Keep only non-social IDs; social-based IDs are fully regenerated from current socialLinks
+  const preserved = existing.filter((item) => !socialHosts.has(item.key));
+  const next = [...preserved, ...autoIds];
+
+  if (JSON.stringify(next) === JSON.stringify(existing)) return;
+
+  formInstance.setFieldsValue({
+    [fieldName]: next,
+  });
 };
 
 const EditAiModal = ({ title = 'Object draft', objectType, imageBlob }: EditAiModalProps) => {
@@ -280,6 +310,12 @@ const EditAiModal = ({ title = 'Object draft', objectType, imageBlob }: EditAiMo
     fetchObjectData();
   }, [objectType, form, imageBlob, currentUrl]);
 
+  const handleValuesChange = (_changedValues: unknown, allValues: ProductData) => {
+    if (allValues && allValues.socialLinks && typeof allValues.socialLinks === 'object') {
+      syncWaivioIdsFromSocialLinks(form, allValues, objectType as ObjectType);
+    }
+  };
+
   const handleOk = async () => {
     setIsSubmitting(true);
     try {
@@ -360,6 +396,7 @@ const EditAiModal = ({ title = 'Object draft', objectType, imageBlob }: EditAiMo
             form={form}
             layout="vertical"
             initialValues={{ ...product }}
+            onValuesChange={handleValuesChange}
           >
             {renderFormFields()}
           </Form>
