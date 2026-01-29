@@ -33,6 +33,7 @@ const IMPORT_WAIVIO_COMMANDS = [
   PARSE_COMMANDS.IMPORT_WAIVIO_OPENSTREETMAP,
   PARSE_COMMANDS.IMPORT_WAIVIO_GOOGLE,
   PARSE_COMMANDS.CREATE_LINK,
+  PARSE_COMMANDS.EDIT_WITH_AI,
 ];
 
 chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {

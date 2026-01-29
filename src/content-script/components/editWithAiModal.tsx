@@ -95,7 +95,7 @@ const processSocialLinks = (socialLinks: SocialLinks): SocialLinks => {
 
     try {
       const url = new URL(value);
-      let path = url.pathname;
+      let path = decodeURIComponent(url.pathname);
 
       // Remove leading slash
       if (path.startsWith('/')) {
