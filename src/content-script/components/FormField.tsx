@@ -185,7 +185,7 @@ export const FormField: React.FC<FormFieldProps> = ({
                             ))}
                             <Form.Item>
                                 {fields.length < maxItems && (
-                                    <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined/>}>
+                                    <Button type="dashed" onClick={() => add({ key: '', value: '' })} block icon={<PlusOutlined/>}>
                                         Add
                                     </Button>
                                 )}

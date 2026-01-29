@@ -308,8 +308,10 @@ const EditAiModal = ({ title = 'Object draft', objectType, imageBlob }: EditAiMo
     fetchObjectData();
   }, [objectType, form, imageBlob, currentUrl]);
 
-  const handleValuesChange = (_changedValues: unknown, allValues: ProductData) => {
-    if (allValues && allValues.socialLinks && typeof allValues.socialLinks === 'object') {
+  const handleValuesChange = (changedValues: unknown, allValues: ProductData) => {
+    const changed = changedValues as ProductData;
+    // Only sync if socialLinks changed, not if waivio_product_ids or waivio_company_ids changed
+    if (changed && 'socialLinks' in changed && allValues && allValues.socialLinks && typeof allValues.socialLinks === 'object') {
       syncWaivioIdsFromSocialLinks(form, allValues, objectType as ObjectType);
     }
   };
