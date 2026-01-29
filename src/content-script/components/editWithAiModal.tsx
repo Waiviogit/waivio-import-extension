@@ -37,6 +37,23 @@ interface SocialLinks {
   linkHive?: string;
 }
 
+const SOCIAL_LINKS_HOST_MAP: Partial<Record<keyof SocialLinks, string>> = {
+  linkFacebook: 'facebook.com',
+  linkTwitter: 'twitter.com',
+  linkYouTube: 'youtube.com',
+  linkTikTok: 'tiktok.com',
+  linkReddit: 'reddit.com',
+  linkLinkedIn: 'linkedin.com',
+  linkTelegram: 't.me',
+  linkWhatsApp: 'wa.me',
+  linkPinterest: 'pinterest.com',
+  linkTwitch: 'twitch.tv',
+  linkSnapchat: 'snapchat.com',
+  linkInstagram: 'instagram.com',
+  linkGitHub: 'github.com',
+  linkHive: 'hive.blog',
+};
+
 interface EditAiModalProps {
   objectType: string;
   title?: string;
@@ -111,6 +128,26 @@ const processSocialLinks = (socialLinks: SocialLinks): SocialLinks => {
   return processed;
 };
 
+type WaivioProductId = { key: string; value: string };
+
+const getWaivioProductIdsFromSocialLinks = (socialLinks: SocialLinks): WaivioProductId[] => {
+  const ids: WaivioProductId[] = [];
+
+  Object.entries(socialLinks).forEach(([key, value]) => {
+    if (!value || typeof value !== 'string' || !value.trim()) return;
+
+    const host = SOCIAL_LINKS_HOST_MAP[key as keyof SocialLinks];
+    if (!host) return;
+
+    ids.push({
+      key: host,
+      value,
+    });
+  });
+
+  return ids;
+};
+
 const EditAiModal = ({ title = 'Object draft', objectType, imageBlob }: EditAiModalProps) => {
   const [isModalOpen, setIsModalOpen] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
@@ -130,7 +167,7 @@ const EditAiModal = ({ title = 'Object draft', objectType, imageBlob }: EditAiMo
       setProduct(null); // Clear previous data to avoid stale data from other tabs
 
       const pageUrl = document.URL; // Capture URL at the start of the effect
-      let linksForProductId = [document.URL];
+      const linksForProductId = [document.URL];
 
       const userInfo = await getWaivioUserInfo();
       if (!userInfo) {
@@ -148,7 +185,6 @@ const EditAiModal = ({ title = 'Object draft', objectType, imageBlob }: EditAiMo
           auth,
           accessToken,
           guestName,
-          linksForProductId,
         });
 
         const object = {
@@ -164,6 +200,7 @@ const EditAiModal = ({ title = 'Object draft', objectType, imageBlob }: EditAiMo
       }
 
       let aiResult: ProductData | null = null;
+      let waivioProductIds: { key: string, value: string }[] = [];
 
       // Try to get AI-generated object, but continue even if it fails
       try {
@@ -180,11 +217,18 @@ const EditAiModal = ({ title = 'Object draft', objectType, imageBlob }: EditAiMo
 
               // Process socialLinks if present
               if (aiResult && aiResult.socialLinks && typeof aiResult.socialLinks === 'object') {
-                linksForProductId = [
-                  ...Object.values(aiResult.socialLinks) as string[],
-                  document.URL,
-                ].filter((el, index, self) => index === self.indexOf(el));
-                aiResult.socialLinks = processSocialLinks(aiResult.socialLinks as SocialLinks);
+                const processedSocialLinks = processSocialLinks(
+                    aiResult.socialLinks as SocialLinks,
+                );
+                aiResult.socialLinks = processedSocialLinks;
+                waivioProductIds = getWaivioProductIdsFromSocialLinks(processedSocialLinks);
+              } else {
+                waivioProductIds = await getWaivioProductIds({
+                  user: userName,
+                  auth,
+                  accessToken,
+                  guestName,
+                });
               }
             }
           }
@@ -196,22 +240,13 @@ const EditAiModal = ({ title = 'Object draft', objectType, imageBlob }: EditAiMo
       const galleryLength = getGalleryLength(aiResult);
 
       try {
-        const [waivioProductIds, { primaryImageURLs, imageURLs }] = await Promise.all([
-          getWaivioProductIds({
-            user: userName,
-            auth,
-            accessToken,
-            guestName,
-            linksForProductId,
-          }),
-          getAvatarAndGallery({
-            user: userName,
-            auth,
-            accessToken,
-            guestName,
-            galleryLength,
-          }),
-        ]);
+        const { primaryImageURLs, imageURLs } = await getAvatarAndGallery({
+          user: userName,
+          auth,
+          accessToken,
+          guestName,
+          galleryLength,
+        });
 
         const hasWebsites = aiResult?.websites && Array.isArray(aiResult.websites)
           && aiResult.websites.length > 0;
