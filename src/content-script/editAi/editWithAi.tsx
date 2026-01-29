@@ -376,19 +376,35 @@ export const getWaivioProductIds = async ({
   return ids;
 };
 
-export const getTextInfoFromSite = () => {
+function clickYoutubeChannelDescriptionMore() {
+  const moreButton = document.querySelector<HTMLButtonElement>(
+    'yt-description-preview-view-model button.yt-truncated-text__absolute-button',
+  );
+
+  if (!moreButton) {
+    console.warn('More button not found');
+    return false;
+  }
+
+  moreButton.click();
+  return true;
+}
+
+export const getTextInfoFromSite = async () => {
   const url = document.URL;
   if (url.includes('youtube')) {
     let result = '';
 
-    const title = document
-      .querySelector('meta[property="og:title"]')
-      ?.getAttribute('content') || '';
-    const description = document
-      .querySelector('meta[property="og:description"]')
-      ?.getAttribute('content') || '';
+    const title = document.querySelector<HTMLElement>('h1.dynamicTextViewModelH1')?.innerText || '';
 
     if (title) result += `page title: ${title}`;
+    const isClicked = clickYoutubeChannelDescriptionMore();
+    if (isClicked) {
+      await new Promise((resolve) => { setTimeout(resolve, 300); });
+    }
+
+    const description = Array.from(document.querySelectorAll<HTMLElement>('#about-container'))
+      .at(-1)?.innerText || '';
     if (description) result += ` page description: ${description}`;
 
     return result;

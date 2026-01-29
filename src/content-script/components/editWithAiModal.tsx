@@ -197,8 +197,6 @@ const EditAiModal = ({ title = 'Object draft', objectType, imageBlob }: EditAiMo
       setProduct(null); // Clear previous data to avoid stale data from other tabs
 
       const pageUrl = document.URL; // Capture URL at the start of the effect
-      const linksForProductId = [document.URL];
-
       const userInfo = await getWaivioUserInfo();
       if (!userInfo) {
         setIsLoading(false);
@@ -237,7 +235,7 @@ const EditAiModal = ({ title = 'Object draft', objectType, imageBlob }: EditAiMo
         if (imageBlob) {
           const { result: imageUrl } = await loadImageBase64(imageBlob);
           if (imageUrl) {
-            const textInfo = getTextInfoFromSite();
+            const textInfo = await getTextInfoFromSite();
             const response = await generateObjectFromImage({
               accessToken, guestName, auth, user: userName, url: imageUrl, objectType, textInfo,
             });
