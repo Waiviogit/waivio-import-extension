@@ -5,6 +5,44 @@ import * as qs from 'qs';
 // Cache for blob data to avoid multiple fetches - moved outside the listener
 const blobCache = new Map<string, Uint8Array>();
 
+// Rule ID for Waivio User-Agent (rule ID 1 is used for YouTube)
+const WAIVIO_USER_AGENT_RULE_ID = 2;
+
+// Set up User-Agent for all Waivio API requests
+async function setupWaivioUserAgent() {
+  try {
+    const manifest = chrome.runtime.getManifest();
+    const version = manifest.version || '1.0.0';
+    const userAgent = `WaivioExtensionBot/${version}`;
+
+    await chrome.declarativeNetRequest.updateDynamicRules({
+      removeRuleIds: [WAIVIO_USER_AGENT_RULE_ID],
+      addRules: [{
+        id: WAIVIO_USER_AGENT_RULE_ID,
+        priority: 1,
+        action: {
+          type: 'modifyHeaders' as chrome.declarativeNetRequest.RuleActionType,
+          requestHeaders: [{
+            header: 'User-Agent',
+            operation: 'set' as chrome.declarativeNetRequest.HeaderOperation,
+            value: userAgent,
+          }],
+        },
+        condition: {
+          urlFilter: 'https://www.waivio.com/*',
+          resourceTypes: ['xmlhttprequest' as chrome.declarativeNetRequest.ResourceType],
+        },
+      }],
+    });
+    console.log(`Waivio User-Agent rule set up successfully: ${userAgent}`);
+  } catch (error) {
+    console.error('Failed to set up Waivio User-Agent rule:', error);
+  }
+}
+
+// Set up User-Agent rule when service worker starts
+setupWaivioUserAgent();
+
 async function tiktokdownloadUrl(url: string) {
   return new Promise((resolve, reject) => {
     // Create axios instance with realistic browser headers
