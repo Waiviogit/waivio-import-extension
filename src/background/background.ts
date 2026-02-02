@@ -31,6 +31,7 @@ async function setupWaivioUserAgent() {
         condition: {
           urlFilter: 'https://www.waivio.com/*',
           resourceTypes: ['xmlhttprequest' as chrome.declarativeNetRequest.ResourceType],
+          excludedInitiatorDomains: ['www.waivio.com', 'waivio.com'],
         },
       }],
     });
